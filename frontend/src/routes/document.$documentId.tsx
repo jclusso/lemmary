@@ -48,6 +48,7 @@ import { ProcessingStatus } from '../components/ProcessingStatus'
 import { ProcessingSteps } from '../components/ProcessingSteps'
 import { Button } from '../components/ui'
 import { ShareDialog, ShareSummary } from '../components/ShareDialog'
+import { PageEditorDialog } from '../components/PageEditorDialog'
 import { RelatedDocuments } from '../components/RelatedDocuments'
 import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
@@ -237,6 +238,7 @@ export function DocumentDetailPage() {
   // write, so offering the controls would only produce 403s.
   const owned = Boolean(document) && document?.user === pb.authStore.record?.id
   const [sharing, setSharing] = useState(false)
+  const [editingPages, setEditingPages] = useState(false)
   const [shareVersion, setShareVersion] = useState(0)
   const back = backTarget(document, owned)
 
@@ -744,6 +746,15 @@ export function DocumentDetailPage() {
               {markingReviewed ? t('documentPage.marking') : t('bulk.markReviewed')}
             </Button>
           )}
+          {owned && previewKind(document.file) === 'pdf' && (
+            <Button
+              variant="secondary"
+              title={t('documentPage.pagesTitle')}
+              onClick={() => setEditingPages(true)}
+            >
+              {t('documentPage.pages')}
+            </Button>
+          )}
           {owned && (
             <Button variant="secondary" onClick={() => setSharing(true)}>
               {t('bulk.share')}
@@ -782,6 +793,20 @@ export function DocumentDetailPage() {
           setShareVersion((version) => version + 1)
         }}
       />
+
+      {owned && (
+        <PageEditorDialog
+          documentId={documentId}
+          open={editingPages}
+          onClose={() => setEditingPages(false)}
+          onChanged={(change) => {
+            setError('')
+            setMessage(
+              change === 'removed' ? t('documentPage.pagesRemoved') : t('documentPage.originalRestored'),
+            )
+          }}
+        />
+      )}
 
       {/* The pane sits left of the form but after it in the DOM, so a keyboard
           reaches the fields without tabbing through the PDF viewer first. */}

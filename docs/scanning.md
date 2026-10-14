@@ -82,6 +82,22 @@ each further sheet.
 use for a stack. Some devices return one PDF per sheet and some return one PDF
 for the lot; either way it arrives as one document.
 
+## Removing blank pages
+
+A feeder sometimes lets a blank sheet through, often with faint text bleeding
+through from its back. To take it out, open the document and press **Pages**.
+Every page is shown, and the ones that look blank are already selected. Change
+the selection if needed, then press **Remove**. This works on any PDF in your
+library, not only scans.
+
+A page counts as blank when it has almost no dark print. Bleed-through, specks
+of dust and the shadows at a scan's edges are ignored, so check the suggestion
+before removing: a page holding a single faint stamp may be flagged too.
+
+The preview and the OCR text are rebuilt from the shorter file. The title,
+tags and other details stay as they are. The file as first uploaded is kept,
+and **Restore original** in the same dialog puts it back.
+
 ## Limits
 
 A document may be at most 47 MB, which is the same ceiling as any upload, and
