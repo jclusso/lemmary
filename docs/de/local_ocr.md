@@ -168,7 +168,7 @@ beschrieben.
   Feld für den API-Schlüssel des Anbieters in den **Einstellungen**.
 - **TXT, CSV, DOCX und XLSX erreichen den Sidecar nie.** Lemmary parst diese selbst, daher ist
   ein Problem mit einer davon kein OCR-Problem.
-- **Probieren Sie es aus, bevor Sie sich darauf verlassen.** Die Seite **OCR-Test** schickt
+- **Probieren Sie es aus, bevor Sie sich darauf verlassen.** Die Seite **OCR-Test** im Administrationsbereich schickt
   eine Datei durch einen Anbieter, ohne die Pipeline zu berühren. Ein lokaler Sidecar erscheint
   dort, sobald er unter **Anbieter** hinzugefügt wurde, noch bevor er der OCR zugewiesen ist.
 

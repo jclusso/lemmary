@@ -93,7 +93,7 @@ func Register(
 			// Without a route-level limit the multipart parse consumes the whole
 			// request under PocketBase's 32MB default before the handler's own
 			// check can reject it.
-			g.POST("/ocr/test", bindAuth(handleOCRTest(app, rt))).
+			g.POST("/ocr/test", bindAdmin(handleOCRTest(app, rt))).
 				BindFunc(unlessManaged(rt)).
 				Bind(apis.BodyLimit(ocrTestMaxFileBytes + (1 << 20)))
 			g.GET("/users", bindAuth(handleListUsers(app)))

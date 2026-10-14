@@ -1,5 +1,7 @@
 import type { LinkProps } from '@tanstack/react-router'
-import { t } from '../i18n'
+import { docsUrl, t } from '../i18n'
+
+export const githubRepoUrl = 'https://github.com/buldezir/lemmary'
 
 /**
  * The header's link set as data: the bar and the mobile panel render it in two
@@ -18,18 +20,9 @@ export const NAV_BADGE_DESCRIPTIONS: Record<NavBadgeKey, string> = {
   activity: t('nav.badgeActivity'),
 }
 
-/** Names an icon the header draws before a label -- the key, never the SVG. */
-export type NavIconKey = 'pocketbase'
-
-type NavItemBase = {
-  label: string
-  /** Rendered for admins only, and labelled with a shield. */
-  admin?: boolean
-  icon?: NavIconKey
-}
-
-export type RouteNavItem = NavItemBase & {
+export type RouteNavItem = {
   kind: 'route'
+  label: string
   to: LinkProps['to']
   /** Marks the link active only on an exact path match. */
   exact?: boolean
@@ -37,12 +30,20 @@ export type RouteNavItem = NavItemBase & {
   badgeKey?: NavBadgeKey
 }
 
-export type ExternalNavItem = NavItemBase & {
+export type ExternalNavItem = {
   kind: 'external'
+  label: string
   href: string
 }
 
 export type NavItem = RouteNavItem | ExternalNavItem
+
+/** A run of secondary links, set off by a rule and, after the first, a heading. */
+export type NavGroup = {
+  key: 'personal' | 'admin' | 'help' | 'settings' | 'instance'
+  heading?: string
+  items: NavItem[]
+}
 
 /**
  * A function because the Inbox is conditional: without always_require_review a
@@ -64,28 +65,64 @@ export function primaryNavItems(reviewRequired: boolean): readonly NavItem[] {
 }
 
 /**
- * The links behind the bar's "More" menu, listed inline on a narrow one.
- * `hostEditable` is false on a managed instance, which offers no OCR test and
- * no PocketBase dashboard.
+ * The links behind the bar's "More" menu, listed inline on a narrow one. The
+ * admin area is one entry here and lists its own pages in a sidebar; the admin
+ * routes bounce non-admins anyway, so leaving it out avoids offering a dead end.
  */
-export function secondaryNavItems(pbAdminUrl: string, hostEditable: boolean): readonly NavItem[] {
-  return [
-    { kind: 'route', label: t('nav.account'), to: '/account' },
-    { kind: 'route', label: t('nav.tags'), to: '/tags' },
-    { kind: 'route', label: t('nav.bulkActions'), to: '/bulk' },
-    ...(hostEditable ? [{ kind: 'route', label: t('nav.ocrTest'), to: '/ocr-test' } as const] : []),
-    { kind: 'route', label: t('nav.export'), to: '/export' },
-    { kind: 'route', label: t('nav.import'), to: '/import' },
-    { kind: 'route', label: t('nav.settings'), to: '/settings', admin: true },
-    { kind: 'route', label: t('nav.management'), to: '/management', admin: true },
-    { kind: 'route', label: t('nav.maintenance'), to: '/maintenance', admin: true },
-    ...(hostEditable
-      ? [{ kind: 'external', label: t('nav.admin'), href: pbAdminUrl, admin: true, icon: 'pocketbase' } as const]
-      : []),
+export function secondaryNavGroups(admin: boolean): NavGroup[] {
+  const groups: NavGroup[] = [
+    {
+      key: 'personal',
+      items: [
+        { kind: 'route', label: t('nav.account'), to: '/account' },
+        { kind: 'route', label: t('nav.tags'), to: '/tags' },
+        { kind: 'route', label: t('nav.bulkActions'), to: '/bulk' },
+      ],
+    },
   ]
+  if (admin) {
+    groups.push({ key: 'admin', items: [{ kind: 'route', label: t('nav.adminArea'), to: '/settings' }] })
+  }
+  groups.push({
+    key: 'help',
+    heading: t('nav.groupHelp'),
+    items: [
+      { kind: 'external', label: t('footer.documentation'), href: docsUrl() },
+      { kind: 'external', label: 'GitHub', href: githubRepoUrl },
+    ],
+  })
+  return groups
 }
 
-/** The admin routes bounce non-admins anyway; this avoids offering a dead end. */
-export function visibleNavItems(items: readonly NavItem[], admin: boolean): NavItem[] {
-  return items.filter((item) => !item.admin || admin)
+/**
+ * The admin area's sidebar: every settings section and instance page in one
+ * list, so no admin page needs a tab bar of its own. A managed instance
+ * (`hostEditable` false) has nothing editable behind AI, Worker, Duplicates,
+ * OCR test or the PocketBase dashboard; Ingest exists only once a source is
+ * configured.
+ */
+export function adminNavGroups(
+  pbAdminUrl: string,
+  { hostEditable, ingest }: { hostEditable: boolean; ingest: boolean },
+): NavGroup[] {
+  const settings: (NavItem | false)[] = [
+    { kind: 'route', label: t('settings.tabAppearance'), to: '/settings', exact: true },
+    hostEditable && { kind: 'route', label: t('settings.tabAi'), to: '/settings/ai' },
+    { kind: 'route', label: t('settings.tabProcessing'), to: '/settings/processing' },
+    { kind: 'route', label: t('settings.tabFields'), to: '/settings/fields' },
+    hostEditable && { kind: 'route', label: t('settings.tabWorker'), to: '/settings/worker' },
+    hostEditable && { kind: 'route', label: t('settings.tabDuplicates'), to: '/settings/duplicates' },
+    ingest && { kind: 'route', label: t('settings.tabIngest'), to: '/settings/ingest' },
+    { kind: 'route', label: t('settings.tabMcp'), to: '/settings/mcp' },
+  ]
+  const instance: (NavItem | false)[] = [
+    { kind: 'route', label: t('nav.users'), to: '/management' },
+    { kind: 'route', label: t('nav.maintenance'), to: '/maintenance' },
+    hostEditable && { kind: 'route', label: t('nav.ocrTest'), to: '/ocr-test' },
+    hostEditable && { kind: 'external', label: t('nav.admin'), href: pbAdminUrl },
+  ]
+  return [
+    { key: 'settings', heading: t('nav.settings'), items: settings.filter((item) => item !== false) },
+    { key: 'instance', heading: t('nav.groupInstance'), items: instance.filter((item) => item !== false) },
+  ]
 }

@@ -1,55 +1,67 @@
 import { describe, expect, test } from 'vitest'
 import {
+  adminNavGroups,
   NAV_BADGE_DESCRIPTIONS,
   primaryNavItems,
-  secondaryNavItems,
-  visibleNavItems,
+  secondaryNavGroups,
+  type NavGroup,
 } from './nav'
 
+function outline(groups: NavGroup[]) {
+  return groups.map((group) => [group.heading ?? null, group.items.map((item) => item.label)])
+}
+
 describe('nav items', () => {
-  test('hides admin-only entries from a regular user', () => {
-    const items = visibleNavItems(secondaryNavItems('http://pb.test/_/', true), false)
-    const labels = items.map((item) => item.label)
-
-    expect(labels).toEqual(['Account', 'Tags', 'Bulk Actions', 'OCR test', 'Export', 'Import'])
-    expect(items.every((item) => !item.admin)).toBe(true)
-  })
-
-  test('gives an admin the full secondary set', () => {
-    const items = visibleNavItems(secondaryNavItems('http://pb.test/_/', true), true)
-
-    expect(items.map((item) => item.label)).toEqual([
-      'Account',
-      // Not admin-only: the tag vocabulary is per-user, like the account itself.
-      'Tags',
-      'Bulk Actions',
-      'OCR test',
-      'Export',
-      'Import',
-      'Settings',
-      'Management',
-      'Maintenance',
-      'Admin',
+  test('leaves the admin entry out for a regular user', () => {
+    expect(outline(secondaryNavGroups(false))).toEqual([
+      // Tags is not admin-only: the vocabulary is per-user, like the account itself.
+      [null, ['Account', 'Tags', 'Bulk Actions']],
+      ['Help', ['Documentation', 'GitHub']],
     ])
   })
 
-  test('offers no OCR test or dashboard on a managed instance', () => {
-    const labels = secondaryNavItems('http://pb.test/_/', false).map((item) => item.label)
-
-    expect(labels).not.toContain('OCR test')
-    expect(labels).not.toContain('Admin')
-    expect(labels).toContain('Export')
+  test('gives an admin one entry into the admin area', () => {
+    expect(outline(secondaryNavGroups(true))).toEqual([
+      [null, ['Account', 'Tags', 'Bulk Actions']],
+      [null, ['Admin']],
+      ['Help', ['Documentation', 'GitHub']],
+    ])
   })
 
-  test('points the admin entry at the PocketBase dashboard', () => {
-    const admin = secondaryNavItems('http://pb.test/_/', true).find((item) => item.label === 'Admin')
-
-    expect(admin).toEqual({ kind: 'external', label: 'Admin', href: 'http://pb.test/_/', admin: true, icon: 'pocketbase' })
+  test('lists every settings section and admin page in the admin sidebar', () => {
+    expect(outline(adminNavGroups('http://pb.test/_/', { hostEditable: true, ingest: true }))).toEqual([
+      ['Settings', ['Appearance', 'AI', 'Processing', 'Fields', 'Worker', 'Duplicates', 'Ingest', 'MCP']],
+      ['Instance', ['Users', 'Maintenance', 'OCR test', 'PocketBase']],
+    ])
   })
 
-  test('keeps the primary links open to everyone', () => {
+  test('offers only what a managed instance can edit, and Ingest only once configured', () => {
+    expect(outline(adminNavGroups('http://pb.test/_/', { hostEditable: false, ingest: false }))).toEqual([
+      ['Settings', ['Appearance', 'Processing', 'Fields', 'MCP']],
+      ['Instance', ['Users', 'Maintenance']],
+    ])
+  })
+
+  test('points the PocketBase entry at the dashboard', () => {
+    const groups = adminNavGroups('http://pb.test/_/', { hostEditable: true, ingest: false })
+    expect(groups.at(-1)?.items.at(-1)).toEqual({
+      kind: 'external',
+      label: 'PocketBase',
+      href: 'http://pb.test/_/',
+    })
+  })
+
+  test('links the docs and the source repository', () => {
+    const help = secondaryNavGroups(false).at(-1)
+
+    expect(help?.items).toEqual([
+      { kind: 'external', label: 'Documentation', href: '/docs/' },
+      { kind: 'external', label: 'GitHub', href: 'https://github.com/buldezir/lemmary' },
+    ])
+  })
+
+  test('lists the primary links in order', () => {
     const items = primaryNavItems(true)
-    expect(visibleNavItems(items, false)).toHaveLength(items.length)
     expect(items.map((item) => item.label)).toEqual([
       'Documents',
       'Inbox',
@@ -89,13 +101,14 @@ describe('nav items', () => {
     }
   })
 
-  // Only the document list is exact: every other link has children it should
-  // stay lit for (/upload/split, /rag/research/<chat>, /import/ngx).
-  test('marks only the document list as an exact match', () => {
-    const exact = [...primaryNavItems(true), ...secondaryNavItems('/_/', true)].filter(
+  // Only the two links that sit on a parent's own path are exact; every other
+  // link has children it should stay lit for (/upload/split, /rag/research/<chat>).
+  test('marks only the document list and Appearance as exact matches', () => {
+    const secondary = [...secondaryNavGroups(true).flatMap((group) => group.items), ...adminNavGroups('/_/', { hostEditable: true, ingest: true }).flatMap((group) => group.items)]
+    const exact = [...primaryNavItems(true), ...secondary].filter(
       (item) => item.kind === 'route' && item.exact,
     )
 
-    expect(exact.map((item) => item.label)).toEqual(['Documents'])
+    expect(exact.map((item) => item.label)).toEqual(['Documents', 'Appearance'])
   })
 })

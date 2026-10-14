@@ -5,7 +5,7 @@ import { describe, expect, test } from 'vitest'
 describe('route tree', () => {
   test('includes every core route', async () => {
     const { router } = await import('./router')
-    const paths = Object.keys(router.routesById)
+    const paths = Object.values(router.routesById).map((route) => route.fullPath.replace(/(.)\/$/, '$1'))
 
     for (const path of [
       '/',
@@ -45,6 +45,19 @@ describe('route tree', () => {
     ]) {
       expect(paths).toContain(path)
     }
+  })
+
+  // The admin layout carries the admin guard, so a page outside it is open to
+  // every signed-in user.
+  test('puts the admin pages inside the admin layout', async () => {
+    const { router } = await import('./router')
+    const ids = Object.keys(router.routesById)
+
+    for (const id of ['/admin/settings', '/admin/management', '/admin/maintenance', '/admin/ocr-test']) {
+      expect(ids).toContain(id)
+    }
+    expect(ids).toContain('/import')
+    expect(ids).toContain('/export')
   })
 })
 

@@ -118,13 +118,13 @@ first.
 
 - A passkey here is a **primary** sign-in method, not a second factor. There is no
   password-plus-passkey step, and passkeys are not wired to PocketBase's own MFA.
-- The **Admin** entry (PocketBase's own UI at `/_/`) always authenticates with the superuser
+- The **PocketBase** entry in the Admin area (PocketBase's own UI at `/_/`) always authenticates with the superuser
   password. Passkeys are registered against the `users` collection, so an admin can never lock
   themselves out of the server with a passkey mistake.
 - Passkeys are **not** part of a library export. The export is a portable archive of your
   documents; a passkey is tied to one hostname and to hardware, so a restored copy could never
-  authenticate and would only clutter the list. A full PocketBase backup (**Admin → Settings →
-  Backups**) does include them, which is the right vehicle — restoring one puts the install
+  authenticate and would only clutter the list. A full PocketBase backup (**Settings →
+  Backups** in the PocketBase UI) does include them, which is the right vehicle — restoring one puts the install
   back on the same hostname.
 - Paperless-ngx clients continue to sign in with a username and password. A WebAuthn ceremony
   needs a browser, so there is nothing to add to that API.
@@ -156,7 +156,7 @@ in for your password.
 
 **"Too many sign-in attempts are in progress."** The server is holding as many half-finished
 ceremonies as it will. Wait a minute and try again. An operator seeing this regularly should
-enable PocketBase's rate limiter (**Admin → Settings → Rate limits**).
+enable PocketBase's rate limiter (**Settings → Rate limits** in the PocketBase UI).
 
 **"That passkey is no longer valid on this server."** The account behind it is gone, or the
 hostname changed. Sign in another way and remove the entry.

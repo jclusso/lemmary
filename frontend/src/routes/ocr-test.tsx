@@ -155,13 +155,8 @@ function OCRTester() {
   }
 
   return (
-    <section className="mx-auto flex max-w-3xl flex-col gap-5">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">{t('ocrTest.title')}</h2>
-        <p className="text-sm text-ink-soft">
-          {t('ocrTest.intro')}
-        </p>
-      </div>
+    <section className="flex max-w-3xl flex-col gap-5">
+      <p className="text-sm text-ink-soft">{t('ocrTest.intro')}</p>
 
       <form className="flex flex-col gap-4" onSubmit={onSubmit}>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">

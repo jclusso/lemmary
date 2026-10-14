@@ -30,9 +30,15 @@ export const en = {
   'nav.export': 'Export',
   'nav.import': 'Import',
   'nav.settings': 'Settings',
-  'nav.management': 'Management',
+  'nav.users': 'Users',
+  'nav.groupInstance': 'Instance',
   'nav.maintenance': 'Maintenance',
-  'nav.admin': 'Admin',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Admin',
+  'admin.title': 'Admin',
+  'admin.intro': 'Settings and tools for the whole instance. Only admins see this area.',
+  'admin.sectionsLabel': 'Admin sections',
+  'nav.groupHelp': 'Help',
 
   'documentStatus.pending': 'Pending',
   'documentStatus.processing': 'Processing',
@@ -1050,11 +1056,8 @@ export const en = {
   'import.sourcesLabel': 'Import sources',
   'import.tabArchive': 'Lemmary archive',
 
-  'settings.title': 'Settings',
-  'settings.intro': 'Runtime configuration for OCR, AI, and the worker. Changes apply immediately.',
   'settings.aiManaged':
     'AI providers, models, timeouts and the worker are set by your hosting provider and are not editable here.',
-  'settings.sectionsLabel': 'Settings sections',
   'settings.tabAppearance': 'Appearance',
   'settings.tabAi': 'AI',
   'settings.tabProcessing': 'Processing',
@@ -1064,10 +1067,6 @@ export const en = {
   'settings.tabIngest': 'Ingest',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Management',
-  'management.intro': 'Accounts on this instance. Admin only.',
-  'management.sectionsLabel': 'Management sections',
-  'management.tabUsers': 'Users',
 
   'settingsIndex.nameRequired': 'Application name is required',
   'settingsIndex.accentInvalid': 'Accent color must be a hex value like #6e2620',
@@ -1467,6 +1466,9 @@ export const en = {
   'account.passwordFailed': 'Could not change the password.',
   'account.title': 'Account',
   'account.intro': 'How you and your agents sign in to this archive.',
+  'account.languageHint': 'Remembered in this browser for a year. Messages from the server follow it too.',
+  'account.moveLibrary': 'Import and export',
+  'account.moveLibraryHint': 'Bring documents in from another Lemmary instance, Paperless-ngx or Papra, or download a backup of your whole library.',
 
   'importNgx.preserveLabel': 'Keep Paperless-ngx metadata',
   'importNgx.preserveDescription':
@@ -1709,7 +1711,6 @@ export const en = {
   'ocrTest.chooseProvider': 'Choose an OCR provider.',
   'ocrTest.meta': { other: '{chars} characters · {provider} · {duration}' },
   'ocrTest.failed': 'OCR test failed',
-  'ocrTest.title': 'OCR test',
   'ocrTest.intro': 'Upload a file and run OCR with a configured provider. Results are not saved.',
   'ocrTest.provider': 'Provider',
   'ocrTest.loadingProviders': 'Loading providers...',
@@ -1764,8 +1765,7 @@ export const en = {
   'maintenance.reindexFailed': 'Search reindex failed',
   'maintenance.inFlight': 'Processing in flight ({jobs}). Try again when the queue is idle.',
   'maintenance.pruneFailed': 'Stale data cleanup failed',
-  'maintenance.title': 'Maintenance',
-  'maintenance.intro': 'Maintenance tasks that run over the whole library. Admin only.',
+  'maintenance.intro': 'Maintenance tasks that run over the whole library.',
   'maintenance.failedTitle': 'Failed processing',
   'maintenance.failedHint':
     'Queues a fresh job for documents whose processing failed. Originals are never touched. Jobs run one at a time, so a batch drains gradually — reprocess in batches rather than all at once to keep OCR and AI spend under control.',

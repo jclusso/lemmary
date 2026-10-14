@@ -1,4 +1,5 @@
 import { type SubmitEvent, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { changePassword, getMe } from '../lib/auth'
 import {
   deletePasskey,
@@ -27,7 +28,7 @@ import {
   sectionTitleClassName,
   selectClassName,
 } from '../components/ui'
-import { docsUrl, t, tNode } from '../i18n'
+import { docsUrl, lang, languageNames, setLanguage, t, tNode, type Language } from '../i18n'
 
 function SignedInSection() {
   const { data: me } = useAsync(getMe, [])
@@ -535,6 +536,47 @@ function InstanceLimitsSection() {
   )
 }
 
+function LanguageSection() {
+  return (
+    <section className={sectionClassName}>
+      <h2 className={sectionTitleClassName}>{t('common.language')}</h2>
+      <p className={`${fieldHintClassName} mb-4`}>{t('account.languageHint')}</p>
+      <select
+        aria-label={t('common.language')}
+        value={lang}
+        onChange={(e) => setLanguage(e.target.value as Language)}
+        className={`${selectClassName} max-w-xs`}
+      >
+        {Object.entries(languageNames).map(([code, name]) => (
+          <option key={code} value={code}>
+            {name}
+          </option>
+        ))}
+      </select>
+    </section>
+  )
+}
+
+const linkButtonClassName =
+  'rounded-xs border border-line-strong bg-surface px-3 py-1.5 text-sm font-medium tracking-wide text-ink transition-colors hover:border-ink hover:bg-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood'
+
+function MoveLibrarySection() {
+  return (
+    <section id="import-export" className={sectionClassName}>
+      <h2 className={sectionTitleClassName}>{t('account.moveLibrary')}</h2>
+      <p className={`${fieldHintClassName} mb-4`}>{t('account.moveLibraryHint')}</p>
+      <div className="flex flex-wrap gap-2">
+        <Link to="/import" className={linkButtonClassName}>
+          {t('nav.import')}
+        </Link>
+        <Link to="/export" className={linkButtonClassName}>
+          {t('nav.export')}
+        </Link>
+      </div>
+    </section>
+  )
+}
+
 export function AccountPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-5">
@@ -543,10 +585,12 @@ export function AccountPage() {
         <p className="mt-1 text-sm text-ink-soft">{t('account.intro')}</p>
       </div>
       <SignedInSection />
+      <LanguageSection />
       <AgentsSection />
       <PaperlessAppsSection />
       <PasswordSection />
       <PasskeysSection />
+      <MoveLibrarySection />
       <InstanceLimitsSection />
     </div>
   )

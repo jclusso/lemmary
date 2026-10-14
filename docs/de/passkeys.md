@@ -118,13 +118,13 @@ Passkey hinzu.
 
 - Ein Passkey ist hier eine **primäre** Anmeldemethode, kein zweiter Faktor. Es gibt keinen
   Schritt „Passwort plus Passkey“, und Passkeys sind nicht mit der eigenen MFA von PocketBase verbunden.
-- Der Eintrag **Admin** (die eigene Oberfläche von PocketBase unter `/_/`) authentifiziert immer mit dem
+- Der Eintrag **PocketBase** im Administrationsbereich (die eigene Oberfläche von PocketBase unter `/_/`) authentifiziert immer mit dem
   Superuser-Passwort. Passkeys werden für die Collection `users` registriert, sodass sich ein Administrator durch einen
   Fehler mit Passkeys nie vom Server aussperren kann.
 - Passkeys sind **nicht** Teil eines Bibliotheksexports. Der Export ist ein portables Archiv Ihrer
   Dokumente; ein Passkey ist an einen Hostnamen und an Hardware gebunden, daher könnte sich eine wiederhergestellte
-  Kopie nie authentifizieren und würde die Liste nur überladen. Eine vollständige PocketBase-Sicherung (**Admin → Settings →
-  Backups**) enthält sie dagegen, und das ist der richtige Weg – beim Wiederherstellen einer solchen Sicherung läuft die
+  Kopie nie authentifizieren und würde die Liste nur überladen. Eine vollständige PocketBase-Sicherung (**Settings →
+  Backups** in der PocketBase-Oberfläche) enthält sie dagegen, und das ist der richtige Weg – beim Wiederherstellen einer solchen Sicherung läuft die
   Installation wieder unter demselben Hostnamen.
 - Paperless-ngx-Clients melden sich weiterhin mit Benutzername und Passwort an. Ein WebAuthn-Vorgang
   benötigt einen Browser, daher gibt es für diese API nichts hinzuzufügen.
@@ -156,7 +156,7 @@ der Passkey Ihr Passwort ersetzt.
 
 **"Too many sign-in attempts are in progress."** Der Server hält so viele halb abgeschlossene
 Vorgänge vor, wie er zulässt. Warten Sie eine Minute und versuchen Sie es erneut. Ein Betreiber, der dies regelmäßig
-sieht, sollte den Rate Limiter von PocketBase aktivieren (**Admin → Settings → Rate limits**).
+sieht, sollte den Rate Limiter von PocketBase aktivieren (**Settings → Rate limits** in der PocketBase-Oberfläche).
 
 **„Dieser Passkey ist auf diesem Server nicht mehr gültig.“** Das zugehörige Konto existiert nicht mehr, oder der
 Hostname hat sich geändert. Melden Sie sich auf andere Weise an und entfernen Sie den Eintrag.

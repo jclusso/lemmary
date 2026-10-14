@@ -13,6 +13,7 @@ import {
   type DocumentQueryInput,
 } from './lib/documentQuery'
 import { RootLayout } from './components/RootLayout'
+import { AdminLayout } from './components/AdminLayout'
 import { IndexPage } from './routes/index'
 import { InboxPage } from './routes/inbox'
 import { ActivityPage } from './routes/activity'
@@ -37,7 +38,6 @@ import { SettingsDuplicatesPage } from './routes/settings.duplicates'
 import { SettingsIngestPage } from './routes/settings.ingest'
 import { SettingsMCPPage } from './routes/settings.mcp'
 import { MaintenancePage } from './routes/maintenance'
-import { ManagementPage } from './routes/management'
 import { ManagementUsersPage } from './routes/management.users'
 import { ImportPage } from './routes/import'
 import { ImportNgxPage, ImportPapraPage } from './routes/import.remote'
@@ -183,22 +183,28 @@ const researchSessionRoute = createRoute({
   component: () => null,
 })
 
-const ocrTestRoute = createRoute({
+// Pathless: the admin pages keep their URLs and share one guard and one frame.
+const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
+  id: 'admin',
+  beforeLoad: requireAdmin,
+  component: AdminLayout,
+})
+
+const ocrTestRoute = createRoute({
+  getParentRoute: () => adminRoute,
   path: '/ocr-test',
   component: OCRTestPage,
 })
 
-// A shell with one tab per section; the guard sits on the parent, which the
-// tabs inherit.
+// The sections are listed in the admin sidebar.
 const settingsRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => adminRoute,
   path: '/settings',
-  beforeLoad: requireAdmin,
   component: SettingsPage,
 })
 
-// Appearance is the first tab, so it sits on /settings itself.
+// Appearance is the first section, so it sits on /settings itself.
 const settingsAppearanceRoute = createRoute({
   getParentRoute: () => settingsRoute,
   path: '/',
@@ -248,13 +254,11 @@ const settingsMCPRoute = createRoute({
 })
 
 const managementRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => adminRoute,
   path: '/management',
-  beforeLoad: requireAdmin,
-  component: ManagementPage,
 })
 
-// Users is the first tab, so it sits on /management itself.
+// Users is the only section, so it sits on /management itself.
 const managementUsersRoute = createRoute({
   getParentRoute: () => managementRoute,
   path: '/',
@@ -262,9 +266,8 @@ const managementUsersRoute = createRoute({
 })
 
 const maintenanceRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => adminRoute,
   path: '/maintenance',
-  beforeLoad: requireAdmin,
   component: MaintenancePage,
 })
 
@@ -302,8 +305,8 @@ const importArchiveAliasRoute = createRoute({
   },
 })
 
-// No beforeLoad guard on purpose: RootLayout's gate already requires a session,
-// and unlike /settings and /maintenance this page has to work for non-admins.
+// Outside the admin area on purpose: RootLayout's gate already requires a
+// session, and this page has to work for non-admins.
 const accountRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/account',
@@ -353,19 +356,21 @@ const routeTree = rootRoute.addChildren([
     searchRoute.addChildren([searchSessionRoute]),
     researchRoute.addChildren([researchSessionRoute]),
   ]),
-  ocrTestRoute,
-  settingsRoute.addChildren([
-    settingsAppearanceRoute,
-    settingsAIRoute,
-    settingsProcessingRoute,
-    settingsFieldsRoute,
-    settingsWorkerRoute,
-    settingsDuplicatesRoute,
-    settingsIngestRoute,
-    settingsMCPRoute,
+  adminRoute.addChildren([
+    ocrTestRoute,
+    settingsRoute.addChildren([
+      settingsAppearanceRoute,
+      settingsAIRoute,
+      settingsProcessingRoute,
+      settingsFieldsRoute,
+      settingsWorkerRoute,
+      settingsDuplicatesRoute,
+      settingsIngestRoute,
+      settingsMCPRoute,
+    ]),
+    managementRoute.addChildren([managementUsersRoute]),
+    maintenanceRoute,
   ]),
-  managementRoute.addChildren([managementUsersRoute]),
-  maintenanceRoute,
   importRoute.addChildren([importArchiveRoute, importNgxRoute, importPapraRoute, importArchiveAliasRoute]),
   exportRoute,
   accountRoute,

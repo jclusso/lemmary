@@ -30,9 +30,15 @@ export const de: Catalog = {
   'nav.export': 'Export',
   'nav.import': 'Import',
   'nav.settings': 'Einstellungen',
-  'nav.management': 'Verwaltung',
+  'nav.users': 'Benutzer',
+  'nav.groupInstance': 'Instanz',
   'nav.maintenance': 'Wartung',
-  'nav.admin': 'Admin',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Administration',
+  'admin.title': 'Administration',
+  'admin.intro': 'Einstellungen und Werkzeuge für die gesamte Instanz. Nur Administratoren sehen diesen Bereich.',
+  'admin.sectionsLabel': 'Bereiche der Administration',
+  'nav.groupHelp': 'Hilfe',
 
   'documentStatus.pending': 'Ausstehend',
   'documentStatus.processing': 'In Verarbeitung',
@@ -1110,12 +1116,8 @@ export const de: Catalog = {
   'import.sourcesLabel': 'Import-Quellen',
   'import.tabArchive': 'Lemmary-Archiv',
 
-  'settings.title': 'Einstellungen',
-  'settings.intro':
-    'Laufzeitkonfiguration für OCR, KI und den Worker. Änderungen gelten sofort.',
   'settings.aiManaged':
     'KI-Anbieter, Modelle, Zeitlimits und der Worker werden von Ihrem Hosting-Anbieter festgelegt und können hier nicht geändert werden.',
-  'settings.sectionsLabel': 'Bereiche der Einstellungen',
   'settings.tabAppearance': 'Darstellung',
   'settings.tabAi': 'KI',
   'settings.tabProcessing': 'Verarbeitung',
@@ -1125,10 +1127,6 @@ export const de: Catalog = {
   'settings.tabIngest': 'Eingang',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Verwaltung',
-  'management.intro': 'Konten auf dieser Instanz. Nur für Administratoren.',
-  'management.sectionsLabel': 'Bereiche der Verwaltung',
-  'management.tabUsers': 'Benutzer',
 
   'settingsIndex.nameRequired': 'Der Anwendungsname ist erforderlich',
   'settingsIndex.accentInvalid': 'Die Akzentfarbe muss ein Hex-Wert wie #6e2620 sein',
@@ -1541,6 +1539,9 @@ export const de: Catalog = {
   'account.passwordFailed': 'Das Passwort konnte nicht geändert werden.',
   'account.title': 'Konto',
   'account.intro': 'Wie Sie und Ihre Agenten sich bei diesem Archiv anmelden.',
+  'account.languageHint': 'Wird in diesem Browser für ein Jahr gespeichert. Auch Meldungen des Servers folgen dieser Einstellung.',
+  'account.moveLibrary': 'Import und Export',
+  'account.moveLibraryHint': 'Dokumente aus einer anderen Lemmary-Instanz, aus Paperless-ngx oder Papra übernehmen oder eine Sicherung der gesamten Bibliothek herunterladen.',
 
   'importNgx.preserveLabel': 'Metadaten aus Paperless-ngx behalten',
   'importNgx.preserveDescription':
@@ -1801,7 +1802,6 @@ export const de: Catalog = {
     other: '{chars} Zeichen · {provider} · {duration}',
   },
   'ocrTest.failed': 'OCR-Test fehlgeschlagen',
-  'ocrTest.title': 'OCR-Test',
   'ocrTest.intro':
     'Laden Sie eine Datei hoch und führen Sie die OCR mit einem konfigurierten Anbieter aus. Ergebnisse werden nicht gespeichert.',
   'ocrTest.provider': 'Anbieter',
@@ -1866,9 +1866,8 @@ export const de: Catalog = {
   'maintenance.inFlight':
     'Verarbeitung läuft ({jobs}). Versuchen Sie es erneut, wenn die Warteschlange leer ist.',
   'maintenance.pruneFailed': 'Bereinigung veralteter Daten fehlgeschlagen',
-  'maintenance.title': 'Wartung',
   'maintenance.intro':
-    'Wartungsaufgaben, die über die gesamte Bibliothek laufen. Nur für Administratoren.',
+    'Wartungsaufgaben, die über die gesamte Bibliothek laufen.',
   'maintenance.failedTitle': 'Fehlgeschlagene Verarbeitung',
   'maintenance.failedHint':
     'Reiht einen neuen Job für Dokumente ein, deren Verarbeitung fehlgeschlagen ist. Originale werden nie angetastet. Jobs laufen nacheinander, eine Charge leert sich also allmählich – verarbeiten Sie in Chargen statt alles auf einmal, um die Kosten für OCR und KI im Griff zu behalten.',

@@ -48,7 +48,8 @@ erscheinen für alles, was in PocketBase aktiviert ist.
 
 Jedes Konto verwaltet seine eigenen Passkeys, einen pro Gerät, und seine eigenen
 Tokens für einen Agenten, der das Archiv über [MCP](/de/mcp) durchsuchen und lesen
-soll.
+soll. Auf der Kontoseite wählen Sie auch die Sprache der Oberfläche, und dort
+beginnen Import und Export.
 
 ![Kontoseite mit einem registrierten Passkey](../screenshots/account.png)
 
@@ -256,8 +257,13 @@ seinen Metadaten oder indem die Pipeline erneut über die Dateien läuft.
 
 ## Administration {#administration}
 
+Admins erreichen diese Seiten über **Administration** im Zahnradmenü. Sie teilen
+sich einen Administrationsbereich mit einer Seitenleiste in zwei Gruppen:
+Einstellungen, mit einem Eintrag pro Einstellungsbereich, und Instanz, mit
+Benutzer, Wartung, OCR-Test und dem PocketBase-Dashboard.
+
 Die Einstellungen sind Laufzeitkonfiguration, die in der Datenbank statt in der
-Umgebung gespeichert ist, aufgeteilt in je einen Tab. Unter Darstellung erhält die
+Umgebung gespeichert ist, aufgeteilt in je einen Bereich. Unter Darstellung erhält die
 Instanz ihren Namen und die Akzentfarbe, die die gesamte Oberfläche übernimmt.
 
 ![Einstellungen, Darstellung](../screenshots/settings-appearance.png)
@@ -267,7 +273,7 @@ allgemeines KI-Modell für die alltägliche Arbeit und ein optionales
 fortgeschrittenes für Deep Research. API-Schlüssel sind nur schreibbar: Die Seite meldet, dass ein Schlüssel gesetzt
 ist, aber nie, wie er lautet.
 
-![Einstellungen, der KI-Tab vollständig](../screenshots/settings.png)
+![Einstellungen, der Bereich KI vollständig](../screenshots/settings.png)
 
 Verarbeitung umfasst die Timeouts, die Sprache, in der Ergebnisse zurückkommen,
 ob jedes Dokument auf eine Prüfung wartet, sowie Hausregeln, die an den
@@ -302,10 +308,10 @@ Postfachordner eintreffen, werden beim nächsten Scan zu Dokumenten.
 
 ![Einstellungen, Eingang](../screenshots/settings-ingest.png)
 
-Verwaltung ist die Liste der Konten der Instanz für den Admin, in der eines
+Benutzer ist die Liste der Konten der Instanz für den Admin, in der eines
 angelegt, bearbeitet oder gelöscht wird.
 
-![Verwaltung, die Konten der Instanz](../screenshots/management.png)
+![Benutzer, die Konten der Instanz](../screenshots/management.png)
 
 Bibliotheksweite Wartung: fehlgeschlagene Dokumente stapelweise erneut
 verarbeiten, nach Duplikaten suchen, Taxonomie-Einträge löschen, auf die nichts

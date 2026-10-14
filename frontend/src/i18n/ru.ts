@@ -35,9 +35,15 @@ export const ru: Catalog = {
   'nav.export': 'Экспорт',
   'nav.import': 'Импорт',
   'nav.settings': 'Настройки',
-  'nav.management': 'Управление',
+  'nav.users': 'Пользователи',
+  'nav.groupInstance': 'Сервер',
   'nav.maintenance': 'Обслуживание',
-  'nav.admin': 'Админ-панель',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Администрирование',
+  'admin.title': 'Администрирование',
+  'admin.intro': 'Настройки и инструменты для всего сервера. Этот раздел видят только администраторы.',
+  'admin.sectionsLabel': 'Разделы администрирования',
+  'nav.groupHelp': 'Справка',
 
   'documentStatus.pending': 'Ожидает',
   'documentStatus.processing': 'Обрабатывается',
@@ -1229,11 +1235,8 @@ export const ru: Catalog = {
   'import.sourcesLabel': 'Источники импорта',
   'import.tabArchive': 'Архив Lemmary',
 
-  'settings.title': 'Настройки',
-  'settings.intro': 'Настройки OCR, ИИ и обработчика заданий. Изменения применяются сразу.',
   'settings.aiManaged':
     'ИИ-провайдеры, модели, тайм-ауты и обработчик задаёт ваш хостинг-провайдер, здесь их изменить нельзя.',
-  'settings.sectionsLabel': 'Разделы настроек',
   'settings.tabAppearance': 'Оформление',
   'settings.tabAi': 'ИИ',
   'settings.tabProcessing': 'Обработка',
@@ -1243,10 +1246,6 @@ export const ru: Catalog = {
   'settings.tabIngest': 'Поступление',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Управление',
-  'management.intro': 'Учётные записи на этом сервере. Только для администраторов.',
-  'management.sectionsLabel': 'Разделы управления',
-  'management.tabUsers': 'Пользователи',
 
   'settingsIndex.nameRequired': 'Укажите название приложения',
   'settingsIndex.accentInvalid': 'Акцентный цвет должен быть в формате hex, например #6e2620',
@@ -1668,6 +1667,9 @@ export const ru: Catalog = {
   'account.passwordFailed': 'Не удалось сменить пароль.',
   'account.title': 'Учётная запись',
   'account.intro': 'Как вы и ваши агенты входите в этот архив.',
+  'account.languageHint': 'Запоминается в этом браузере на год. Сообщения сервера тоже следуют этой настройке.',
+  'account.moveLibrary': 'Импорт и экспорт',
+  'account.moveLibraryHint': 'Перенесите документы из другого экземпляра Lemmary, Paperless-ngx или Papra либо скачайте резервную копию всей библиотеки.',
 
   'importNgx.preserveLabel': 'Сохранить метаданные Paperless-ngx',
   'importNgx.preserveDescription':
@@ -1978,7 +1980,6 @@ export const ru: Catalog = {
     other: '{chars} символа · {provider} · {duration}',
   },
   'ocrTest.failed': 'Проверка OCR не удалась',
-  'ocrTest.title': 'Проверка OCR',
   'ocrTest.intro':
     'Загрузите файл и запустите OCR у настроенного провайдера. Результаты не сохраняются.',
   'ocrTest.provider': 'Провайдер',
@@ -2070,8 +2071,7 @@ export const ru: Catalog = {
   'maintenance.reindexFailed': 'Переиндексация поиска не удалась',
   'maintenance.inFlight': 'Идёт обработка ({jobs}). Повторите, когда очередь опустеет.',
   'maintenance.pruneFailed': 'Очистка устаревших данных не удалась',
-  'maintenance.title': 'Обслуживание',
-  'maintenance.intro': 'Задачи обслуживания для всей библиотеки. Только для администраторов.',
+  'maintenance.intro': 'Задачи обслуживания для всей библиотеки.',
   'maintenance.failedTitle': 'Ошибки обработки',
   'maintenance.failedHint':
     'Ставит новое задание для документов, обработка которых завершилась ошибкой. Оригиналы не затрагиваются. Задания выполняются по одному, поэтому партия обрабатывается постепенно — обрабатывайте заново партиями, а не всё сразу, чтобы держать расходы на OCR и ИИ под контролем.',

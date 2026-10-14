@@ -70,7 +70,7 @@ Die Quittierung wird in einer Spalte `ngx_acknowledged` in `processing_jobs` ges
 
 Jeder angemeldete Benutzer kann eine Paperless-ngx-Bibliothek in sein eigenes Lemmary-Konto migrieren. Das entfernte API-Token authentifiziert einen bestimmten ngx-Benutzer, daher läuft der Import als der aktuelle lokale Benutzer und nicht als Administrator.
 
-1. Öffnen Sie **Importieren** im Menü „Mehr“ und dann den Tab **Paperless-ngx** (oder rufen Sie `/import/ngx` auf).
+1. Öffnen Sie **Import** im Abschnitt **Import und Export** der Kontoseite und dann den Tab **Paperless-ngx** (oder rufen Sie `/import/ngx` auf).
 2. Geben Sie die Basis-URL der entfernten Paperless-ngx-Instanz und ein API-Token aus dem Profil dieser Instanz ein.
 3. Wählen Sie einen Importmodus:
    - **Paperless-ngx-Metadaten beibehalten** (`preserve`): legt Tags, Korrespondenten und Dokumenttypen anhand des Namens an oder aktualisiert sie; lädt jedes Dokument mit seinem OCR-`content`, Titel, Datum und seinen Taxonomie-Verknüpfungen herunter. Vorschau und Duplikaterkennung laufen weiterhin; die KI-Metadatenextraktion wird übersprungen, damit die entfernten Metadaten erhalten bleiben.
