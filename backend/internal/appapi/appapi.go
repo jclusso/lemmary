@@ -43,6 +43,7 @@ func Register(
 			g := e.Router.Group("/api/app")
 			g.GET("/meta", handleGetMeta(app, rt, ingestDirEnabled, imapScanner != nil))
 			g.GET("/me", handleGetMe(app))
+			g.PATCH("/me", bindAuth(handlePatchMe(app)))
 			g.GET("/limits", bindAuth(handleGetLimits(app, lim, badLimitKeys)))
 			g.GET("/setup/status", handleGetSetupStatus(app, rt))
 			g.POST("/setup/admin", handlePostSetupAdmin(app))

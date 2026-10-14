@@ -286,7 +286,7 @@ export function ResearchPage() {
           <UnfinishedNotice onContinue={continueTurn} disabled={chat.loading || ws.railBusy} />
         )}
         {overflow && (
-          <p className="border-t border-line bg-paper px-4 pt-3 text-xs text-amber-800">
+          <p className="border-t border-line bg-paper px-4 pt-3 text-xs text-ochre">
             {overflow}
           </p>
         )}

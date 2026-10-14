@@ -37,6 +37,335 @@
   --color-oxblood-deep: #4e1a15;
   --color-forest: #38492a;
   --color-madder: #8b291d;
+  --color-ochre: #b45309;
+  --color-ochre-deep: #451a03;
+  --color-ochre-wash: #fffbeb;
+  --color-ochre-line: #fde68a;
+  --color-prussian: #0c4a6e;
+  --color-shade: #1b1810;
+  --color-focus: #6e2620;
+}
+
+/*
+ * Alternate palettes, chosen on the account page and set as data-theme on
+ * <html>. Each redefines the same tokens, so every utility follows; the theme
+ * previews set data-theme on their own box to render in another palette.
+ * Token names stay the paper theme's pigments: "oxblood" is the accent,
+ * whatever its hue. The dark palettes lighten accent and status colors to
+ * clear AA on their grounds, so `text-paper` on them reads dark-on-light.
+ */
+[data-theme] {
+  --color-focus: var(--color-oxblood);
+}
+
+[data-theme='paper'] {
+  --color-paper: #ece3ce;
+  --color-surface: #fdfaf1;
+  --color-bright: #fffefa;
+  --color-wash: #dcd0b3;
+  --color-line: #c0b18d;
+  --color-line-strong: #9c8a63;
+  --color-ink: #1b1810;
+  --color-ink-muted: #484230;
+  --color-ink-soft: #59513c;
+  --color-ink-faint: #6f664e;
+  --color-oxblood: #6e2620;
+  --color-oxblood-deep: #4e1a15;
+  --color-forest: #38492a;
+  --color-madder: #8b291d;
+  --color-ochre: #b45309;
+  --color-ochre-deep: #451a03;
+  --color-ochre-wash: #fffbeb;
+  --color-ochre-line: #fde68a;
+  --color-prussian: #0c4a6e;
+  --color-shade: #1b1810;
+}
+
+[data-theme='daylight'] {
+  --color-paper: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-bright: #ffffff;
+  --color-wash: #e8ecf1;
+  --color-line: #d3d9e1;
+  --color-line-strong: #94a0b0;
+  --color-ink: #0f172a;
+  --color-ink-muted: #334155;
+  --color-ink-soft: #475569;
+  --color-ink-faint: #5b6779;
+  --color-oxblood: #2563eb;
+  --color-oxblood-deep: #1d4ed8;
+  --color-forest: #15803d;
+  --color-madder: #dc2626;
+  --color-ochre: #c2410c;
+  --color-ochre-deep: #9a3412;
+  --color-ochre-wash: #fff7ed;
+  --color-ochre-line: #fed7aa;
+  --color-prussian: #0e7490;
+  --color-shade: #0f172a;
+}
+
+[data-theme='dawn'] {
+  --color-paper: #f2e9e1;
+  --color-surface: #fffaf3;
+  --color-bright: #fffdf9;
+  --color-wash: #ebdfd5;
+  --color-line: #d6c7bb;
+  --color-line-strong: #9a8b95;
+  --color-ink: #3b3654;
+  --color-ink-muted: #575279;
+  --color-ink-soft: #625c80;
+  --color-ink-faint: #6e6a86;
+  --color-oxblood: #286983;
+  --color-oxblood-deep: #1d5468;
+  --color-forest: #3f7a5a;
+  --color-madder: #b83c4c;
+  --color-ochre: #a8641c;
+  --color-ochre-deep: #6b3f12;
+  --color-ochre-wash: #fbf1e4;
+  --color-ochre-line: #ecd3ad;
+  --color-prussian: #3e6fa8;
+  --color-shade: #26233a;
+}
+
+[data-theme='carbon'] {
+  color-scheme: dark;
+
+  --color-paper: #0a0b0d;
+  --color-surface: #131518;
+  --color-bright: #1a1d21;
+  --color-wash: #1f2226;
+  --color-line: #2c3036;
+  --color-line-strong: #464b53;
+  --color-ink: #e8eaed;
+  --color-ink-muted: #c6cad0;
+  --color-ink-soft: #a9aeb6;
+  --color-ink-faint: #8b9199;
+  --color-oxblood: #58a6ff;
+  --color-oxblood-deep: #79c0ff;
+  --color-forest: #3fb950;
+  --color-madder: #f85149;
+  --color-ochre: #e8913a;
+  --color-ochre-deep: #f2b26e;
+  --color-ochre-wash: #24190f;
+  --color-ochre-line: #5c3a17;
+  --color-prussian: #56d4dd;
+  --color-shade: #000000;
+}
+
+[data-theme='nord'] {
+  color-scheme: dark;
+
+  --color-paper: #2e3440;
+  --color-surface: #3b4252;
+  --color-bright: #434c5e;
+  --color-wash: #434c5e;
+  --color-line: #4c566a;
+  --color-line-strong: #66738c;
+  --color-ink: #eceff4;
+  --color-ink-muted: #e5e9f0;
+  --color-ink-soft: #d8dee9;
+  --color-ink-faint: #b4bccc;
+  --color-oxblood: #88c0d0;
+  --color-oxblood-deep: #8fbcbb;
+  --color-forest: #a3be8c;
+  --color-madder: #bf616a;
+  --color-ochre: #d08770;
+  --color-ochre-deep: #e0a898;
+  --color-ochre-wash: #3d3836;
+  --color-ochre-line: #6e5550;
+  --color-prussian: #81a1c1;
+  --color-shade: #1a1e26;
+}
+
+[data-theme='mocha'] {
+  color-scheme: dark;
+
+  --color-paper: #181825;
+  --color-surface: #1e1e2e;
+  --color-bright: #313244;
+  --color-wash: #313244;
+  --color-line: #45475a;
+  --color-line-strong: #6c7086;
+  --color-ink: #cdd6f4;
+  --color-ink-muted: #bac2de;
+  --color-ink-soft: #a6adc8;
+  --color-ink-faint: #9399b2;
+  --color-oxblood: #cba6f7;
+  --color-oxblood-deep: #dcc4fa;
+  --color-forest: #a6e3a1;
+  --color-madder: #f0717a;
+  --color-ochre: #fab387;
+  --color-ochre-deep: #fcd0b2;
+  --color-ochre-wash: #2f2621;
+  --color-ochre-line: #6b4f3c;
+  --color-prussian: #89b4fa;
+  --color-shade: #11111b;
+}
+
+[data-theme='ink'] {
+  color-scheme: dark;
+
+  --color-paper: #161514;
+  --color-surface: #1f1d1b;
+  --color-bright: #282624;
+  --color-wash: #2f2c29;
+  --color-line: #45413c;
+  --color-line-strong: #66605a;
+  --color-ink: #eee8dc;
+  --color-ink-muted: #d4cdbf;
+  --color-ink-soft: #bdb5a6;
+  --color-ink-faint: #a0988a;
+  --color-oxblood: #e5867a;
+  --color-oxblood-deep: #f0a69c;
+  --color-forest: #9cc38a;
+  --color-madder: #ff7b6e;
+  --color-ochre: #e8944a;
+  --color-ochre-deep: #f4b884;
+  --color-ochre-wash: #2b2117;
+  --color-ochre-line: #6b4a2a;
+  --color-prussian: #8fb3d6;
+  --color-shade: #000000;
+}
+
+[data-theme='snowstorm'] {
+  --color-paper: #e5e9f0;
+  --color-surface: #eceff4;
+  --color-bright: #f8f9fb;
+  --color-wash: #d8dee9;
+  --color-line: #c2cad6;
+  --color-line-strong: #8f9bb0;
+  --color-ink: #2e3440;
+  --color-ink-muted: #3b4252;
+  --color-ink-soft: #434c5e;
+  --color-ink-faint: #4c566a;
+  --color-oxblood: #4c6a92;
+  --color-oxblood-deep: #3e587c;
+  --color-forest: #4f6b3a;
+  --color-madder: #a5404a;
+  --color-ochre: #a8572e;
+  --color-ochre-deep: #7a3d1f;
+  --color-ochre-wash: #f6e9e2;
+  --color-ochre-line: #e2bfa9;
+  --color-prussian: #3b6ea8;
+  --color-shade: #2e3440;
+}
+
+[data-theme='latte'] {
+  --color-paper: #e6e9ef;
+  --color-surface: #eff1f5;
+  --color-bright: #fbfbfd;
+  --color-wash: #dce0e8;
+  --color-line: #bcc0cc;
+  --color-line-strong: #8c8fa1;
+  --color-ink: #4c4f69;
+  --color-ink-muted: #5c5f77;
+  --color-ink-soft: #5c5f77;
+  --color-ink-faint: #6c6f85;
+  --color-oxblood: #8839ef;
+  --color-oxblood-deep: #7024d6;
+  --color-forest: #2f7a1f;
+  --color-madder: #d20f39;
+  --color-ochre: #b04a08;
+  --color-ochre-deep: #7a3306;
+  --color-ochre-wash: #fdf0e4;
+  --color-ochre-line: #f5c9a1;
+  --color-prussian: #1a5bd8;
+  --color-shade: #11111b;
+}
+
+[data-theme='rosepine'] {
+  color-scheme: dark;
+
+  --color-paper: #191724;
+  --color-surface: #1f1d2e;
+  --color-bright: #26233a;
+  --color-wash: #26233a;
+  --color-line: #403d52;
+  --color-line-strong: #6e6a86;
+  --color-ink: #e0def4;
+  --color-ink-muted: #c9c6e0;
+  --color-ink-soft: #b4b0cc;
+  --color-ink-faint: #908caa;
+  --color-oxblood: #9ccfd8;
+  --color-oxblood-deep: #c0e3ea;
+  --color-forest: #a3d9b1;
+  --color-madder: #eb5f6f;
+  --color-ochre: #f2a35e;
+  --color-ochre-deep: #f8c79a;
+  --color-ochre-wash: #2a2228;
+  --color-ochre-line: #6b4e3a;
+  --color-prussian: #7fa8e0;
+  --color-shade: #000000;
+}
+
+[data-theme='monokai-light'] {
+  --color-paper: #f2f1ea;
+  --color-surface: #fafaf5;
+  --color-bright: #ffffff;
+  --color-wash: #e8e6dc;
+  --color-line: #d4d1c3;
+  --color-line-strong: #a8a8a2;
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #3d3b33;
+  --color-ink-soft: #4f4c42;
+  --color-ink-faint: #625e4c;
+  --color-oxblood: #d0004f;
+  --color-oxblood-deep: #a8003f;
+  --color-forest: #4f7a0a;
+  --color-madder: #c62828;
+  --color-ochre: #b35c00;
+  --color-ochre-deep: #7a3e00;
+  --color-ochre-wash: #fdf1e0;
+  --color-ochre-line: #f0c98f;
+  --color-prussian: #0e7c96;
+  --color-shade: #1a1a1a;
+  --color-focus: #4f4c42;
+}
+
+[data-theme='monokai'] {
+  color-scheme: dark;
+
+  --color-paper: #0c0c0c;
+  --color-surface: #1a1a1a;
+  --color-bright: #222222;
+  --color-wash: #262626;
+  --color-line: #343434;
+  --color-line-strong: #4a4a4a;
+  --color-ink: #f6f6ef;
+  --color-ink-muted: #d9d9d9;
+  --color-ink-soft: #c4c5b5;
+  --color-ink-faint: #a29f8c;
+  --color-oxblood: #f92672;
+  --color-oxblood-deep: #ff5c94;
+  --color-forest: #98e024;
+  --color-madder: #ff5555;
+  --color-ochre: #fd971f;
+  --color-ochre-deep: #ffb860;
+  --color-ochre-wash: #2a1d0c;
+  --color-ochre-line: #6b4513;
+  --color-prussian: #58d1eb;
+  --color-shade: #000000;
+  --color-focus: #c4c5b5;
+}
+
+/*
+ * Every dropdown draws its own chevron in the theme's ink, inset from the
+ * edge: the native arrow ignores padding and sits against the border.
+ * Unlayered, so it outranks the px-3 utility the selects carry.
+ */
+select:not([multiple]) {
+  appearance: none;
+  padding-right: 2.25rem;
+  --chevron-stroke: transparent calc(50% - 0.8px), var(--color-ink-soft) calc(50% - 0.8px),
+    var(--color-ink-soft) calc(50% + 0.8px), transparent calc(50% + 0.8px);
+  background-image:
+    linear-gradient(45deg, var(--chevron-stroke)),
+    linear-gradient(-45deg, var(--chevron-stroke));
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
 }
 
 html {
@@ -51,8 +380,8 @@ html {
   }
 
   ::selection {
-    background-color: var(--color-oxblood);
-    color: var(--color-paper);
+    background-color: color-mix(in srgb, var(--color-oxblood) 35%, transparent);
+    color: var(--color-ink);
   }
 
   /* Native checkboxes and radios pick up the accent instead of browser blue. */

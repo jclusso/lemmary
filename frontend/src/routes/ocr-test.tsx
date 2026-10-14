@@ -173,7 +173,7 @@ function OCRTester() {
               setModel('')
             }}
             disabled={loadingProviders || providers.length === 0 || running}
-            className="w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm font-normal text-ink outline-none focus:border-oxblood focus:ring-1 focus:ring-oxblood disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm font-normal text-ink outline-none focus:border-focus focus:ring-1 focus:ring-focus disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loadingProviders ? (
               <option value="">{t('ocrTest.loadingProviders')}</option>
@@ -200,7 +200,7 @@ function OCRTester() {
             onChange={setModel}
           />
         )}
-        {showWarning && <p className="text-xs text-amber-800">{OCR_MODEL_WARNING}</p>}
+        {showWarning && <p className="text-xs text-ochre">{OCR_MODEL_WARNING}</p>}
 
         <label
           className={`flex min-h-44 cursor-pointer flex-col items-center justify-center gap-1 rounded-none border border-dashed p-6 text-center transition-colors ${

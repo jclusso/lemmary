@@ -29,7 +29,7 @@ import { Button, labelTextClassName, sectionClassName, sectionTitleClassName } f
 import { lang, t, tNode } from '../i18n'
 
 const selectClassName =
-  'rounded-xs border border-line-strong bg-bright px-3 py-2 text-sm outline-none focus:border-oxblood focus:ring-1 focus:ring-oxblood'
+  'rounded-xs border border-line-strong bg-bright px-3 py-2 text-sm outline-none focus:border-focus focus:ring-1 focus:ring-focus'
 
 const activeJobsPollMs = 5_000
 
@@ -509,7 +509,7 @@ export function MaintenancePage() {
               {pruning ? t('maintenance.clearing') : t('maintenance.clearStale')}
             </Button>
             {jobsInFlight && activeJobs && (
-              <p className="text-xs text-amber-700">
+              <p className="text-xs text-ochre">
                 {t('maintenance.waiting', { jobs: activeJobsLabel(activeJobs) })}
               </p>
             )}
@@ -538,7 +538,7 @@ export function MaintenancePage() {
           ) : embeddingStats === null ? (
             <p className="mt-4 text-xs text-ink-soft">{t('maintenance.embeddingUnknown')}</p>
           ) : !embeddingStats.enabled ? (
-            <p className="mt-4 text-xs text-amber-700">
+            <p className="mt-4 text-xs text-ochre">
               {tNode('maintenance.noEmbeddingModel', {
                 link: (
                   <Link to="/settings/ai" className="font-medium underline">

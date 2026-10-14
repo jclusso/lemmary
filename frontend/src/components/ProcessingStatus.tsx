@@ -2,7 +2,7 @@ import type { ProcessingSummary } from '../lib/processing'
 
 const toneStyles: Record<ProcessingSummary['tone'], { marker: string; text: string }> = {
   running: { marker: 'animate-pulse text-oxblood', text: 'text-ink-muted' },
-  warning: { marker: 'text-amber-800', text: 'text-amber-800' },
+  warning: { marker: 'text-ochre', text: 'text-ochre' },
   error: { marker: 'text-madder', text: 'text-madder' },
 }
 

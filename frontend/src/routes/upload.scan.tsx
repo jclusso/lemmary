@@ -196,7 +196,7 @@ function ScanPanel() {
                   type="button"
                   onClick={() => pick(device)}
                   aria-pressed={scanner === device.url}
-                  className={`flex w-full items-baseline justify-between gap-3 border px-3 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood ${
+                  className={`flex w-full items-baseline justify-between gap-3 border px-3 py-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
                     scanner === device.url
                       ? 'border-oxblood bg-bright text-ink'
                       : 'border-line bg-bright text-ink hover:border-ink'

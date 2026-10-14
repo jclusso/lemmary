@@ -43,7 +43,7 @@ export function ResultDialog({
     <dialog
       ref={ref}
       onClose={onClose}
-      className="m-auto max-w-sm border border-line bg-surface p-5 text-ink backdrop:bg-ink/40"
+      className="m-auto max-w-sm border border-line bg-surface p-5 text-ink backdrop:bg-shade/40"
     >
       <p className={`text-sm ${error ? 'text-madder' : 'text-forest'}`}>{error || success}</p>
       {error && (

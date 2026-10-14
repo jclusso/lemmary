@@ -329,6 +329,14 @@ var catalog = map[string]map[string]string{
 		"de": "Der Eigentümer des Dokuments konnte nicht ermittelt werden.",
 		"ru": "Не удалось определить владельца документа.",
 	},
+	"unknown theme mode %q": {
+		"de": "Unbekannter Darstellungsmodus %q",
+		"ru": "Неизвестный режим темы %q",
+	},
+	"unknown theme %q": {
+		"de": "Unbekanntes Farbschema %q",
+		"ru": "Неизвестная тема %q",
+	},
 	"unknown custom field %q": {
 		"de": "Unbekanntes eigenes Feld %q",
 		"ru": "Неизвестное пользовательское поле %q",
@@ -372,6 +380,10 @@ var catalog = map[string]map[string]string{
 	"Failed to save the application name or accent color.": {
 		"de": "Der Anwendungsname oder die Akzentfarbe konnte nicht gespeichert werden.",
 		"ru": "Не удалось сохранить название приложения или акцентный цвет.",
+	},
+	"Failed to save the theme.": {
+		"de": "Das Farbschema konnte nicht gespeichert werden.",
+		"ru": "Не удалось сохранить тему.",
 	},
 	"Failed to save the passkey.": {
 		"de": "Der Passkey konnte nicht gespeichert werden.",

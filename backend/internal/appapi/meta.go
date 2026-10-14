@@ -107,15 +107,18 @@ func handleGetMeta(app core.App, rt *config.Runtime, ingestDirEnabled, ingestIMA
 	}
 }
 
-func handleGetMe(_ core.App) func(*core.RequestEvent) error {
+func handleGetMe(app core.App) func(*core.RequestEvent) error {
 	return bindAuth(func(e *core.RequestEvent) error {
 		email := ""
 		if e.Auth != nil {
 			email = e.Auth.Email()
 		}
+		appearance := accountTheme(app, e)
 		return writeJSON(e, http.StatusOK, map[string]any{
 			"email":    email,
 			"is_admin": IsAppAdmin(e),
+			"theme":    appearance.Theme,
+			"mode":     appearance.Mode,
 		})
 	})
 }

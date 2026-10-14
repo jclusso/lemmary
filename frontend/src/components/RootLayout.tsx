@@ -24,16 +24,16 @@ import { LoginPage } from './LoginPage'
 import { SetupBlocked, SetupWizard } from './SetupWizard'
 
 const navLinkClass =
-  'border-b border-transparent px-0.5 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxblood data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
+  'border-b border-transparent px-0.5 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
 const iconButtonClass =
-  'p-1.5 text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood'
+  'p-1.5 text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus'
 const iconButtonActiveClass = 'text-oxblood'
 const menuItemClass =
   'flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-medium text-ink-muted transition-colors hover:bg-wash hover:text-oxblood data-[status=active]:text-oxblood'
 // The narrow layout has no room for a bar, so the whole link set stacks into
 // full-width tap targets.
 const panelItemClass =
-  'flex w-full items-center gap-2 border-t border-line/70 px-0.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors first:border-t-0 hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood data-[status=active]:text-oxblood'
+  'flex w-full items-center gap-2 border-t border-line/70 px-0.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors first:border-t-0 hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus data-[status=active]:text-oxblood'
 
 function LogoutIcon() {
   return (
@@ -123,7 +123,7 @@ function AdminIcon() {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-3.5 w-3.5 shrink-0 text-amber-600"
+      className="h-3.5 w-3.5 shrink-0 text-ochre"
       aria-hidden="true"
     >
       <path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.4 7.5 9.5 4.4-1.1 7.5-5.1 7.5-9.5V6L12 3Z" />
@@ -175,7 +175,7 @@ function NavBadge({ count, description }: { count: number; description: string }
     <>
       <span
         aria-hidden="true"
-        className="ml-1.5 inline-flex px-1 py-0.5 align-middle text-[10px] font-semibold tabular-nums text-amber-800 ring-1 ring-inset ring-amber-800/40"
+        className="ml-1.5 inline-flex px-1 py-0.5 align-middle text-[10px] font-semibold tabular-nums text-oxblood ring-1 ring-inset ring-oxblood/40"
       >
         {count > 99 ? '99+' : count}
       </span>
@@ -290,7 +290,7 @@ function MoreNavMenu({ items }: { items: NavItem[] }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 min-w-44 border border-line-strong bg-surface p-1 shadow-md shadow-ink/10"
+          className="absolute right-0 z-20 mt-2 min-w-44 border border-line-strong bg-surface p-1 shadow-md shadow-shade/10"
         >
           {items.map((item) => (
             <NavItemLink
@@ -361,12 +361,12 @@ function AppHeader({
   }, [open])
 
   return (
-    <header className="border-b-3 border-double border-line-strong bg-paper">
+    <header className="border-b border-line bg-paper">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 md:py-4">
         <div className="flex min-w-0 items-center gap-3">
           <Link
             to="/"
-            className="flex min-w-0 items-center gap-2.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxblood sm:text-xl"
+            className="flex min-w-0 items-center gap-2.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus sm:text-xl"
           >
             <AppLogo appName={appName} accent={accent} />
             <span className="truncate">{appName}</span>
@@ -431,7 +431,7 @@ function AppHeader({
             <button
               type="button"
               onClick={logout}
-              className="flex shrink-0 items-center gap-2 px-0.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+              className="flex shrink-0 items-center gap-2 px-0.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               <LogoutIcon />
               {t('rootLayout.logOut')}

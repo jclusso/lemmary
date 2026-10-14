@@ -61,7 +61,7 @@ export function AppFooter() {
           aria-label={t('common.language')}
           value={lang}
           onChange={(e) => setLanguage(e.target.value as Language)}
-          className="cursor-pointer bg-transparent uppercase tracking-[0.14em] outline-none transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-oxblood"
+          className="cursor-pointer bg-transparent pr-6! uppercase tracking-[0.14em] outline-none transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-focus"
         >
           {Object.entries(languageNames).map(([code, name]) => (
             <option key={code} value={code}>

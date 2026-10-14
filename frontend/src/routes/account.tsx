@@ -16,6 +16,7 @@ import { mcpSnippets } from '../lib/mcpSnippets'
 import { useAsync } from '../hooks/useAsync'
 import { getLimits } from '../lib/api/limits'
 import { LimitsUsage } from '../components/LimitsUsage'
+import { ThemeSection } from '../components/ThemeSection'
 import {
   Button,
   DocsLink,
@@ -232,7 +233,7 @@ function PasskeysSection() {
         </ul>
       )}
 
-      {!canEnroll && <p className="text-sm text-amber-800">{passkeyUnavailableHint()}</p>}
+      {!canEnroll && <p className="text-sm text-ochre">{passkeyUnavailableHint()}</p>}
 
       {canEnroll && !adding && (
         <Button onClick={openAddForm} disabled={busy}>
@@ -543,6 +544,7 @@ export function AccountPage() {
         <p className="mt-1 text-sm text-ink-soft">{t('account.intro')}</p>
       </div>
       <SignedInSection />
+      <ThemeSection />
       <AgentsSection />
       <PaperlessAppsSection />
       <PasswordSection />

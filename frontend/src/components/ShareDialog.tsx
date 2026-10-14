@@ -123,7 +123,7 @@ export function ShareDialog({
     <dialog
       ref={ref}
       onClose={onClose}
-      className="m-auto w-full max-w-md border border-line bg-surface p-5 text-ink backdrop:bg-ink/40"
+      className="m-auto w-full max-w-md border border-line bg-surface p-5 text-ink backdrop:bg-shade/40"
     >
       <h2 className="font-display text-lg font-semibold text-ink">{t('shareDialog.title')}</h2>
       <p className="mt-1 text-sm text-ink-soft">

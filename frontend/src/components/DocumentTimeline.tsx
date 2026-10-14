@@ -38,7 +38,7 @@ function ChevronIcon({ expanded }: { expanded: boolean }) {
 }
 
 const rowClassName =
-  'flex w-full items-baseline justify-between gap-2 border-l-2 py-1 pr-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood'
+  'flex w-full items-baseline justify-between gap-2 border-l-2 py-1 pr-2 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus'
 
 function rowStateClassName(isActive: boolean) {
   return isActive
@@ -87,7 +87,7 @@ export function DocumentTimeline({
         title={t('documentTimeline.show')}
         aria-expanded={false}
         onClick={onToggleExpanded}
-        className={`group flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood ${className}`}
+        className={`group flex items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${className}`}
       >
         <span className="h-px w-full bg-line transition-colors group-hover:bg-oxblood lg:h-full lg:w-px" />
       </button>
@@ -105,7 +105,7 @@ export function DocumentTimeline({
           aria-expanded
           aria-controls="timeline-periods"
           onClick={onToggleExpanded}
-          className="flex w-full items-center justify-between gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+          className="flex w-full items-center justify-between gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           <span>{t('documentTimeline.title')}</span>
           <ChevronIcon expanded />

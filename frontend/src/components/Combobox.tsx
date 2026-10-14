@@ -45,12 +45,12 @@ const CREATE_VALUE = '\u0000create'
 const listMaxHeightPx = 224
 
 const comboboxInputClassName =
-  'w-full rounded-xs border border-line-strong py-2 pr-8 pl-3 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-oxblood focus:ring-1 focus:ring-oxblood disabled:cursor-not-allowed disabled:opacity-50'
+  'w-full rounded-xs border border-line-strong py-2 pr-8 pl-3 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-focus focus:ring-1 focus:ring-focus disabled:cursor-not-allowed disabled:opacity-50'
 
 // With a leading slot the border moves to the wrapper, so the field and what
 // sits before it read as one control.
 const tokenBoxClassName =
-  'flex w-full flex-wrap items-center gap-1.5 rounded-xs border border-line-strong py-1.5 pr-8 pl-1.5 focus-within:border-oxblood focus-within:ring-1 focus-within:ring-oxblood'
+  'flex w-full flex-wrap items-center gap-1.5 rounded-xs border border-line-strong py-1.5 pr-8 pl-1.5 focus-within:border-focus focus-within:ring-1 focus-within:ring-focus'
 
 const tokenInputClassName =
   'min-w-32 flex-1 border-none bg-transparent px-1.5 py-0.5 text-sm text-ink outline-none placeholder:text-ink-faint disabled:cursor-not-allowed disabled:opacity-50'

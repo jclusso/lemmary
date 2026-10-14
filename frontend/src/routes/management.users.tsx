@@ -118,7 +118,7 @@ function UserRow({
         {user.name && <p className="truncate text-xs text-ink-soft">{user.email}</p>}
       </div>
       {user.admin ? (
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700">{t('managementUsers.admin')}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-ochre">{t('managementUsers.admin')}</span>
       ) : (
         <div className="flex items-center gap-2">
           <Button
