@@ -22,9 +22,9 @@ import { LoginPage } from './LoginPage'
 import { SetupBlocked, SetupWizard } from './SetupWizard'
 
 const navLinkClass =
-  'border-b border-transparent px-0.5 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxblood data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
+  'border-b border-transparent px-0.5 pb-1 pt-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
 const iconButtonClass =
-  'p-1.5 text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood'
+  'p-1.5 text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus'
 const iconButtonActiveClass = 'text-oxblood'
 const menuItemClass =
   'flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-medium text-ink-muted transition-colors hover:bg-wash hover:text-oxblood data-[status=active]:text-oxblood'
@@ -35,7 +35,7 @@ const menuHeadingClass =
 const panelHeadingClass =
   'px-0.5 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint'
 const panelItemClass =
-  'flex w-full items-center gap-2 border-t border-line/70 px-0.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors first:border-t-0 hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood data-[status=active]:text-oxblood'
+  'flex w-full items-center gap-2 border-t border-line/70 px-0.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors first:border-t-0 hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus data-[status=active]:text-oxblood'
 
 function LogoutIcon() {
   return (
@@ -169,7 +169,7 @@ function MoreNavMenu({ groups }: { groups: NavGroup[] }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 w-52 border border-line-strong bg-surface py-1 shadow-md shadow-ink/10"
+          className="absolute right-0 z-20 mt-2 w-52 border border-line-strong bg-surface py-1 shadow-md shadow-shade/10"
         >
           {groups.map((group, index) => (
             <div
@@ -251,12 +251,12 @@ function AppHeader({
   }, [open])
 
   return (
-    <header className="border-b-3 border-double border-line-strong bg-paper">
+    <header className="border-b border-line bg-paper">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 md:py-4">
         <div className="flex min-w-0 items-center gap-3">
           <Link
             to="/"
-            className="flex min-w-0 items-center gap-2.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxblood sm:text-xl"
+            className="flex min-w-0 items-center gap-2.5 font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus sm:text-xl"
           >
             <AppLogo appName={appName} accent={accent} />
             <span className="truncate">{appName}</span>
@@ -343,7 +343,7 @@ function AppHeader({
             <button
               type="button"
               onClick={logout}
-              className="flex shrink-0 items-center gap-2 px-0.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+              className="flex shrink-0 items-center gap-2 px-0.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               <LogoutIcon />
               {t('rootLayout.logOut')}

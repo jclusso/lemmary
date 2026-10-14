@@ -56,13 +56,13 @@ function CardDescription({ document }: { document: DocumentRecord }) {
       const originalTitle =
         document.expand?.duplicate_of?.title?.trim() || t('documentCard.anotherDocument')
       return (
-        <p className="line-clamp-3 text-sm text-amber-800">
+        <p className="line-clamp-3 text-sm text-ochre">
           {tNode('documentCard.possibleDuplicate', {
             link: (
               <Link
                 to="/document/$documentId"
                 params={{ documentId: document.duplicate_of! }}
-                className="relative z-10 pointer-events-auto font-medium underline underline-offset-2 hover:text-amber-950"
+                className="relative z-10 pointer-events-auto font-medium underline underline-offset-2 hover:text-ochre-deep"
               >
                 {originalTitle}
               </Link>
@@ -74,14 +74,14 @@ function CardDescription({ document }: { document: DocumentRecord }) {
     case 'low_confidence': {
       const pct = Math.round((document.confidence ?? 0) * 100)
       return (
-        <p className="line-clamp-3 text-sm text-amber-800">
+        <p className="line-clamp-3 text-sm text-ochre">
           {t('documentCard.lowConfidence', { pct })}
         </p>
       )
     }
     default:
       return (
-        <p className="line-clamp-3 text-sm text-amber-800">{t('documentCard.waitingForReview')}</p>
+        <p className="line-clamp-3 text-sm text-ochre">{t('documentCard.waitingForReview')}</p>
       )
   }
 }
@@ -116,7 +116,7 @@ export function DocumentCard({
   return (
     <article
       data-document-id={document.id}
-      className={`relative flex flex-col border bg-surface p-4 transition-colors hover:bg-bright hover:shadow-sm hover:shadow-ink/10 ${
+      className={`relative flex flex-col border bg-surface p-4 transition-colors hover:bg-bright hover:shadow-sm hover:shadow-shade/10 ${
         selected ? 'border-oxblood ring-1 ring-oxblood' : status.border
       }`}
     >
@@ -124,7 +124,7 @@ export function DocumentCard({
         to="/document/$documentId"
         params={{ documentId: document.id }}
         aria-label={title}
-        className="absolute inset-0 z-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+        className="absolute inset-0 z-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
       />
       <div className="pointer-events-none relative flex flex-col gap-2.5">
         <div className="flex items-center justify-between gap-2">
@@ -136,7 +136,7 @@ export function DocumentCard({
                 checked={Boolean(selected)}
                 onChange={() => onToggleSelect?.(document.id)}
                 aria-label={t('documentCard.select', { title })}
-                className="relative z-10 pointer-events-auto h-4 w-4 cursor-pointer rounded border-line-strong text-oxblood focus:ring-oxblood"
+                className="relative z-10 pointer-events-auto h-4 w-4 cursor-pointer rounded border-line-strong text-oxblood focus:ring-focus"
               />
             )}
             <span

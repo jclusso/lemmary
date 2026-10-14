@@ -194,11 +194,11 @@ export function ProviderModelFields({
       {localHint && <p className={`${fieldHintClassName} sm:col-span-2`}>{localHint}</p>}
       {help && <p className={`${fieldHintClassName} sm:col-span-2`}>{help}</p>}
       {modelsState.error && (
-        <p className="text-xs text-amber-700 sm:col-span-2">
+        <p className="text-xs text-ochre sm:col-span-2">
           {t('providerModelFields.modelsError', { error: modelsState.error })}
         </p>
       )}
-      {showWarning && <p className="text-xs text-amber-800 sm:col-span-2">{OCR_MODEL_WARNING}</p>}
+      {showWarning && <p className="text-xs text-ochre sm:col-span-2">{OCR_MODEL_WARNING}</p>}
     </div>
   )
 }

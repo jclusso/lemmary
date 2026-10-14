@@ -608,7 +608,7 @@ export function DocumentDetailPage() {
   return (
     <section className="flex flex-col gap-5">
       {document.duplicate_of && (
-        <div className="rounded-xs border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div className="rounded-xs border border-ochre-line bg-ochre-wash px-4 py-3 text-sm text-ochre">
           {tNode('documentPage.duplicateOf', {
             link: (
               <Link
@@ -1259,7 +1259,7 @@ function TagField({
 
 const labelClass = 'flex flex-col gap-1.5 text-sm font-medium text-ink-muted'
 const inputClass =
-  'w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm font-normal text-ink outline-none placeholder:text-ink-faint focus:border-oxblood focus:ring-1 focus:ring-oxblood'
+  'w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm font-normal text-ink outline-none placeholder:text-ink-faint focus:border-focus focus:ring-1 focus:ring-focus'
 const readonlyClass =
   'cursor-default border-line bg-wash/50 text-ink-muted shadow-inner focus:border-line focus:ring-0'
 

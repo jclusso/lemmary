@@ -268,7 +268,7 @@ export function UploadSplitPage() {
                   type="button"
                   onClick={() => setZoomPage(page)}
                   aria-label={t('uploadSplit.enlarge', { page })}
-                  className="flex w-24 flex-col items-center gap-1 border border-line bg-surface p-1 transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+                  className="flex w-24 flex-col items-center gap-1 border border-line bg-surface p-1 transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                 >
                   {thumbs[page] ? (
                     <img
@@ -295,7 +295,7 @@ export function UploadSplitPage() {
                         ? t('uploadSplit.removeCut', { page })
                         : t('uploadSplit.splitAfter', { page })
                     }
-                    className={`w-7 shrink-0 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood ${
+                    className={`w-7 shrink-0 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${
                       cuts.has(page)
                         ? 'bg-oxblood text-paper'
                         : 'text-ink-faint hover:bg-surface hover:text-ink'

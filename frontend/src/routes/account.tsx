@@ -17,6 +17,7 @@ import { mcpSnippets } from '../lib/mcpSnippets'
 import { useAsync } from '../hooks/useAsync'
 import { getLimits } from '../lib/api/limits'
 import { LimitsUsage } from '../components/LimitsUsage'
+import { ThemeSection } from '../components/ThemeSection'
 import {
   Button,
   DocsLink,
@@ -233,7 +234,7 @@ function PasskeysSection() {
         </ul>
       )}
 
-      {!canEnroll && <p className="text-sm text-amber-800">{passkeyUnavailableHint()}</p>}
+      {!canEnroll && <p className="text-sm text-ochre">{passkeyUnavailableHint()}</p>}
 
       {canEnroll && !adding && (
         <Button onClick={openAddForm} disabled={busy}>
@@ -558,7 +559,7 @@ function LanguageSection() {
 }
 
 const linkButtonClassName =
-  'rounded-xs border border-line-strong bg-surface px-3 py-1.5 text-sm font-medium tracking-wide text-ink transition-colors hover:border-ink hover:bg-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood'
+  'rounded-xs border border-line-strong bg-surface px-3 py-1.5 text-sm font-medium tracking-wide text-ink transition-colors hover:border-ink hover:bg-bright focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus'
 
 function MoveLibrarySection() {
   return (
@@ -585,6 +586,7 @@ export function AccountPage() {
         <p className="mt-1 text-sm text-ink-soft">{t('account.intro')}</p>
       </div>
       <SignedInSection />
+      <ThemeSection />
       <LanguageSection />
       <AgentsSection />
       <PaperlessAppsSection />

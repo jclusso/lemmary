@@ -260,7 +260,7 @@ function FieldDialog({
       ref={ref}
       onClose={onClose}
       aria-labelledby="field-dialog-title"
-      className="m-auto w-full max-w-lg border border-line bg-surface p-5 text-ink backdrop:bg-ink/40"
+      className="m-auto w-full max-w-lg border border-line bg-surface p-5 text-ink backdrop:bg-shade/40"
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         <h2 id="field-dialog-title" className="font-display text-lg font-semibold text-ink">

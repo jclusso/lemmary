@@ -1,10 +1,11 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { accentContrastText } from '../lib/accent'
+import { DEFAULT_ACCENT } from '../lib/api/meta'
 
 export const inputClassName =
-  'w-full rounded-xs border border-line-strong bg-bright px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-oxblood focus:ring-1 focus:ring-oxblood'
+  'w-full rounded-xs border border-line-strong bg-bright px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-focus focus:ring-1 focus:ring-focus'
 export const selectClassName =
-  'rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm outline-none focus:border-oxblood focus:ring-1 focus:ring-oxblood'
+  'rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm outline-none focus:border-focus focus:ring-1 focus:ring-focus'
 export const labelClassName = 'flex flex-col gap-1'
 export const labelTextClassName =
   'text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft'
@@ -32,7 +33,7 @@ export function DocsLink({ href, children }: { href: string; children: ReactNode
  * sets on itself.
  */
 export const tabClassName =
-  '-mb-px border-b-2 border-transparent px-1 pb-2 pt-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oxblood data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
+  '-mb-px border-b-2 border-transparent px-1 pb-2 pt-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
 
 export const sectionClassName = 'border border-line bg-surface p-5'
 export const sectionTitleClassName =
@@ -66,7 +67,7 @@ export function Button({
   return (
     <button
       type={type}
-      className={`rounded-xs font-medium tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood disabled:cursor-not-allowed disabled:opacity-50 ${buttonSizeClassName[size]} ${buttonVariantClassName[variant]} ${className}`}
+      className={`rounded-xs font-medium tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:opacity-50 ${buttonSizeClassName[size]} ${buttonVariantClassName[variant]} ${className}`}
       {...props}
     />
   )
@@ -92,10 +93,11 @@ export function TrashIcon() {
 }
 
 export function AppLogo({ appName, accent }: { appName: string; accent: string }) {
+  const themed = accent.toLowerCase() === DEFAULT_ACCENT
   return (
     <span
-      className="flex h-7 w-7 items-center justify-center font-display text-sm font-semibold"
-      style={{ backgroundColor: accent, color: accentContrastText(accent) }}
+      className={`flex h-7 w-7 items-center justify-center font-display text-sm font-semibold ${themed ? 'bg-oxblood text-paper' : ''}`}
+      style={themed ? undefined : { backgroundColor: accent, color: accentContrastText(accent) }}
     >
       {appName.trim().charAt(0).toUpperCase() || 'P'}
     </span>

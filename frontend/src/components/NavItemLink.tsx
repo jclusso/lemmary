@@ -29,7 +29,7 @@ function NavBadge({ count, description }: { count: number; description: string }
     <>
       <span
         aria-hidden="true"
-        className="ml-1.5 inline-flex px-1 py-0.5 align-middle text-[10px] font-semibold tabular-nums text-amber-800 ring-1 ring-inset ring-amber-800/40"
+        className="ml-1.5 inline-flex px-1 py-0.5 align-middle text-[10px] font-semibold tabular-nums text-oxblood ring-1 ring-inset ring-oxblood/40"
       >
         {count > 99 ? '99+' : count}
       </span>

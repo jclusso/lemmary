@@ -62,7 +62,7 @@ export function BulkDocumentCard({
               checked={selected}
               onChange={() => onToggleSelect(document.id)}
               aria-label={t('documentCard.select', { title })}
-              className="h-4 w-4 cursor-pointer rounded border-line-strong text-oxblood focus:ring-oxblood"
+              className="h-4 w-4 cursor-pointer rounded border-line-strong text-oxblood focus:ring-focus"
             />
           )}
           <span
@@ -82,7 +82,7 @@ export function BulkDocumentCard({
             rel="noopener"
             aria-label={t('bulkDocumentCard.openNamed', { title })}
             title={t('bulkDocumentCard.open')}
-            className="text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood"
+            className="text-ink-soft transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             <NewTabIcon />
           </Link>

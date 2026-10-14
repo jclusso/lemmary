@@ -52,7 +52,7 @@ export function DocumentFilters({
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
             aria-describedby={tooShort ? 'search-too-short' : undefined}
-            className="w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm outline-none placeholder:text-ink-faint focus:border-oxblood focus:ring-1 focus:ring-oxblood"
+            className="w-full rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm outline-none placeholder:text-ink-faint focus:border-focus focus:ring-1 focus:ring-focus"
           />
           {tooShort && (
             <p id="search-too-short" role="status" className="text-xs text-ink-soft">

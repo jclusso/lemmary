@@ -18,15 +18,15 @@ export type DocumentStatus = (typeof DOCUMENT_STATUSES)[number]
 
 /** Filled badge and a card edged to match, except for the resting state. */
 export const DOCUMENT_STATUS_STYLES: Record<DocumentStatus, { badge: string; border: string }> = {
-  pending: { badge: 'bg-amber-800 text-paper', border: 'border-amber-800' },
-  processing: { badge: 'bg-sky-900 text-paper', border: 'border-sky-900' },
+  pending: { badge: 'bg-ochre text-paper', border: 'border-ochre' },
+  processing: { badge: 'bg-prussian text-paper', border: 'border-prussian' },
   completed: {
     badge: 'text-forest ring-1 ring-inset ring-forest/40',
     border: 'border-line hover:border-ink/50',
   },
   failed: { badge: 'bg-madder text-paper', border: 'border-madder' },
   cancelled: { badge: 'bg-ink-muted text-paper', border: 'border-ink-muted' },
-  needs_review: { badge: 'bg-amber-800 text-paper', border: 'border-amber-800' },
+  needs_review: { badge: 'bg-ochre text-paper', border: 'border-ochre' },
 }
 
 export const DOCUMENT_STATUS_LABELS: Record<DocumentStatus, string> = {

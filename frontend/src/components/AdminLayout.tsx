@@ -7,7 +7,7 @@ import { selectClassName } from './ui'
 import { NavItemLink } from './NavItemLink'
 
 const sidebarItemClass =
-  '-ml-px flex items-center gap-2 border-l-2 border-transparent py-1.5 pl-3 pr-2 text-sm font-medium text-ink-muted transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
+  '-ml-px flex items-center gap-2 border-l-2 border-transparent py-1.5 pl-3 pr-2 text-sm font-medium text-ink-muted transition-colors hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus data-[status=active]:border-oxblood data-[status=active]:text-oxblood'
 const sidebarHeadingClass =
   'mb-1 pl-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint'
 

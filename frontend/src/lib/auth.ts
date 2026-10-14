@@ -1,6 +1,7 @@
 import { ClientResponseError, type RecordModel } from 'pocketbase'
 import { t } from '../i18n'
 import { pb, pbUrl } from './pb'
+import { adoptAccountChoice, type Choice } from './theme'
 import {
   assertionToJSON,
   conditionalMediationAvailable,
@@ -413,6 +414,8 @@ export async function startConditionalPasskeyLogin(handlers: {
 export type MeInfo = {
   email: string
   is_admin: boolean
+  theme: string
+  mode: string
 }
 
 let meCache: MeInfo | null = null
@@ -441,8 +444,24 @@ export async function getMe(): Promise<MeInfo> {
   meCache = {
     email: typeof data.email === 'string' ? data.email : '',
     is_admin: Boolean(data.is_admin),
+    theme: typeof data.theme === 'string' ? data.theme : '',
+    mode: typeof data.mode === 'string' ? data.mode : '',
   }
+  adoptAccountChoice(meCache.theme, meCache.mode)
   return meCache
+}
+
+export async function saveAccountTheme({ family, mode }: Choice) {
+  const response = await fetch(`${pbUrl}/api/app/me`, {
+    method: 'PATCH',
+    headers: { Authorization: pb.authStore.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ theme: family, mode }),
+  })
+  if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { detail?: string }
+    throw new Error(data.detail ?? t('account.themeSaveFailed'))
+  }
+  if (meCache) Object.assign(meCache, { theme: family, mode })
 }
 
 /** True when the current users session is a paired admin (or rare superuser JWT). */

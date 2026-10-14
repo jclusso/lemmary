@@ -148,7 +148,7 @@ function BindingPicker({
           type="checkbox"
           checked={open}
           onChange={(event) => update(event.target.checked ? { ...EMPTY_BINDING } : undefined)}
-          className="size-4 rounded-xs border-line-strong text-oxblood focus:ring-oxblood"
+          className="size-4 rounded-xs border-line-strong text-oxblood focus:ring-focus"
         />
         {t('bindingOverride.useDifferent', { label: lang === 'en' ? label.toLowerCase() : label })}
       </label>
@@ -165,9 +165,9 @@ function BindingPicker({
             onProviderChange={(provider_id) => update({ provider_id, model: '' })}
             onModelChange={(model) => update({ ...(latest.current ?? EMPTY_BINDING), model })}
           />
-          {providersState.error && <p className="text-xs text-amber-700">{providersState.error}</p>}
+          {providersState.error && <p className="text-xs text-ochre">{providersState.error}</p>}
           {!providersState.loading && providers.length === 0 && !providersState.error && (
-            <p className="text-xs text-amber-800">
+            <p className="text-xs text-ochre">
               {t('bindingOverride.noProvider')}
             </p>
           )}

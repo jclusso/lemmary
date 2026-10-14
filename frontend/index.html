@@ -14,6 +14,17 @@
       rel="stylesheet"
     />
     <title>Lemmary</title>
+    <!-- Mirrors initTheme in src/lib/theme.ts. Runs before the stylesheet paints so a dark theme never flashes the light ground first. -->
+    <script>
+      try {
+        var palettes = { paper: ['paper', 'ink'], neutral: ['daylight', 'carbon'], nord: ['snowstorm', 'nord'], catppuccin: ['latte', 'mocha'], rosepine: ['dawn', 'rosepine'], monokai: ['monokai-light', 'monokai'] }
+        var stored = localStorage.getItem('lemmary_theme')
+        var family = Object.hasOwn(palettes, stored) ? palettes[stored] : palettes.paper
+        var mode = localStorage.getItem('lemmary_mode')
+        var dark = mode === 'dark' || (mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = family[dark ? 1 : 0]
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

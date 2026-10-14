@@ -74,7 +74,7 @@ export function ChatComposer({
           autoFocus={autoFocus}
           disabled={sending || disabled}
           placeholder={placeholder}
-          className="min-h-12 w-0 min-w-40 flex-1 resize-y rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-oxblood focus:ring-1 focus:ring-oxblood disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-12 w-0 min-w-40 flex-1 resize-y rounded-xs border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-focus focus:ring-1 focus:ring-focus disabled:cursor-not-allowed disabled:opacity-50"
         />
         {/* Under the button rather than beside it, so the hint cannot push the
             row into a second line at phone width. */}

@@ -17,7 +17,7 @@ const markers: Record<StepRunRecord['status'], string> = {
 
 function markerClass(run: StepRunRecord): string {
   if (run.status === 'running') return 'animate-pulse text-oxblood'
-  if (run.status === 'failed') return run.soft ? 'text-amber-800' : 'text-madder'
+  if (run.status === 'failed') return run.soft ? 'text-ochre' : 'text-madder'
   if (run.status === 'completed') return 'text-ink-faint'
   return 'text-ink-faint'
 }
@@ -91,7 +91,7 @@ export function ProcessingSteps({
   const stepErrors = runs
     .filter((run) => run.error)
     .map((run) => (
-      <p key={run.name} className={`mt-1 text-xs ${run.soft ? 'text-amber-800' : 'text-madder'}`}>
+      <p key={run.name} className={`mt-1 text-xs ${run.soft ? 'text-ochre' : 'text-madder'}`}>
         {stepLabel(run.name)}: {run.error}
       </p>
     ))

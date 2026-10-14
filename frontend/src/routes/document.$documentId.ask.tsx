@@ -230,7 +230,7 @@ export function DocumentAskPage() {
       </div>
 
       {!hasOcrText ? (
-        <div className="rounded-none border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+        <div className="rounded-none border border-ochre-line bg-ochre-wash p-4 text-sm text-ochre">
           {t('documentAsk.noOcr')}
         </div>
       ) : (
