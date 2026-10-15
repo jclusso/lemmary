@@ -99,8 +99,8 @@ flagged too.
 
 Pages that look blank are never sent to OCR, so they cost nothing to process
 and their bleed-through does not end up in the document's text. The file
-itself keeps them until you remove them, and the document page lists them
-with a **Review** button.
+itself keeps them until you remove them, and the document page suggests
+removing them under the OCR text; the suggestion opens the same dialog.
 
 Lemmary works out whether a change needs OCR again. Removing only pages that
 were left out keeps the text as it is. Removing a page that was read, or

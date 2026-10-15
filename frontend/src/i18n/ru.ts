@@ -1225,7 +1225,12 @@ export const ru: Catalog = {
     many: 'Страницы {pages} похожи на пустые и не отправлялись на OCR.',
     other: 'Страницы {pages} похожи на пустые и не отправлялись на OCR.',
   },
-  'documentPage.reviewPages': 'Проверить',
+  'documentPage.removeBlankPages': {
+    one: 'Удалить пустую страницу {pages}',
+    few: 'Удалить пустые страницы {pages}',
+    many: 'Удалить пустые страницы {pages}',
+    other: 'Удалить пустые страницы {pages}',
+  },
   'documentPage.hideJobDetails': 'Скрыть сведения о задании обработки',
   'documentPage.showJobDetails': 'Показать сведения о задании обработки',
   'documentPage.hideJob': 'Скрыть задание обработки',

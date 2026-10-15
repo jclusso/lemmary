@@ -102,8 +102,8 @@ Schrift kann markiert werden.
 
 Leer wirkende Seiten werden nie zur Texterkennung geschickt. Sie kosten daher
 nichts, und ihr durchscheinender Text landet nicht im Text des Dokuments. Die Datei
-selbst behält sie, bis Sie sie entfernen, und die Dokumentseite listet sie mit
-einer Schaltfläche **Prüfen** auf.
+selbst behält sie, bis Sie sie entfernen, und die Dokumentseite schlägt unter dem
+OCR-Text vor, sie zu entfernen; der Vorschlag öffnet denselben Dialog.
 
 Lemmary entscheidet selbst, ob eine Änderung eine erneute Texterkennung braucht.
 Werden nur ausgelassene Seiten entfernt, bleibt der Text, wie er ist. Wird eine

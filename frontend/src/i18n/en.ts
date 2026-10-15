@@ -1033,7 +1033,10 @@ export const en = {
     one: 'Page {pages} looks blank and was not sent to OCR.',
     other: 'Pages {pages} look blank and were not sent to OCR.',
   },
-  'documentPage.reviewPages': 'Review',
+  'documentPage.removeBlankPages': {
+    one: 'Remove blank page {pages}',
+    other: 'Remove blank pages {pages}',
+  },
   'documentPage.hideJobDetails': 'Hide processing job details',
   'documentPage.showJobDetails': 'Show processing job details',
   'documentPage.hideJob': 'Hide processing job',

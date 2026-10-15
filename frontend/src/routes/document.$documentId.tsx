@@ -49,6 +49,7 @@ import { ProcessingSteps } from '../components/ProcessingSteps'
 import { Button } from '../components/ui'
 import { ShareDialog, ShareSummary } from '../components/ShareDialog'
 import { PageEditorDialog, type PageChange } from '../components/PageEditorDialog'
+import { SuggestedPageRemoval } from '../components/SuggestedPageRemoval'
 import { unreadPages } from '../lib/api/documentPages'
 import { RelatedDocuments } from '../components/RelatedDocuments'
 import { DocumentPreview } from '../components/DocumentPreview'
@@ -56,7 +57,7 @@ import { useStoredFlag } from '../hooks/useStoredFlag'
 import { useAppMeta } from '../hooks/useAppMeta'
 import { previewKind } from '../lib/documentPreview'
 import { anyJobRunning } from '../lib/api/jobs'
-import { lang, t, tNode } from '../i18n'
+import { t, tNode } from '../i18n'
 
 type OcrView = 'original' | 'translated' | 'both'
 
@@ -73,8 +74,6 @@ const OCR_VIEW_LABELS: Record<OcrView, string> = {
 function backTarget(document: DocumentRecord | null, owned: boolean): '/' | '/inbox' {
   return owned && document?.processing_status === 'needs_review' ? '/inbox' : '/'
 }
-
-const listFormat = new Intl.ListFormat(lang, { style: 'long', type: 'conjunction' })
 
 function pageChangeMessage(change: PageChange, reread: boolean): string {
   if (change === 'kept') return t('documentPage.pagesKept')
@@ -639,14 +638,6 @@ export function DocumentDetailPage() {
             : t('documentPage.duplicateReviewed')}
         </div>
       )}
-      {owned && unread.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border border-line bg-surface px-4 py-3 text-sm text-ink">
-          <span>{t('documentPage.unreadPages', { count: unread.length, pages: listFormat.format(unread.map(String)) })}</span>
-          <Button variant="secondary" size="sm" onClick={() => setEditingPages(true)}>
-            {t('documentPage.reviewPages')}
-          </Button>
-        </div>
-      )}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <Link to={back} className="text-sm text-ink-soft hover:text-oxblood">
@@ -1145,6 +1136,7 @@ export function DocumentDetailPage() {
               {editing && (
                 <span className="text-xs font-normal text-ink-soft">{t('documentPage.ocrEditHint')}</span>
               )}
+              {owned && <SuggestedPageRemoval pages={unread} onReview={() => setEditingPages(true)} />}
             </div>
 
             <div className="flex items-center gap-4 sm:col-span-2">
