@@ -1076,7 +1076,10 @@ export const de: Catalog = {
     one: 'Seite {pages} wirkt leer und wurde nicht zur Texterkennung geschickt.',
     other: 'Die Seiten {pages} wirken leer und wurden nicht zur Texterkennung geschickt.',
   },
-  'documentPage.reviewPages': 'Prüfen',
+  'documentPage.removeBlankPages': {
+    one: 'Leere Seite {pages} entfernen',
+    other: 'Leere Seiten {pages} entfernen',
+  },
   'documentPage.hideJobDetails': 'Details zum Verarbeitungsauftrag ausblenden',
   'documentPage.showJobDetails': 'Details zum Verarbeitungsauftrag anzeigen',
   'documentPage.hideJob': 'Verarbeitungsauftrag ausblenden',
