@@ -85,6 +85,25 @@ auf **Weitere Seite scannen**.
 Wahl für einen Stapel. Manche Geräte liefern ein PDF pro Blatt, andere ein PDF für den
 ganzen Stapel; in beiden Fällen kommt es als ein Dokument an.
 
+## Leere Seiten entfernen {#removing-blank-pages}
+
+Ein Einzug lässt manchmal ein leeres Blatt durch, oft mit schwachem Text, der von der
+Rückseite durchscheint. Um es zu entfernen, öffnen Sie das Dokument und klicken auf
+**Seiten**. Alle Seiten werden angezeigt, und die leer wirkenden sind bereits
+ausgewählt. Passen Sie die Auswahl bei Bedarf an und klicken Sie dann auf
+**Entfernen**. Das funktioniert mit jedem PDF in Ihrer Bibliothek, nicht nur mit Scans.
+
+Eine Seite gilt als leer, wenn sie fast keinen dunklen Druck enthält. Staubkörner und
+die Schatten an den Rändern eines Scans werden ignoriert, ebenso Durchscheinendes:
+von der Vorderseite durchgedrückte Spuren und das blasse Bild einer ganzen bedruckten
+Seite, das durch das Papier scheint. Prüfen Sie den Vorschlag vor dem Entfernen: Auch
+eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
+Schrift kann markiert werden.
+
+Vorschau und OCR-Text werden aus der kürzeren Datei neu erstellt. Titel, Tags und
+andere Angaben bleiben unverändert. Die ursprünglich hochgeladene Datei wird
+aufbewahrt, und **Original wiederherstellen** im selben Dialog stellt sie wieder her.
+
 ## Grenzen {#limits}
 
 Ein Dokument darf höchstens 47 MB groß sein, dieselbe Obergrenze wie bei jedem Upload;

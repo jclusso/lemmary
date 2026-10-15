@@ -13,6 +13,10 @@ var catalog = map[string]map[string]string{
 		"de": "Eine Erkennung läuft bereits.",
 		"ru": "Определение уже выполняется.",
 	},
+	"A document must keep at least one page.": {
+		"de": "Ein Dokument muss mindestens eine Seite behalten.",
+		"ru": "В документе должна остаться хотя бы одна страница.",
+	},
 	"A mailbox scan is already running. Try again shortly.": {
 		"de": "Ein Postfach-Scan läuft bereits. Versuchen Sie es gleich noch einmal.",
 		"ru": "Проверка почтового ящика уже выполняется. Повторите попытку чуть позже.",
@@ -81,6 +85,10 @@ var catalog = map[string]map[string]string{
 		"de": "Ein Import läuft bereits.",
 		"ru": "Импорт уже выполняется.",
 	},
+	"Another document already has exactly these pages.": {
+		"de": "Ein anderes Dokument hat bereits genau diese Seiten.",
+		"ru": "Другой документ уже содержит ровно эти страницы.",
+	},
 	"Assigning tags with AI needs a model; configure one in Settings.": {
 		"de": "Für die Tag-Zuweisung per KI wird ein Modell benötigt; konfigurieren Sie eines in den Einstellungen.",
 		"ru": "Для назначения тегов с помощью ИИ нужна модель; настройте её в Настройках.",
@@ -109,6 +117,10 @@ var catalog = map[string]map[string]string{
 		"de": "Chats sind nicht verfügbar.",
 		"ru": "Чаты недоступны.",
 	},
+	"Choose at least one page to remove.": {
+		"de": "Wählen Sie mindestens eine Seite zum Entfernen aus.",
+		"ru": "Выберите хотя бы одну страницу для удаления.",
+	},
 	"Choose the password that will unlock this archive. You will be given a recovery code — it is shown once.": {
 		"de": "Wählen Sie das Passwort, mit dem dieses Archiv entsperrt wird. Sie erhalten einen Wiederherstellungscode – er wird nur einmal angezeigt.",
 		"ru": "Выберите пароль, которым будет разблокироваться этот архив. Вы получите код восстановления — он показывается один раз.",
@@ -116,6 +128,10 @@ var catalog = map[string]map[string]string{
 	"Continue": {
 		"de": "Weiter",
 		"ru": "Продолжить",
+	},
+	"Could not change the document's pages.": {
+		"de": "Die Seiten des Dokuments konnten nicht geändert werden.",
+		"ru": "Не удалось изменить страницы документа.",
 	},
 	"Could not read the queue.": {
 		"de": "Die Warteschlange konnte nicht gelesen werden.",
@@ -160,6 +176,10 @@ var catalog = map[string]map[string]string{
 	"Document not found.": {
 		"de": "Dokument nicht gefunden.",
 		"ru": "Документ не найден.",
+	},
+	"Documents of more than %d pages cannot be edited.": {
+		"de": "Dokumente mit mehr als %d Seiten können nicht bearbeitet werden.",
+		"ru": "Документы длиннее %d страниц редактировать нельзя.",
 	},
 	"Duplicate scan failed.": {
 		"de": "Duplikatsuche fehlgeschlagen.",
@@ -336,6 +356,22 @@ var catalog = map[string]map[string]string{
 	"unknown theme %q": {
 		"de": "Unbekanntes Farbschema %q",
 		"ru": "Неизвестная тема %q",
+	},
+	"Only PDF documents have pages to remove.": {
+		"de": "Nur PDF-Dokumente haben Seiten, die sich entfernen lassen.",
+		"ru": "Удалять страницы можно только из PDF-документов.",
+	},
+	"The document has no such page.": {
+		"de": "Das Dokument hat keine solche Seite.",
+		"ru": "В документе нет такой страницы.",
+	},
+	"The document is being processed. Try again when it finishes.": {
+		"de": "Das Dokument wird gerade verarbeitet. Versuchen Sie es erneut, wenn die Verarbeitung abgeschlossen ist.",
+		"ru": "Документ сейчас обрабатывается. Повторите попытку, когда обработка завершится.",
+	},
+	"There is no original file to restore.": {
+		"de": "Es gibt keine Originaldatei zum Wiederherstellen.",
+		"ru": "Нет исходного файла для восстановления.",
 	},
 	"unknown custom field %q": {
 		"de": "Unbekanntes eigenes Feld %q",

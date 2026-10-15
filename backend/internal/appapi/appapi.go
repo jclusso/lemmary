@@ -133,12 +133,19 @@ func Register(
 			g.GET("/tags/assign", bindAuth(handleGetTagAssignPreview(app)))
 			g.POST("/tags/assign", bindAuth(handlePostTagAssign(app, rt)))
 			g.GET("/tags/assign/status", bindAuth(handleGetTagAssignStatus(app)))
+			registerDocumentPageRoutes(g, app)
 			registerImportRoutes(g, app, lim)
 			registerSplitRoutes(g, app, rt, lim)
 			registerScanRoutes(g, app, rt, lim)
 			return e.Next()
 		},
 	})
+}
+
+func registerDocumentPageRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App) {
+	g.GET("/documents/{documentId}/pages", bindAuth(handleGetDocumentPages(app)))
+	g.POST("/documents/{documentId}/pages/removal", bindAuth(handlePostDocumentPageRemoval(app)))
+	g.POST("/documents/{documentId}/original/restore", bindAuth(handlePostDocumentOriginalRestore(app)))
 }
 
 func registerImportRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App, lim limits.Limits) {
