@@ -103,6 +103,38 @@ func TestRenderPagesNamesEveryPageWithoutPadding(t *testing.T) {
 	}
 }
 
+func TestRenderPagesAsWritesTheFormatAsked(t *testing.T) {
+	requirePoppler(t, "pdftoppm")
+
+	source := writePDF(t, 2)
+	for _, tc := range []struct {
+		format Format
+		ext    string
+		magic  string
+	}{
+		{JPEG, ".jpg", "\xff\xd8"},
+		{Gray, ".pgm", "P5"},
+	} {
+		outDir := filepath.Join(t.TempDir(), "pages")
+		paths, err := RenderPagesAs(context.Background(), source, outDir, tc.format, 200, 2)
+		if err != nil {
+			t.Fatalf("%s: %v", tc.ext, err)
+		}
+		for page, path := range paths {
+			if want := filepath.Join(outDir, fmt.Sprintf("page-%d%s", page+1, tc.ext)); path != want {
+				t.Fatalf("page %d rendered to %s, want %s", page+1, path, want)
+			}
+			data, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.HasPrefix(string(data), tc.magic) {
+				t.Fatalf("%s page %d starts %q", tc.ext, page+1, data[:min(4, len(data))])
+			}
+		}
+	}
+}
+
 func TestRenderPagesRejectsUnexpectedPageCount(t *testing.T) {
 	requirePoppler(t, "pdftoppm")
 

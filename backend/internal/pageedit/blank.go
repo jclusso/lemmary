@@ -57,10 +57,12 @@ func InkCoverage(img image.Image) float64 {
 	return float64(ink) / float64(total)
 }
 
-// luminance reads *image.RGBA directly because that is what a pdftoppm PNG
-// decodes to, and going through At for every pixel of every page is the
-// slowest part of a scan's inspection.
+// luminance reads *image.Gray and *image.RGBA directly, because going through
+// At for every pixel of every page is the slowest part of a scan's inspection.
 func luminance(img image.Image, x, y int) uint8 {
+	if gray, ok := img.(*image.Gray); ok {
+		return gray.Pix[gray.PixOffset(x, y)]
+	}
 	if rgba, ok := img.(*image.RGBA); ok {
 		i := rgba.PixOffset(x, y)
 		p := rgba.Pix[i : i+3 : i+3]

@@ -13,9 +13,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"image"
-	"image/jpeg"
-	"image/png"
 	"io"
 	"os"
 	"path/filepath"
@@ -25,7 +22,6 @@ import (
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/filesystem"
-	"golang.org/x/image/draw"
 
 	"lemmary/backend/internal/config"
 	"lemmary/backend/internal/duplicates"
@@ -42,8 +38,7 @@ const (
 	// pixels of solid ink when the page is measured for blankness.
 	renderEdge = 800
 	// thumbEdge is what the editor shows; half the measured render.
-	thumbEdge    = 400
-	thumbQuality = 70
+	thumbEdge = 400
 )
 
 var (
@@ -70,8 +65,8 @@ type Overview struct {
 	HasOriginal bool   `json:"has_original"`
 }
 
-// Inspect renders every page of the document's PDF once, measuring each for
-// blankness and shrinking it to a thumbnail from the same render.
+// Inspect renders every page of the document's PDF, measuring each for
+// blankness and returning a thumbnail of it.
 func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview, error) {
 	if !isPDF(document) {
 		return Overview{}, ErrNotPDF
@@ -93,14 +88,21 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 	if count > MaxPages {
 		return Overview{}, ErrTooManyPages
 	}
-	rendered, err := pdftool.RenderPages(ctx, pdfPath, filepath.Join(workDir, "pages"), renderEdge, count)
+	// Two renders rather than one shared: pdftoppm writes a raw grey page and a
+	// small JPEG in a fraction of the time it takes to compress one PNG of a
+	// noisy scan, and neither needs re-encoding here.
+	measured, err := pdftool.RenderPagesAs(ctx, pdfPath, filepath.Join(workDir, "measure"), pdftool.Gray, renderEdge, count)
+	if err != nil {
+		return Overview{}, err
+	}
+	thumbs, err := pdftool.RenderPagesAs(ctx, pdfPath, filepath.Join(workDir, "thumbs"), pdftool.JPEG, thumbEdge, count)
 	if err != nil {
 		return Overview{}, err
 	}
 
 	pages := make([]Page, 0, count)
-	for i, path := range rendered {
-		page, err := inspectPage(path)
+	for i := range count {
+		page, err := inspectPage(measured[i], thumbs[i])
 		if err != nil {
 			return Overview{}, fmt.Errorf("page %d: %w", i+1, err)
 		}
@@ -110,34 +112,23 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 	return Overview{Pages: pages, HasOriginal: document.GetString("original_file") != ""}, nil
 }
 
-func inspectPage(path string) (Page, error) {
-	file, err := os.Open(path)
+func inspectPage(measurePath, thumbPath string) (Page, error) {
+	data, err := os.ReadFile(measurePath)
 	if err != nil {
 		return Page{}, err
 	}
-	defer file.Close()
-	img, err := png.Decode(file)
+	img, err := decodePGM(data)
 	if err != nil {
 		return Page{}, err
 	}
-	thumb, err := thumbnail(img)
+	thumb, err := os.ReadFile(thumbPath)
 	if err != nil {
 		return Page{}, err
 	}
-	return Page{Blank: IsBlank(img), Thumbnail: thumb}, nil
-}
-
-func thumbnail(img image.Image) (string, error) {
-	b := img.Bounds()
-	scale := float64(thumbEdge) / float64(max(b.Dx(), b.Dy()))
-	small := image.NewRGBA(image.Rect(0, 0, max(1, int(float64(b.Dx())*scale)), max(1, int(float64(b.Dy())*scale))))
-	draw.ApproxBiLinear.Scale(small, small.Bounds(), img, b, draw.Src, nil)
-
-	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, small, &jpeg.Options{Quality: thumbQuality}); err != nil {
-		return "", err
-	}
-	return "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+	return Page{
+		Blank:     IsBlank(img),
+		Thumbnail: "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(thumb),
+	}, nil
 }
 
 // RemovePages replaces the document's file with one lacking the given pages.
