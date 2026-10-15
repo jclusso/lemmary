@@ -90,9 +90,12 @@ Every page is shown, and the ones that look blank are already selected. Change
 the selection if needed, then press **Remove**. This works on any PDF in your
 library, not only scans.
 
-A page counts as blank when it has almost no dark print. Bleed-through, specks
-of dust and the shadows at a scan's edges are ignored, so check the suggestion
-before removing: a page holding a single faint stamp may be flagged too.
+A page counts as blank when it has almost no dark print. Specks of dust and
+the shadows at a scan's edges are ignored, and so is bleed-through: marks
+pressed through from the front, and the faint image of a whole printed page
+showing through the paper. Check the suggestion before removing: a page
+holding a single faint stamp, or a whole page of badly faded print, may be
+flagged too.
 
 The preview and the OCR text are rebuilt from the shorter file. The title,
 tags and other details stay as they are. The file as first uploaded is kept,

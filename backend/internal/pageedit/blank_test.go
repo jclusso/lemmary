@@ -54,6 +54,25 @@ func TestIsBlank(t *testing.T) {
 			fill(img, image.Rect(400, 500, 402, 502), 0)
 			return img
 		}, true},
+		{"a stamp pressed through from the front", func() *image.RGBA {
+			img := page(250)
+			fill(img, image.Rect(200, 150, 240, 152), 130)
+			fill(img, image.Rect(200, 180, 240, 182), 130)
+			fill(img, image.Rect(200, 150, 202, 182), 130)
+			fill(img, image.Rect(238, 150, 240, 182), 130)
+			return img
+		}, true},
+		{"heavy bleed-through across the sheet", func() *image.RGBA {
+			img := page(250)
+			paragraph(img, 140)
+			fill(img, image.Rect(300, 400, 304, 404), 40)
+			return img
+		}, true},
+		{"one dark line on an empty page", func() *image.RGBA {
+			img := page(250)
+			fill(img, image.Rect(80, 300, 200, 303), 20)
+			return img
+		}, false},
 		{"one short printed word", func() *image.RGBA {
 			img := page(250)
 			fill(img, image.Rect(70, 70, 130, 82), 20)
@@ -69,7 +88,7 @@ func TestIsBlank(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			img := tc.build()
 			if got := IsBlank(img); got != tc.blank {
-				t.Fatalf("IsBlank = %v, want %v (coverage %.5f)", got, tc.blank, InkCoverage(img))
+				t.Fatalf("IsBlank = %v, want %v (%+v)", got, tc.blank, measureInk(img))
 			}
 		})
 	}
