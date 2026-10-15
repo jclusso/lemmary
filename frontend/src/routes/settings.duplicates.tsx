@@ -14,7 +14,6 @@ import {
   labelClassName,
   labelTextClassName,
   sectionClassName,
-  sectionTitleClassName,
 } from '../components/ui'
 import { t, tNode } from '../i18n'
 
@@ -51,7 +50,6 @@ export function SettingsDuplicatesPage() {
   return (
     <form onSubmit={onSubmit}>
       <section className={sectionClassName}>
-        <h2 className={sectionTitleClassName}>{t('settingsDuplicates.title')}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="flex items-center gap-2 text-sm text-ink-muted sm:col-span-2">
             <input

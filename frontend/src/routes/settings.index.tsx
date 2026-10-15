@@ -14,7 +14,6 @@ import {
   labelClassName,
   labelTextClassName,
   sectionClassName,
-  sectionTitleClassName,
 } from '../components/ui'
 import { t } from '../i18n'
 
@@ -46,7 +45,6 @@ export function SettingsAppearancePage() {
   return (
     <form onSubmit={onSubmit}>
       <section className={sectionClassName}>
-        <h2 className={sectionTitleClassName}>{t('settingsIndex.title')}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className={labelClassName}>
             <label className={labelClassName}>

@@ -30,9 +30,23 @@ export const en = {
   'nav.export': 'Export',
   'nav.import': 'Import',
   'nav.settings': 'Settings',
-  'nav.management': 'Management',
+  'nav.users': 'Users',
+  'nav.groupInstance': 'Instance',
   'nav.maintenance': 'Maintenance',
-  'nav.admin': 'Admin',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Admin',
+  'admin.title': 'Admin',
+  'admin.sectionsLabel': 'Admin sections',
+  'admin.introAppearance': 'The application name and accent color every user sees.',
+  'admin.introAi': 'The providers this instance can call, and which model each job runs on.',
+  'admin.introProcessing': 'Review, time limits and the language results are written in, for every new document.',
+  'admin.introFields': 'Extra fields extraction fills in on every document.',
+  'admin.introWorker': 'How long a processing job may run and how often a failed one is retried.',
+  'admin.introDuplicates': 'Whether new documents are checked for near duplicates, and how close counts as one.',
+  'admin.introIngest': 'Where documents are picked up automatically, who owns them and how often to look.',
+  'admin.introMcp': 'What agents connected over MCP may change in the archive.',
+  'admin.introUsers': 'The accounts on this instance.',
+  'nav.groupHelp': 'Help',
 
   'documentStatus.pending': 'Pending',
   'documentStatus.processing': 'Processing',
@@ -1050,11 +1064,8 @@ export const en = {
   'import.sourcesLabel': 'Import sources',
   'import.tabArchive': 'Lemmary archive',
 
-  'settings.title': 'Settings',
-  'settings.intro': 'Runtime configuration for OCR, AI, and the worker. Changes apply immediately.',
   'settings.aiManaged':
     'AI providers, models, timeouts and the worker are set by your hosting provider and are not editable here.',
-  'settings.sectionsLabel': 'Settings sections',
   'settings.tabAppearance': 'Appearance',
   'settings.tabAi': 'AI',
   'settings.tabProcessing': 'Processing',
@@ -1064,14 +1075,9 @@ export const en = {
   'settings.tabIngest': 'Ingest',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Management',
-  'management.intro': 'Accounts on this instance. Admin only.',
-  'management.sectionsLabel': 'Management sections',
-  'management.tabUsers': 'Users',
 
   'settingsIndex.nameRequired': 'Application name is required',
   'settingsIndex.accentInvalid': 'Accent color must be a hex value like #6e2620',
-  'settingsIndex.title': 'Appearance',
   'settingsIndex.appName': 'Application name',
   'settingsIndex.appNameHint':
     'Shown in the header and on the sign-in page, and used as the sender name on mail and in passkey prompts.',
@@ -1099,7 +1105,6 @@ export const en = {
   'settingsMcp.deleteHint': 'Permanent: there is no trash and no undo.',
   'settingsMcp.tags': 'Manage tags',
   'settingsMcp.tagsHint': 'Create, rename and delete tags.',
-  'settingsDuplicates.title': 'Duplicates',
   'settingsDuplicates.enable': 'Enable near-duplicate detection after OCR (re-scans)',
   'settingsDuplicates.threshold': 'Near-duplicate threshold (0–1)',
   'settingsDuplicates.hint':
@@ -1108,7 +1113,6 @@ export const en = {
 
   'settingsWorker.timeoutInvalid': 'Worker timeout must be a positive number',
   'settingsWorker.retriesInvalid': 'Worker max retries must be >= 0',
-  'settingsWorker.title': 'Worker',
   'settingsWorker.timeout': 'Job timeout (seconds)',
   'settingsWorker.maxRetries': 'Max retries',
   'settingsWorker.cronHint': 'Worker cron schedule stays in {env} in {file}.',
@@ -1321,7 +1325,6 @@ export const en = {
   'fieldPresets.agentHint': 'The full name of the person the power of attorney is granted to.',
   'settingsProcessing.ocrTimeoutInvalid': 'OCR timeout must be a positive number',
   'settingsProcessing.aiTimeoutInvalid': 'AI timeout must be a positive number',
-  'settingsProcessing.title': 'Processing',
   'settingsProcessing.alwaysReview': 'Always require review for new documents',
   'settingsProcessing.alwaysReviewHint':
     'Every document the AI extracts metadata for waits in the Inbox, however confident the extraction was — reprocessed documents included. Nothing completes but by your saying so. Off, only low-confidence extractions and possible duplicates land there. While a document waits, the AI may also suggest new tags for it; accepting one creates the tag.',
@@ -1353,7 +1356,6 @@ export const en = {
   'settingsIngest.everyMinutes': { one: '{count} minute', other: '{count} minutes' },
   'settingsIngest.typeImages': 'Images',
   'settingsIngest.typeText': 'Text (TXT, CSV)',
-  'settingsIngest.title': 'Ingest',
   'settingsIngest.owner': 'Owner',
   'settingsIngest.ownerDefault': 'Default (first admin account)',
   'settingsIngest.ownerHint': 'The account that owns every ingested document.',
@@ -1467,6 +1469,9 @@ export const en = {
   'account.passwordFailed': 'Could not change the password.',
   'account.title': 'Account',
   'account.intro': 'How you and your agents sign in to this archive.',
+  'account.languageHint': 'Remembered in this browser for a year. Messages from the server follow it too.',
+  'account.moveLibrary': 'Import and export',
+  'account.moveLibraryHint': 'Bring documents in from another Lemmary instance, Paperless-ngx or Papra, or download a backup of your whole library.',
 
   'importNgx.preserveLabel': 'Keep Paperless-ngx metadata',
   'importNgx.preserveDescription':
@@ -1709,7 +1714,6 @@ export const en = {
   'ocrTest.chooseProvider': 'Choose an OCR provider.',
   'ocrTest.meta': { other: '{chars} characters · {provider} · {duration}' },
   'ocrTest.failed': 'OCR test failed',
-  'ocrTest.title': 'OCR test',
   'ocrTest.intro': 'Upload a file and run OCR with a configured provider. Results are not saved.',
   'ocrTest.provider': 'Provider',
   'ocrTest.loadingProviders': 'Loading providers...',
@@ -1764,8 +1768,7 @@ export const en = {
   'maintenance.reindexFailed': 'Search reindex failed',
   'maintenance.inFlight': 'Processing in flight ({jobs}). Try again when the queue is idle.',
   'maintenance.pruneFailed': 'Stale data cleanup failed',
-  'maintenance.title': 'Maintenance',
-  'maintenance.intro': 'Maintenance tasks that run over the whole library. Admin only.',
+  'maintenance.intro': 'Maintenance tasks that run over the whole library.',
   'maintenance.failedTitle': 'Failed processing',
   'maintenance.failedHint':
     'Queues a fresh job for documents whose processing failed. Originals are never touched. Jobs run one at a time, so a batch drains gradually — reprocess in batches rather than all at once to keep OCR and AI spend under control.',

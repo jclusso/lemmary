@@ -42,7 +42,9 @@ the provider buttons appear for whatever is enabled in PocketBase.
 ![Login screen with password, passkey and OAuth2](./screenshots/login.png)
 
 Each account manages its own passkeys, one per device, and its own tokens for
-an agent that should search and read the archive over [MCP](/mcp).
+an agent that should search and read the archive over [MCP](/mcp). The Account
+page is also where the interface language is chosen and where import and
+export start.
 
 ![Account page with an enrolled passkey](./screenshots/account.png)
 
@@ -234,8 +236,12 @@ its metadata or re-running the pipeline over the files.
 
 ## Administration
 
+Admins reach these pages from **Admin** in the gear menu. They share one Admin
+area with a sidebar in two groups: Settings, one entry per settings section,
+and Instance, with Users, Maintenance, OCR test and the PocketBase dashboard.
+
 Settings are runtime configuration, stored in the database rather than the
-environment, and split into a tab each. Appearance names the instance and picks
+environment, and split into one section each. Appearance names the instance and picks
 the accent the whole interface takes.
 
 ![Settings, appearance](./screenshots/settings-appearance.png)
@@ -244,7 +250,7 @@ AI holds the providers and which model does what: a General AI model for the
 everyday work and an optional Advanced one for Deep Research. API keys are
 write-only: the page reports that a key is set, never what it is.
 
-![Settings, the AI tab in full](./screenshots/settings.png)
+![Settings, the AI section in full](./screenshots/settings.png)
 
 Processing covers the timeouts, the language results come back in, whether every
 document waits for review, and house rules appended to the extraction prompt —
@@ -276,10 +282,10 @@ of mail arriving in the mailbox folder, become documents on the next scan.
 
 ![Settings, ingest](./screenshots/settings-ingest.png)
 
-Management is the admin's list of the accounts on the instance, where one is
+Users is the admin's list of the accounts on the instance, where one is
 added, edited or deleted.
 
-![Management, the accounts on the instance](./screenshots/management.png)
+![Users, the accounts on the instance](./screenshots/management.png)
 
 Library-wide maintenance: reprocess failed documents in batches, scan for
 duplicates, delete taxonomy nothing points at any more, rebuild the search

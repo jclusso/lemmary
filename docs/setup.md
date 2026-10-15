@@ -61,11 +61,11 @@ configuration.
 ## Settings (admin UI)
 
 1. Sign in with the **admin** email/password (login prefers the `users` account; legacy `_superusers`-only installs are linked automatically via `/api/app/ensure-user`, which sets a hidden `is_app_admin` flag on the paired `users` record).
-2. Open **Settings** in the nav (shown when `/api/app/me` reports `is_admin`). It has one tab per section, each on its own path and each saving only its own fields: **Appearance** (`/settings`), **AI** (`/settings/ai`), **Processing** (`/settings/processing`), **Worker** (`/settings/worker`), **Duplicates** (`/settings/duplicates`) and, when `INGEST_DIR` or `INGEST_IMAP_ENABLED` is set, **Ingest** (`/settings/ingest`). On the AI tab, add providers, then bind OCR, General AI and optionally the Advanced model to a provider and model — see [Binding models in Settings](/ai_providers#binding-models-in-settings). Changes hot-reload the in-process clients (no restart).
+2. Open **Admin** in the gear menu (shown when `/api/app/me` reports `is_admin`), which lands on **Settings**. Each settings section is a sidebar entry on its own path and saves only its own fields: **Appearance** (`/settings`), **AI** (`/settings/ai`), **Processing** (`/settings/processing`), **Fields** (`/settings/fields`), **Worker** (`/settings/worker`), **Duplicates** (`/settings/duplicates`), **Ingest** (`/settings/ingest`) and **MCP** (`/settings/mcp`). AI, Worker and Duplicates are shown only when the instance is not managed, and Ingest only when `INGEST_DIR` or `INGEST_IMAP_ENABLED` is set. In the AI section, add providers, then bind OCR, General AI and optionally the Advanced model to a provider and model — see [Binding models in Settings](/ai_providers#binding-models-in-settings). Changes hot-reload the in-process clients (no restart).
 
 `WORKER_CRON_EXPR` is not editable there; change `.env` and restart, or use PocketBase Admin → Settings → Crons.
 
-**Extra extraction rules** (Processing tab) is the one part of the extraction prompt an admin writes. Whatever is in it is appended to the built-in prompt, after the list of existing correspondents and document types and before the format rules, so it can state house conventions the fixed prompt cannot know — “treat *Rechnung* as the document type Invoice”, “tag insurance documents with the policy number”. It cannot change which fields are stored: the pipeline parses the answer into a fixed set, and the prompt says so after the rules. Up to 4000 characters, empty by default, and applied to documents processed or reprocessed from then on. The extraction log line reports its length as `rule_chars`, and each document's `extract_metadata` step run records the prompt it actually ran under (see below).
+**Extra extraction rules** (Processing section) is the one part of the extraction prompt an admin writes. Whatever is in it is appended to the built-in prompt, after the list of existing correspondents and document types and before the format rules, so it can state house conventions the fixed prompt cannot know — “treat *Rechnung* as the document type Invoice”, “tag insurance documents with the policy number”. It cannot change which fields are stored: the pipeline parses the answer into a fixed set, and the prompt says so after the rules. Up to 4000 characters, empty by default, and applied to documents processed or reprocessed from then on. The extraction log line reports its length as `rule_chars`, and each document's `extract_metadata` step run records the prompt it actually ran under (see below).
 
 `EXTRACTION_PROMPT_VERSION` is not offered there either. It is pure bookkeeping — it is recorded on each document's `extract_metadata` step run so metadata can be traced back to a prompt, and never reaches the prompt itself — so there is nothing for an admin to tune. Where extraction rules are set, that step run records `v1+rules.<digest>` instead of the bare version: the rules change the prompt while the version does not, and a run recorded under `v1` alone would name a prompt that no longer exists. Documents extracted with no rules keep the bare version, so nothing changes for an instance that sets none. `PATCH /api/app/settings` still accepts `extraction_prompt_version`, and it can be edited in PocketBase Admin → `app_settings`.
 
@@ -73,7 +73,7 @@ configuration.
 
 With `INGEST_DIR` set, a cron walks that directory and turns every storable file (the same types the upload accepts: PDF, JPEG, PNG, WebP, TXT, CSV, DOCX, XLSX) into a document, exactly as if it had been uploaded: the file is hashed, measured against the 47 MB document cap and [the page ceiling](#the-page-ceiling), and queued for the full pipeline. The walk is recursive (a root that is itself a symlink is followed), and the folders between the root and the file become its tags — `Taxes/2024/invoice.pdf` arrives tagged **Taxes** and **2024**, reusing an existing tag whose name matches case-insensitively and creating the ones that do not exist yet. Extraction adds the model's tags to these rather than replacing them. Dot-files and dot-folders, symlinks, empty files and anything not storable are ignored; a file modified in the last 30 seconds waits for the next scan so nothing half-written is picked up.
 
-The **Ingest** tab (`/settings/ingest`) holds the three settings (owner and interval are shared with [IMAP ingest](#ingest-from-imap)):
+The **Ingest** section (`/settings/ingest`) holds the three settings (owner and interval are shared with [IMAP ingest](#ingest-from-imap)):
 
 - **Owner** — the account every document from the folder belongs to. Default is the first admin's paired `users` account; any account can be picked.
 - **Scan every** — default 5 minutes. Saving re-schedules the `dir_ingest` cron (visible in PocketBase Admin → Settings → Crons), so a change applies without a restart. Accepted are the minutes that divide an hour (1–30) and the hours that divide a day (1–24); anything else is refused, since a cron step would space it unevenly.
@@ -81,7 +81,7 @@ The **Ingest** tab (`/settings/ingest`) holds the three settings (owner and inte
 
 ### Ingest from IMAP
 
-With `INGEST_IMAP_ENABLED` set, the **Ingest** tab also offers a mailbox, and a cron (`imap_ingest`, on the same interval as the folder) reads its folder: every attachment whose name has a storable extension of a chosen type becomes a document owned by the same account, through the same hooks as an upload. The message body is never a document, nor is an image anywhere under a `multipart/related` part — the logos and icons an HTML body embeds by `cid:` — unless the sender marked it `Content-Disposition: attachment`; an image sent as a real attachment still counts. An inline image outside `multipart/related` is imported, since that is how iPhone Mail sends attached photos. Mail without such an attachment is left untouched. Leaving the server empty turns it off.
+With `INGEST_IMAP_ENABLED` set, the **Ingest** section also offers a mailbox, and a cron (`imap_ingest`, on the same interval as the folder) reads its folder: every attachment whose name has a storable extension of a chosen type becomes a document owned by the same account, through the same hooks as an upload. The message body is never a document, nor is an image anywhere under a `multipart/related` part — the logos and icons an HTML body embeds by `cid:` — unless the sender marked it `Content-Disposition: attachment`; an image sent as a real attachment still counts. An inline image outside `multipart/related` is imported, since that is how iPhone Mail sends attached photos. Mail without such an attachment is left untouched. Leaving the server empty turns it off.
 
 Only mail received after the mailbox was set up is scanned: saving a new server, username or folder records that moment (`imap_since`, shown under the Mailbox fields), and anything the folder already held is left alone, whatever the after-import action. A new password or after-import action keeps the moment, so nothing that arrived meanwhile is skipped. Older mail is a backfill: **Maintenance → Mailbox** takes two days, inclusive, and imports the attachments of everything received between them (IMAP `SINCE`/`BEFORE`, by the server's received date). The backfill opens the folder read-only, never moves or deletes a message, does not touch the keep-mode ledger, and relies on the checksum check to skip attachments already in the library, so running it twice is harmless. It runs in the background and holds the same lock as the scheduled scan, so neither starts while the other runs — a delete or move scan never works on the folder a backfill is reading. A message that fails is counted and passed over.
 
@@ -97,13 +97,13 @@ Delete and move rely on UIDPLUS (or IMAP4rev2) to expunge only the messages Lemm
 
 A message whose attachment is refused (empty, over the 47 MB cap, wrong content for its extension) is never moved or deleted; it is logged and skipped. Any other error stops the scan, and the message is retried next interval.
 
-## Management (admin UI)
+## Users (admin UI) {#management-admin-ui}
 
-**Management** in the nav (admin only, below Settings) manages the accounts on the instance. Its **Users** tab lists every `users` account, adds one (email, optional name, password; created verified, so it can sign in at once), edits a regular account's email, name or password, and deletes one. Deleting an account also deletes its documents, tags, shares and passkeys. Admin accounts (`is_app_admin`) are listed but read-only here; manage them in the PocketBase dashboard. The routes are `GET`/`POST /api/app/admin/users` and `PATCH`/`DELETE /api/app/admin/users/{id}`, admin only, and `403` on an admin account. With the vault on, a new account's password gets its own key wrap, as with any other account.
+**Users** in the Admin area (under Instance, at `/management`) manages the accounts on the instance. It lists every `users` account, adds one (email, optional name, password; created verified, so it can sign in at once), edits a regular account's email, name or password, and deletes one. Deleting an account also deletes its documents, tags, shares and passkeys. Admin accounts (`is_app_admin`) are listed but read-only here; manage them in the PocketBase dashboard. The routes are `GET`/`POST /api/app/admin/users` and `PATCH`/`DELETE /api/app/admin/users/{id}`, admin only, and `403` on an admin account. With the vault on, a new account's password gets its own key wrap, as with any other account.
 
 ## Maintenance (admin UI)
 
-**Maintenance** in the nav (admin only, next to Settings) holds maintenance actions that run over the whole library, not per document:
+**Maintenance** in the Admin area (below Users) holds maintenance actions that run over the whole library, not per document:
 
 - **Scan for duplicates** — `POST /api/app/duplicates/scan`, see [Duplicate detection](#duplicate-detection).
 - **Scan mailbox** (only with `INGEST_IMAP_ENABLED`) — `POST /api/app/ingest/imap/scan` with `{ "from": "YYYY-MM-DD", "to": "YYYY-MM-DD" }` starts a backfill of older mail in the background, see [Ingest from IMAP](#ingest-from-imap), and answers `202` with the status; `GET` on the same path returns `{ "running", "from", "to", "created", "skipped", "failed", "error" }` for the last one, which the page polls every 3s. `409` while any mailbox scan runs, `400` for bad dates or no mailbox.
@@ -112,7 +112,7 @@ A message whose attachment is refused (empty, over the 47 MB cap, wrong content 
 - **Rebuild search index** — `POST /api/app/search/reindex`, see [Full-text search](#full-text-search).
 - **Embed N missing documents** — `POST /api/app/embeddings/backfill` sweeps every document that still needs passage vectors: the archive that existed before an embedding model was bound, restored backups (whose documents get no processing job at all), documents edited since they were embedded, and anything a model or chunker change invalidated. It answers immediately with `{ "started", "running", "stats" }` and works through the backlog in the background, in batches, for up to 30 minutes; `GET` on the same path returns `{ "running", "stats" }`, which is what the progress line polls every 3s. The section is disabled with a pointer to Settings when no embedding model is bound (`409`), and the button is disabled while a sweep is running. A sweep and the `EMBEDDING_BACKFILL_BATCH` cron share one lock, so they never embed the same document twice — and `EMBEDDING_BACKFILL_BATCH=0` disables only the cron, never this button.
 
-Admin-only items in the nav menu are prefixed with a shield icon (decorative — the items only render for admins in the first place).
+The admin pages share one Admin area, reached from **Admin** in the gear menu, which only admins see. Its sidebar has two groups: **Settings**, with one entry per settings section (Appearance, AI, Processing, Fields, Worker, Duplicates, Ingest, MCP), and **Instance**, with **Users**, **Maintenance**, **OCR test** and **PocketBase** (the PocketBase dashboard at `/_/`). On phones the sidebar is a single section dropdown at the top of the Admin area.
 
 ## Outbound mail (SMTP / `outbound_emails`)
 
@@ -237,7 +237,7 @@ Any signed-in user can download their whole library as one zip and restore it �
 
 ### Exporting
 
-**More → Export → Download backup**, or `POST /api/app/documents/export` with no body. The response streams a zip named `lemmary-export.zip`.
+**Account → Import and export → Export → Download backup** (`/export`), or `POST /api/app/documents/export` with no body. The response streams a zip named `lemmary-export.zip`.
 
 To export only part of the library, filter the Documents list and use the download icon next to **AI assisted search**. That sends `{"ids": [...]}`, and the archive holds just those documents the caller can read, shared ones included, plus only the tags, correspondents and document types they carry.
 
@@ -262,7 +262,7 @@ A document whose stored file is missing from storage is skipped and left out of 
 
 ### Restoring
 
-**More → Import** (`/import`), or the API below. The archive is streamed to `<data dir>/temp/archive_import/` — never buffered in memory — then scanned and previewed: how many documents it holds, how many are new, how many are duplicates, oversized or missing, how much taxonomy comes with them. Nothing is created until you confirm.
+**Account → Import and export → Import** (`/import`), or the API below. The archive is streamed to `<data dir>/temp/archive_import/` — never buffered in memory — then scanned and previewed: how many documents it holds, how many are new, how many are duplicates, oversized or missing, how much taxonomy comes with them. Nothing is created until you confirm.
 
 Two modes:
 
@@ -288,7 +288,7 @@ An archive with no documents but a non-empty taxonomy is valid and restorable �
 
 ## Importing from Papra
 
-Any signed-in user can pull a [Papra](https://github.com/papra-hq/papra) library into their own account under **More → Import → Papra** (`/import/papra`). Create an API key in Papra with the `organizations:read` and `documents:read` permissions. The import walks every organization the key can read and adds their documents to the current account; an organization the key may not read is named in the result's errors and skipped.
+Any signed-in user can pull a [Papra](https://github.com/papra-hq/papra) library into their own account under **Account → Import and export → Import → Papra** (`/import/papra`). Create an API key in Papra with the `organizations:read` and `documents:read` permissions. The import walks every organization the key can read and adds their documents to the current account; an organization the key may not read is named in the result's errors and skipped.
 
 - **Keep Papra metadata** (`preserve`, the default): the document's name becomes its title (without the file extension), its tags are created by name, and its document date and the text Papra extracted are kept. Preview and duplicate detection run; AI metadata extraction is skipped, so correspondent and document type stay empty. Papra notes and custom properties are not imported.
 - **Import files only and reprocess** (`reprocess`): downloads only the original files and queues the full OCR + AI pipeline, as for a new upload.

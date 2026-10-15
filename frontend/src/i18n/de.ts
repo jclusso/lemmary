@@ -30,9 +30,23 @@ export const de: Catalog = {
   'nav.export': 'Export',
   'nav.import': 'Import',
   'nav.settings': 'Einstellungen',
-  'nav.management': 'Verwaltung',
+  'nav.users': 'Benutzer',
+  'nav.groupInstance': 'Instanz',
   'nav.maintenance': 'Wartung',
-  'nav.admin': 'Admin',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Administration',
+  'admin.title': 'Administration',
+  'admin.sectionsLabel': 'Bereiche der Administration',
+  'admin.introAppearance': 'Der Anwendungsname und die Akzentfarbe, die alle Benutzer sehen.',
+  'admin.introAi': 'Die Anbieter, die diese Instanz aufrufen kann, und welches Modell jede Aufgabe verwendet.',
+  'admin.introProcessing': 'Prüfung, Zeitlimits und die Sprache der Ergebnisse für jedes neue Dokument.',
+  'admin.introFields': 'Zusätzliche Felder, die die Extraktion bei jedem Dokument ausfüllt.',
+  'admin.introWorker': 'Wie lange eine Verarbeitungsaufgabe laufen darf und wie oft eine fehlgeschlagene wiederholt wird.',
+  'admin.introDuplicates': 'Ob neue Dokumente auf Beinahe-Duplikate geprüft werden und ab welcher Ähnlichkeit eines vorliegt.',
+  'admin.introIngest': 'Wo Dokumente automatisch abgeholt werden, wem sie gehören und wie oft nachgesehen wird.',
+  'admin.introMcp': 'Was über MCP verbundene Agenten im Archiv ändern dürfen.',
+  'admin.introUsers': 'Die Konten auf dieser Instanz.',
+  'nav.groupHelp': 'Hilfe',
 
   'documentStatus.pending': 'Ausstehend',
   'documentStatus.processing': 'In Verarbeitung',
@@ -1110,12 +1124,8 @@ export const de: Catalog = {
   'import.sourcesLabel': 'Import-Quellen',
   'import.tabArchive': 'Lemmary-Archiv',
 
-  'settings.title': 'Einstellungen',
-  'settings.intro':
-    'Laufzeitkonfiguration für OCR, KI und den Worker. Änderungen gelten sofort.',
   'settings.aiManaged':
     'KI-Anbieter, Modelle, Zeitlimits und der Worker werden von Ihrem Hosting-Anbieter festgelegt und können hier nicht geändert werden.',
-  'settings.sectionsLabel': 'Bereiche der Einstellungen',
   'settings.tabAppearance': 'Darstellung',
   'settings.tabAi': 'KI',
   'settings.tabProcessing': 'Verarbeitung',
@@ -1125,14 +1135,9 @@ export const de: Catalog = {
   'settings.tabIngest': 'Eingang',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Verwaltung',
-  'management.intro': 'Konten auf dieser Instanz. Nur für Administratoren.',
-  'management.sectionsLabel': 'Bereiche der Verwaltung',
-  'management.tabUsers': 'Benutzer',
 
   'settingsIndex.nameRequired': 'Der Anwendungsname ist erforderlich',
   'settingsIndex.accentInvalid': 'Die Akzentfarbe muss ein Hex-Wert wie #6e2620 sein',
-  'settingsIndex.title': 'Darstellung',
   'settingsIndex.appName': 'Anwendungsname',
   'settingsIndex.appNameHint':
     'Erscheint in der Kopfzeile und auf der Anmeldeseite und dient als Absendername für E-Mails und in Passkey-Abfragen.',
@@ -1162,7 +1167,6 @@ export const de: Catalog = {
   'settingsMcp.deleteHint': 'Endgültig: Es gibt keinen Papierkorb und kein Rückgängig.',
   'settingsMcp.tags': 'Tags verwalten',
   'settingsMcp.tagsHint': 'Tags anlegen, umbenennen und löschen.',
-  'settingsDuplicates.title': 'Duplikate',
   'settingsDuplicates.enable': 'Beinahe-Duplikate nach der OCR erkennen (bei erneutem Scan)',
   'settingsDuplicates.threshold': 'Schwellenwert für Beinahe-Duplikate (0–1)',
   'settingsDuplicates.hint':
@@ -1171,7 +1175,6 @@ export const de: Catalog = {
 
   'settingsWorker.timeoutInvalid': 'Das Worker-Zeitlimit muss eine positive Zahl sein',
   'settingsWorker.retriesInvalid': 'Die maximalen Wiederholungen des Workers müssen >= 0 sein',
-  'settingsWorker.title': 'Worker',
   'settingsWorker.timeout': 'Zeitlimit pro Job (Sekunden)',
   'settingsWorker.maxRetries': 'Maximale Wiederholungen',
   'settingsWorker.cronHint': 'Der Cron-Zeitplan des Workers wird über {env} in {file} gesetzt.',
@@ -1392,7 +1395,6 @@ export const de: Catalog = {
   'fieldPresets.agentHint': 'Der vollständige Name der Person, der die Vollmacht erteilt wird.',
   'settingsProcessing.ocrTimeoutInvalid': 'Das OCR-Zeitlimit muss eine positive Zahl sein',
   'settingsProcessing.aiTimeoutInvalid': 'Das KI-Zeitlimit muss eine positive Zahl sein',
-  'settingsProcessing.title': 'Verarbeitung',
   'settingsProcessing.alwaysReview': 'Neue Dokumente immer prüfen lassen',
   'settingsProcessing.alwaysReviewHint':
     'Jedes Dokument, für das die KI Metadaten extrahiert, wartet im Posteingang, egal wie sicher die Extraktion war – erneut verarbeitete Dokumente eingeschlossen. Nichts wird ohne Ihre Zustimmung abgeschlossen. Ist die Option aus, landen dort nur unsichere Extraktionen und mögliche Duplikate. Solange ein Dokument wartet, kann die KI auch neue Tags vorschlagen; wer einen annimmt, legt den Tag an.',
@@ -1425,7 +1427,6 @@ export const de: Catalog = {
   'settingsIngest.everyMinutes': { one: 'jede {count} Minute', other: 'alle {count} Minuten' },
   'settingsIngest.typeImages': 'Bilder',
   'settingsIngest.typeText': 'Text (TXT, CSV)',
-  'settingsIngest.title': 'Eingang',
   'settingsIngest.owner': 'Eigentümer',
   'settingsIngest.ownerDefault': 'Standard (erstes Administratorkonto)',
   'settingsIngest.ownerHint': 'Das Konto, dem jedes eingelesene Dokument gehört.',
@@ -1541,6 +1542,9 @@ export const de: Catalog = {
   'account.passwordFailed': 'Das Passwort konnte nicht geändert werden.',
   'account.title': 'Konto',
   'account.intro': 'Wie Sie und Ihre Agenten sich bei diesem Archiv anmelden.',
+  'account.languageHint': 'Wird in diesem Browser für ein Jahr gespeichert. Auch Meldungen des Servers folgen dieser Einstellung.',
+  'account.moveLibrary': 'Import und Export',
+  'account.moveLibraryHint': 'Dokumente aus einer anderen Lemmary-Instanz, aus Paperless-ngx oder Papra übernehmen oder eine Sicherung der gesamten Bibliothek herunterladen.',
 
   'importNgx.preserveLabel': 'Metadaten aus Paperless-ngx behalten',
   'importNgx.preserveDescription':
@@ -1801,7 +1805,6 @@ export const de: Catalog = {
     other: '{chars} Zeichen · {provider} · {duration}',
   },
   'ocrTest.failed': 'OCR-Test fehlgeschlagen',
-  'ocrTest.title': 'OCR-Test',
   'ocrTest.intro':
     'Laden Sie eine Datei hoch und führen Sie die OCR mit einem konfigurierten Anbieter aus. Ergebnisse werden nicht gespeichert.',
   'ocrTest.provider': 'Anbieter',
@@ -1866,9 +1869,8 @@ export const de: Catalog = {
   'maintenance.inFlight':
     'Verarbeitung läuft ({jobs}). Versuchen Sie es erneut, wenn die Warteschlange leer ist.',
   'maintenance.pruneFailed': 'Bereinigung veralteter Daten fehlgeschlagen',
-  'maintenance.title': 'Wartung',
   'maintenance.intro':
-    'Wartungsaufgaben, die über die gesamte Bibliothek laufen. Nur für Administratoren.',
+    'Wartungsaufgaben, die über die gesamte Bibliothek laufen.',
   'maintenance.failedTitle': 'Fehlgeschlagene Verarbeitung',
   'maintenance.failedHint':
     'Reiht einen neuen Job für Dokumente ein, deren Verarbeitung fehlgeschlagen ist. Originale werden nie angetastet. Jobs laufen nacheinander, eine Charge leert sich also allmählich – verarbeiten Sie in Chargen statt alles auf einmal, um die Kosten für OCR und KI im Griff zu behalten.',

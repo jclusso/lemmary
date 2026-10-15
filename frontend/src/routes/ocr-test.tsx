@@ -12,7 +12,7 @@ import { useAppMeta } from '../hooks/useAppMeta'
 import { useAsync } from '../hooks/useAsync'
 import { ManagedByHostNotice } from '../components/settings/SettingsFeedback'
 import { ModelSelect } from '../components/ProviderModelFields'
-import { Button } from '../components/ui'
+import { Button, sectionClassName, sectionTitleClassName } from '../components/ui'
 import { lang, t } from '../i18n'
 
 const ACCEPTED_EXTENSIONS = new Set([
@@ -155,15 +155,8 @@ function OCRTester() {
   }
 
   return (
-    <section className="mx-auto flex max-w-3xl flex-col gap-5">
-      <div>
-        <h2 className="font-display text-2xl font-semibold tracking-tight text-ink">{t('ocrTest.title')}</h2>
-        <p className="text-sm text-ink-soft">
-          {t('ocrTest.intro')}
-        </p>
-      </div>
-
-      <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+    <div className="flex max-w-3xl flex-col gap-5">
+      <form className={`${sectionClassName} flex flex-col gap-4`} onSubmit={onSubmit}>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-muted">
           {t('ocrTest.provider')}
           <select
@@ -236,10 +229,10 @@ function OCRTester() {
       </form>
 
       {(result || running) && (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className="text-sm font-medium text-ink-muted">{t('ocrTest.result')}</h3>
-            {meta && <p className="text-xs text-ink-soft">{meta}</p>}
+        <section className={sectionClassName}>
+          <div className={`${sectionTitleClassName} flex items-baseline justify-between gap-4`}>
+            <h2>{t('ocrTest.result')}</h2>
+            {meta && <p className="font-sans text-xs font-normal text-ink-soft">{meta}</p>}
           </div>
           <textarea
             readOnly
@@ -247,8 +240,8 @@ function OCRTester() {
             value={running ? t('ocrTest.running') : result}
             className="min-h-96 w-full resize-y rounded-xs border border-line-strong bg-surface px-3 py-2 font-mono text-xs leading-relaxed text-ink outline-none"
           />
-        </div>
+        </section>
       )}
-    </section>
+    </div>
   )
 }

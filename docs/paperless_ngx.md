@@ -70,7 +70,7 @@ Acknowledgement is stored in an `ngx_acknowledged` column on `processing_jobs` t
 
 Any signed-in user can migrate a Paperless-ngx library into their own Lemmary account. The remote API token authenticates a specific ngx user, so the import runs as the current local user rather than as an admin.
 
-1. Open **Import** in the More menu, then the **Paperless-ngx** tab (or go to `/import/ngx`).
+1. Open **Import** from the **Import and export** section of the Account page, then the **Paperless-ngx** tab (or go to `/import/ngx`).
 2. Enter the remote Paperless-ngx base URL and an API token from that instance’s profile.
 3. Choose an import mode:
    - **Keep Paperless-ngx metadata** (`preserve`): upserts tags, correspondents, and document types by name; downloads each document with its OCR `content`, title, date, and taxonomy links. Preview and duplicate detection still run; AI metadata extraction is skipped so remote metadata is kept.

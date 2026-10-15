@@ -162,7 +162,7 @@ instead, as in [Local OCR and embeddings on a Mac](/local_ai_macos).
   `OCR_API_KEY`, or in the provider's API key field in **Settings**.
 - **TXT, CSV, DOCX and XLSX never reach the sidecar.** Lemmary parses those
   itself, so a problem with one of them is not an OCR problem.
-- **Try it before trusting it.** The **OCR test** page runs one file through a
+- **Try it before trusting it.** The **OCR test** page in the Admin area runs one file through a
   provider without touching the pipeline. A local sidecar appears there as soon
   as it is added under **Providers**, before it is bound to OCR.
 

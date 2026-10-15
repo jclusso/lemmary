@@ -1,6 +1,5 @@
 import { docsUrl, lang, languageNames, setLanguage, t, type Language } from '../i18n'
-
-const githubRepoUrl = 'https://github.com/buldezir/lemmary'
+import { githubRepoUrl } from '../lib/nav'
 
 function GitHubIcon() {
   return (

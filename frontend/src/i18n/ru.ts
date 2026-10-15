@@ -35,9 +35,23 @@ export const ru: Catalog = {
   'nav.export': 'Экспорт',
   'nav.import': 'Импорт',
   'nav.settings': 'Настройки',
-  'nav.management': 'Управление',
+  'nav.users': 'Пользователи',
+  'nav.groupInstance': 'Сервер',
   'nav.maintenance': 'Обслуживание',
-  'nav.admin': 'Админ-панель',
+  'nav.admin': 'PocketBase',
+  'nav.adminArea': 'Администрирование',
+  'admin.title': 'Администрирование',
+  'admin.sectionsLabel': 'Разделы администрирования',
+  'admin.introAppearance': 'Название приложения и акцентный цвет, которые видят все пользователи.',
+  'admin.introAi': 'Провайдеры, к которым обращается этот сервер, и модель для каждой задачи.',
+  'admin.introProcessing': 'Проверка, ограничения по времени и язык результатов для каждого нового документа.',
+  'admin.introFields': 'Дополнительные поля, которые извлечение заполняет в каждом документе.',
+  'admin.introWorker': 'Сколько может длиться задача обработки и сколько раз повторяется неудачная.',
+  'admin.introDuplicates': 'Проверять ли новые документы на почти дубликаты и какое сходство считать дубликатом.',
+  'admin.introIngest': 'Откуда документы забираются автоматически, кому они принадлежат и как часто проверять.',
+  'admin.introMcp': 'Что агенты, подключённые по MCP, могут менять в архиве.',
+  'admin.introUsers': 'Учётные записи на этом сервере.',
+  'nav.groupHelp': 'Справка',
 
   'documentStatus.pending': 'Ожидает',
   'documentStatus.processing': 'Обрабатывается',
@@ -1229,11 +1243,8 @@ export const ru: Catalog = {
   'import.sourcesLabel': 'Источники импорта',
   'import.tabArchive': 'Архив Lemmary',
 
-  'settings.title': 'Настройки',
-  'settings.intro': 'Настройки OCR, ИИ и обработчика заданий. Изменения применяются сразу.',
   'settings.aiManaged':
     'ИИ-провайдеры, модели, тайм-ауты и обработчик задаёт ваш хостинг-провайдер, здесь их изменить нельзя.',
-  'settings.sectionsLabel': 'Разделы настроек',
   'settings.tabAppearance': 'Оформление',
   'settings.tabAi': 'ИИ',
   'settings.tabProcessing': 'Обработка',
@@ -1243,14 +1254,9 @@ export const ru: Catalog = {
   'settings.tabIngest': 'Поступление',
   'settings.tabMcp': 'MCP',
 
-  'management.title': 'Управление',
-  'management.intro': 'Учётные записи на этом сервере. Только для администраторов.',
-  'management.sectionsLabel': 'Разделы управления',
-  'management.tabUsers': 'Пользователи',
 
   'settingsIndex.nameRequired': 'Укажите название приложения',
   'settingsIndex.accentInvalid': 'Акцентный цвет должен быть в формате hex, например #6e2620',
-  'settingsIndex.title': 'Оформление',
   'settingsIndex.appName': 'Название приложения',
   'settingsIndex.appNameHint':
     'Показывается в шапке и на странице входа, а также используется как имя отправителя писем и в запросах ключа доступа.',
@@ -1278,7 +1284,6 @@ export const ru: Catalog = {
   'settingsMcp.deleteHint': 'Безвозвратно: корзины и отмены нет.',
   'settingsMcp.tags': 'Управлять тегами',
   'settingsMcp.tagsHint': 'Создавать, переименовывать и удалять теги.',
-  'settingsDuplicates.title': 'Дубликаты',
   'settingsDuplicates.enable': 'Искать похожие дубликаты после OCR (при повторном сканировании)',
   'settingsDuplicates.threshold': 'Порог похожих дубликатов (0–1)',
   'settingsDuplicates.hint':
@@ -1287,7 +1292,6 @@ export const ru: Catalog = {
 
   'settingsWorker.timeoutInvalid': 'Тайм-аут обработчика должен быть положительным числом',
   'settingsWorker.retriesInvalid': 'Число повторов должно быть >= 0',
-  'settingsWorker.title': 'Обработчик',
   'settingsWorker.timeout': 'Тайм-аут задания (секунды)',
   'settingsWorker.maxRetries': 'Максимум повторов',
   'settingsWorker.cronHint': 'Расписание cron обработчика задаётся в {env} в файле {file}.',
@@ -1512,7 +1516,6 @@ export const ru: Catalog = {
   'fieldPresets.agentHint': 'Полное имя лица, которому выдана доверенность.',
   'settingsProcessing.ocrTimeoutInvalid': 'Тайм-аут OCR должен быть положительным числом',
   'settingsProcessing.aiTimeoutInvalid': 'Тайм-аут ИИ должен быть положительным числом',
-  'settingsProcessing.title': 'Обработка',
   'settingsProcessing.alwaysReview': 'Всегда проверять новые документы',
   'settingsProcessing.alwaysReviewHint':
     'Каждый документ, для которого ИИ извлекает метаданные, ждёт во Входящих, насколько бы уверенным ни было извлечение, — включая повторно обработанные. Ничего не завершается без вашего подтверждения. Если выключено, туда попадают только извлечения с низкой уверенностью и возможные дубликаты. Пока документ ждёт, ИИ может предложить для него новые теги; принятый тег будет создан.',
@@ -1554,7 +1557,6 @@ export const ru: Catalog = {
   },
   'settingsIngest.typeImages': 'Изображения',
   'settingsIngest.typeText': 'Текст (TXT, CSV)',
-  'settingsIngest.title': 'Поступление',
   'settingsIngest.owner': 'Владелец',
   'settingsIngest.ownerDefault': 'По умолчанию (первый администратор)',
   'settingsIngest.ownerHint': 'Учётная запись, которой принадлежит каждый поступивший документ.',
@@ -1668,6 +1670,9 @@ export const ru: Catalog = {
   'account.passwordFailed': 'Не удалось сменить пароль.',
   'account.title': 'Учётная запись',
   'account.intro': 'Как вы и ваши агенты входите в этот архив.',
+  'account.languageHint': 'Запоминается в этом браузере на год. Сообщения сервера тоже следуют этой настройке.',
+  'account.moveLibrary': 'Импорт и экспорт',
+  'account.moveLibraryHint': 'Перенесите документы из другого экземпляра Lemmary, Paperless-ngx или Papra либо скачайте резервную копию всей библиотеки.',
 
   'importNgx.preserveLabel': 'Сохранить метаданные Paperless-ngx',
   'importNgx.preserveDescription':
@@ -1978,7 +1983,6 @@ export const ru: Catalog = {
     other: '{chars} символа · {provider} · {duration}',
   },
   'ocrTest.failed': 'Проверка OCR не удалась',
-  'ocrTest.title': 'Проверка OCR',
   'ocrTest.intro':
     'Загрузите файл и запустите OCR у настроенного провайдера. Результаты не сохраняются.',
   'ocrTest.provider': 'Провайдер',
@@ -2070,8 +2074,7 @@ export const ru: Catalog = {
   'maintenance.reindexFailed': 'Переиндексация поиска не удалась',
   'maintenance.inFlight': 'Идёт обработка ({jobs}). Повторите, когда очередь опустеет.',
   'maintenance.pruneFailed': 'Очистка устаревших данных не удалась',
-  'maintenance.title': 'Обслуживание',
-  'maintenance.intro': 'Задачи обслуживания для всей библиотеки. Только для администраторов.',
+  'maintenance.intro': 'Задачи обслуживания для всей библиотеки.',
   'maintenance.failedTitle': 'Ошибки обработки',
   'maintenance.failedHint':
     'Ставит новое задание для документов, обработка которых завершилась ошибкой. Оригиналы не затрагиваются. Задания выполняются по одному, поэтому партия обрабатывается постепенно — обрабатывайте заново партиями, а не всё сразу, чтобы держать расходы на OCR и ИИ под контролем.',

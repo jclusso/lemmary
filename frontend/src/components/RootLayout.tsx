@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactElement } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet, useMatchRoute } from '@tanstack/react-router'
-import { pb, pbAdminUrl } from '../lib/pb'
+import { pb } from '../lib/pb'
 import { adoptAuthHandoff, ensureAuth, getUserDisplayName, isAdmin, logout } from '../lib/auth'
 import { getAppMeta, getSetupStatus, type SetupStatus } from '../lib/api/meta'
 import { useAppMeta } from '../hooks/useAppMeta'
@@ -8,16 +8,14 @@ import { useInboxCount } from '../hooks/useInboxCount'
 import { useActiveJobCount } from '../hooks/useActiveJobCount'
 import {
   primaryNavItems,
-  secondaryNavItems,
-  visibleNavItems,
-  NAV_BADGE_DESCRIPTIONS,
+  secondaryNavGroups,
   type NavBadgeKey,
-  type NavIconKey,
+  type NavGroup,
   type NavItem,
 } from '../lib/nav'
 import { t } from '../i18n'
-import { AppFooter } from './AppFooter'
 import { DemoCountdown } from './DemoCountdown'
+import { NavItemLink } from './NavItemLink'
 import { Button } from './ui'
 import { AppLogo } from './ui'
 import { LoginPage } from './LoginPage'
@@ -30,8 +28,12 @@ const iconButtonClass =
 const iconButtonActiveClass = 'text-oxblood'
 const menuItemClass =
   'flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-medium text-ink-muted transition-colors hover:bg-wash hover:text-oxblood data-[status=active]:text-oxblood'
+const menuHeadingClass =
+  'px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint'
 // The narrow layout has no room for a bar, so the whole link set stacks into
 // full-width tap targets.
+const panelHeadingClass =
+  'px-0.5 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint'
 const panelItemClass =
   'flex w-full items-center gap-2 border-t border-line/70 px-0.5 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition-colors first:border-t-0 hover:text-oxblood focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxblood data-[status=active]:text-oxblood'
 
@@ -113,141 +115,18 @@ function CloseIcon() {
   )
 }
 
-function AdminIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-3.5 w-3.5 shrink-0 text-amber-600"
-      aria-hidden="true"
-    >
-      <path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.4 7.5 9.5 4.4-1.1 7.5-5.1 7.5-9.5V6L12 3Z" />
-      <path d="M9.5 12.5 11.5 14.5 15 11" />
-    </svg>
-  )
-}
-
-function PocketBaseIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 40 40"
-      fill="none"
-      className="h-3.5 w-3.5 shrink-0"
-      aria-hidden="true"
-    >
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2.5"
-        d="M26 14h10.8a1.2 1.2 0 0 1 1.2 1.2v21.6a1.2 1.2 0 0 1-1.2 1.2H15.2a1.2 1.2 0 0 1-1.2-1.2V26M26 14V3.2A1.2 1.2 0 0 0 24.8 2H3.2A1.2 1.2 0 0 0 2 3.2v21.6A1.2 1.2 0 0 0 3.2 26H14"
-      />
-      <path
-        fill="currentColor"
-        d="M10 20a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h3.753a9 9 0 0 1 2.037.22q.967.199 1.667.697.72.48 1.131 1.296.412.798.412 1.974 0 1.137-.432 1.974a3.760 3.760 0 0 1-1.132 1.376 4.9 4.9 0 0 1-1.666.797 7.6 7.6 0 0 1-2.017.26h-.728a1 1 0 0 0-1 1V19a1 1 0 0 1-1 1zm2.025-7.740a1 1 0 0 0 1 1h.543q2.469 0 2.469-2.073 0-1.017-.638-1.435-.617-.42-1.831-.42h-.543a1 1 0 0 0-1 1zM22 33a1 1 0 0 1-1-1V21a1 1 0 0 1 1-1h3.488q1.044 0 1.926.16.902.139 1.557.518.657.378 1.025.997.39.618.39 1.555 0 .44-.144.877a2.4 2.4 0 0 1-.41.818q-.287.378-.717.678a2.9 2.9 0 0 1-.987.43.05.05 0 0 0-.038.047.05.05 0 0 0 .04.049q1.405.261 2.132.99.738.736.738 2.053 0 .996-.39 1.715a3.4 3.4 0 0 1-1.085 1.196 5.4 5.4 0 0 1-1.640.698 8.7 8.7 0 0 1-2.008.219zm2.012-8.776a1 1 0 0 0 1 1h.332q1.106 0 1.599-.419.49-.418.491-1.176 0-.719-.512-1.017-.492-.32-1.557-.32h-.353a1 1 0 0 0-1 1zm0 5.483a1 1 0 0 0 1 1h.62q2.417 0 2.417-1.755 0-.857-.594-1.236-.574-.379-1.824-.379h-.619a1 1 0 0 0-1 1z"
-      />
-    </svg>
-  )
-}
-
-const NAV_ICONS: Record<NavIconKey, () => ReactElement> = {
-  pocketbase: PocketBaseIcon,
-}
-
 type NavBadges = Record<NavBadgeKey, number | null>
 
 function navBadge(item: NavItem, badges: NavBadges): number | null | undefined {
   return item.kind === 'route' && item.badgeKey ? badges[item.badgeKey] : undefined
 }
 
-/**
- * The digits are hidden from assistive tech and replaced with a sentence,
- * because "Inbox 3" is not a useful accessible name.
- */
-function NavBadge({ count, description }: { count: number; description: string }) {
-  return (
-    <>
-      <span
-        aria-hidden="true"
-        className="ml-1.5 inline-flex px-1 py-0.5 align-middle text-[10px] font-semibold tabular-nums text-amber-800 ring-1 ring-inset ring-amber-800/40"
-      >
-        {count > 99 ? '99+' : count}
-      </span>
-      <span className="sr-only">{`, ${count} ${description}`}</span>
-    </>
-  )
-}
 
-/**
- * One header link, in either shape. The router handles internal paths so a tap
- * does not reload the app; the PocketBase dashboard is a real page elsewhere.
- */
-function NavItemLink({
-  item,
-  className,
-  role,
-  onNavigate,
-  badge,
-}: {
-  item: NavItem
-  className: string
-  role?: string
-  onNavigate?: () => void
-  badge?: number | null
-}) {
-  const Icon = item.icon && NAV_ICONS[item.icon]
-  // The shield stays decorative: these items only render for admins, so "admin
-  // only" in the accessible name would add nothing.
-  const label = (
-    <>
-      {item.admin && <AdminIcon />}
-      {Icon && <Icon />}
-      <span>{item.label}</span>
-      {typeof badge === 'number' && badge > 0 && item.kind === 'route' && item.badgeKey && (
-        <NavBadge count={badge} description={NAV_BADGE_DESCRIPTIONS[item.badgeKey]} />
-      )}
-    </>
-  )
-
-  if (item.kind === 'external') {
-    return (
-      <a
-        href={item.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        role={role}
-        className={className}
-        onClick={onNavigate}
-      >
-        {label}
-      </a>
-    )
-  }
-
-  return (
-    <Link
-      to={item.to}
-      role={role}
-      className={className}
-      activeOptions={item.exact ? { exact: true } : undefined}
-      onClick={onNavigate}
-    >
-      {label}
-    </Link>
-  )
-}
-
-function MoreNavMenu({ items }: { items: NavItem[] }) {
+function MoreNavMenu({ groups }: { groups: NavGroup[] }) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const matchRoute = useMatchRoute()
-  const menuActive = items.some(
+  const menuActive = groups.flatMap((group) => group.items).some(
     (item) => item.kind === 'route' && Boolean(matchRoute({ to: item.to })),
   )
 
@@ -290,16 +169,30 @@ function MoreNavMenu({ items }: { items: NavItem[] }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 min-w-44 border border-line-strong bg-surface p-1 shadow-md shadow-ink/10"
+          className="absolute right-0 z-20 mt-2 w-52 border border-line-strong bg-surface py-1 shadow-md shadow-ink/10"
         >
-          {items.map((item) => (
-            <NavItemLink
-              key={item.label}
-              item={item}
-              role="menuitem"
-              className={menuItemClass}
-              onNavigate={() => setOpen(false)}
-            />
+          {groups.map((group, index) => (
+            <div
+              key={group.key}
+              role="group"
+              aria-label={group.heading}
+              className={index > 0 ? 'mt-1 border-t border-line pt-1' : undefined}
+            >
+              {group.heading && (
+                <p aria-hidden="true" className={menuHeadingClass}>
+                  {group.heading}
+                </p>
+              )}
+              {group.items.map((item) => (
+                <NavItemLink
+                  key={item.label}
+                  item={item}
+                  role="menuitem"
+                  className={menuItemClass}
+                  onNavigate={() => setOpen(false)}
+                />
+              ))}
+            </div>
           ))}
         </div>
       )}
@@ -316,7 +209,6 @@ function AppHeader({
   accent,
   admin,
   reviewRequired,
-  hostEditable,
   userDisplayName,
   writableUntil,
 }: {
@@ -324,14 +216,12 @@ function AppHeader({
   accent: string
   admin: boolean
   reviewRequired: boolean
-  hostEditable: boolean
   userDisplayName: string
   writableUntil?: number
 }) {
   const [open, setOpen] = useState(false)
   const primaryItems = primaryNavItems(reviewRequired)
-  const secondaryItems = visibleNavItems(secondaryNavItems(pbAdminUrl, hostEditable), admin)
-  const panelItems = [...primaryItems, ...secondaryItems]
+  const secondaryGroups = secondaryNavGroups(admin)
   const badges = { inbox: useInboxCount(), activity: useActiveJobCount() }
 
   useEffect(() => {
@@ -383,7 +273,7 @@ function AppHeader({
                 badge={navBadge(item, badges)}
               />
             ))}
-            <MoreNavMenu items={secondaryItems} />
+            <MoreNavMenu groups={secondaryGroups} />
           </nav>
           <div className="flex items-center gap-2 border-l border-line pl-4">
             {userDisplayName && (
@@ -416,7 +306,7 @@ function AppHeader({
       {open && (
         <div id="header-nav-panel" className="border-t border-line bg-surface md:hidden">
           <nav className="mx-auto max-w-7xl px-4 sm:px-6" aria-label={t('rootLayout.mainNav')}>
-            {panelItems.map((item) => (
+            {[...primaryItems, ...secondaryGroups[0].items].map((item) => (
               <NavItemLink
                 key={item.label}
                 item={item}
@@ -424,6 +314,28 @@ function AppHeader({
                 onNavigate={() => setOpen(false)}
                 badge={navBadge(item, badges)}
               />
+            ))}
+            {secondaryGroups.slice(1).map((group) => (
+              <div
+                key={group.key}
+                role="group"
+                aria-label={group.heading}
+                className="border-t border-line-strong"
+              >
+                {group.heading && (
+                  <p aria-hidden="true" className={panelHeadingClass}>
+                    {group.heading}
+                  </p>
+                )}
+                {group.items.map((item) => (
+                  <NavItemLink
+                    key={item.label}
+                    item={item}
+                    className={panelItemClass}
+                    onNavigate={() => setOpen(false)}
+                  />
+                ))}
+              </div>
             ))}
           </nav>
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 border-t border-line-strong px-4 py-3 sm:px-6">
@@ -487,7 +399,7 @@ async function resolveGate(): Promise<Gate> {
 
 export function RootLayout() {
   const [gate, setGate] = useState<Gate>({ kind: 'loading' })
-  const { appName, accent, alwaysRequireReview, managed, writableUntil } = useAppMeta()
+  const { appName, accent, alwaysRequireReview, writableUntil } = useAppMeta()
   const userDisplayName = gate.kind === 'app' ? getUserDisplayName() : ''
   const admin = gate.kind === 'app' ? gate.admin : false
 
@@ -587,14 +499,12 @@ export function RootLayout() {
         accent={accent}
         admin={admin}
         reviewRequired={Boolean(alwaysRequireReview)}
-        hostEditable={managed === false}
         userDisplayName={userDisplayName}
         writableUntil={writableUntil}
       />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5 sm:px-6 sm:py-6">
         <Outlet />
       </main>
-      <AppFooter />
     </div>
   )
 }
