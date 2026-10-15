@@ -7,6 +7,7 @@ import {
   removeDocumentPages,
   restoreDocumentOriginal,
   suggestedRemovals,
+  suggestedKept,
   unreadKept,
   type DocumentPages,
   type PageEditOutcome,
@@ -98,6 +99,7 @@ export function PageEditorDialog({
   const blankCount = pages.filter((page) => page.blank).length
   const keepsNone = pages.length > 0 && selected.size === pages.length
   const toRead = unreadKept(pages, selected).length
+  const toKeep = suggestedKept(pages, selected).length
   const savable = canSave(pages, selected)
 
   return (
@@ -191,9 +193,11 @@ export function PageEditorDialog({
           >
             {busy
               ? t('pageEditor.working')
-              : selected.size > 0 || toRead === 0
+              : selected.size > 0 || toKeep === 0
                 ? t('pageEditor.remove', { count: selected.size })
-                : t('pageEditor.read', { count: toRead })}
+                : toRead > 0
+                  ? t('pageEditor.read', { count: toRead })
+                  : t('pageEditor.keep', { count: toKeep })}
           </Button>
         </div>
       </div>

@@ -56,11 +56,13 @@ export const en = {
   'documentStatus.needsReview': 'Needs review',
 
   'processing.stepPreview': 'Preview',
+  'processing.stepDetectBlankPages': 'Detect blank pages',
   'processing.stepDetectDuplicates': 'Detect duplicates',
   'processing.stepExtractMetadata': 'Extract metadata',
   'processing.stepApplyMetadata': 'Apply metadata',
   'processing.stepEmbed': 'Build search vectors',
   'processing.descPreview': 'Regenerate the first-page preview image (PDF only)',
+  'processing.descDetectBlankPages': 'Find pages with nothing printed on them, so OCR leaves them out',
   'processing.descOcr': 'Re-run text extraction on the original file',
   'processing.descDetectDuplicates': 'Compare OCR text for near-duplicates (when enabled in Settings)',
   'processing.descExtractMetadata': 'Re-run AI metadata extraction from OCR text',
@@ -524,6 +526,7 @@ export const en = {
   'pageEditor.willRead': 'Will be read',
   'pageEditor.read': { one: 'Read {count} page', other: 'Read {count} pages' },
   'pageEditor.willReread': 'Saving this sends the document to OCR again.',
+  'pageEditor.keep': { one: 'Keep {count} page', other: 'Keep {count} pages' },
   'pageEditor.textKept': 'The text stays as it is, so this uses no OCR.',
 
   'providerModelFields.none': 'None',
@@ -1033,10 +1036,11 @@ export const en = {
     one: 'Page {pages} looks blank and was not sent to OCR.',
     other: 'Pages {pages} look blank and were not sent to OCR.',
   },
-  'documentPage.removeBlankPages': {
-    one: 'Remove blank page {pages}',
-    other: 'Remove blank pages {pages}',
+  'documentPage.blankPages': {
+    one: 'Page {pages} looks blank.',
+    other: 'Pages {pages} look blank.',
   },
+  'documentPage.reviewBlankPages': 'Review pages',
   'documentPage.hideJobDetails': 'Hide processing job details',
   'documentPage.showJobDetails': 'Show processing job details',
   'documentPage.hideJob': 'Hide processing job',

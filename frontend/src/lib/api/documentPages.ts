@@ -34,10 +34,20 @@ export function unreadKept(pages: DocumentPage[], selected: ReadonlySet<number>)
   return pages.filter((page) => page.unread && !selected.has(page.page)).map((page) => page.page)
 }
 
+/**
+ * Pages suggested for removal (blank or unread) that are not selected: keeping
+ * them confirms they stay, which ends the suggestion.
+ */
+export function suggestedKept(pages: DocumentPage[], selected: ReadonlySet<number>): number[] {
+  return pages
+    .filter((page) => (page.blank || page.unread) && !selected.has(page.page))
+    .map((page) => page.page)
+}
+
 /** A change needs something to do and at least one page left over. */
 export function canSave(pages: DocumentPage[], selected: ReadonlySet<number>): boolean {
   if (pages.length === 0 || selected.size >= pages.length) return false
-  return selected.size > 0 || unreadKept(pages, selected).length > 0
+  return selected.size > 0 || suggestedKept(pages, selected).length > 0
 }
 
 /**
@@ -49,13 +59,32 @@ export function needsReread(pages: DocumentPage[], selected: ReadonlySet<number>
   return removesRead || unreadKept(pages, selected).length > 0
 }
 
-/** The current file's pages that OCR left out, numbered as the file is now. */
-export function unreadPages(document: Pick<DocumentRecord, 'page_map' | 'ocr_skipped_pages'>): number[] {
+export type BlankSuggestion = {
+  /** Pages of the current file, numbered as the file is now. */
+  pages: number[]
+  /** Every one of them was left out of the OCR text. */
+  unread: boolean
+}
+
+/**
+ * The pages the detect_blank_pages step found blank that are still in the file
+ * and that the owner has not kept.
+ */
+export function blankSuggestion(
+  document: Pick<DocumentRecord, 'page_map' | 'blank_pages' | 'ocr_skipped_pages' | 'confirmed_pages'>,
+): BlankSuggestion {
+  const blank = new Set(document.blank_pages ?? [])
+  const confirmed = new Set(document.confirmed_pages ?? [])
   const skipped = new Set(document.ocr_skipped_pages ?? [])
-  if (skipped.size === 0) return []
-  const map = document.page_map
-  if (!map || map.length === 0) return [...skipped].sort((a, b) => a - b)
-  return map.flatMap((uploaded, index) => (skipped.has(uploaded) ? [index + 1] : []))
+  // Without a map the file is the upload, so a page's number is its own.
+  const pages = document.page_map?.length
+    ? document.page_map.map((uploaded, index) => ({ page: index + 1, uploaded }))
+    : [...blank].sort((a, b) => a - b).map((uploaded) => ({ page: uploaded, uploaded }))
+  const suggested = pages.filter((entry) => blank.has(entry.uploaded) && !confirmed.has(entry.uploaded))
+  return {
+    pages: suggested.map((entry) => entry.page),
+    unread: suggested.length > 0 && suggested.every((entry) => skipped.has(entry.uploaded)),
+  }
 }
 
 /** Renders every page of the caller's own PDF, flagging the ones that look blank. */

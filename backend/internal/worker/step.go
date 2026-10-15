@@ -45,6 +45,7 @@ func (s *StepState) forced(stepName string) bool {
 func buildRegistry(ocrProvider ocr.Provider, aiExtractor ai.Extractor, embedder ai.Embedder, linking RelatedLinking) map[string]Step {
 	steps := []Step{
 		&PreviewStep{},
+		&DetectBlankPagesStep{},
 		&OCRStep{Provider: ocrProvider},
 		&DetectDuplicatesStep{},
 		&ExtractMetadataStep{Extractor: aiExtractor, ExtractReferences: linking.Enabled},

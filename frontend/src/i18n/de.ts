@@ -56,11 +56,14 @@ export const de: Catalog = {
   'documentStatus.needsReview': 'Prüfung nötig',
 
   'processing.stepPreview': 'Vorschau',
+  'processing.stepDetectBlankPages': 'Leere Seiten erkennen',
   'processing.stepDetectDuplicates': 'Duplikate erkennen',
   'processing.stepExtractMetadata': 'Metadaten extrahieren',
   'processing.stepApplyMetadata': 'Metadaten übernehmen',
   'processing.stepEmbed': 'Suchvektoren erstellen',
   'processing.descPreview': 'Vorschaubild der ersten Seite neu erzeugen (nur PDF)',
+  'processing.descDetectBlankPages':
+    'Seiten ohne Druck finden, damit die Texterkennung sie auslässt',
   'processing.descOcr': 'Texterkennung auf der Originaldatei erneut ausführen',
   'processing.descDetectDuplicates':
     'OCR-Text auf Beinahe-Duplikate vergleichen (wenn in den Einstellungen aktiviert)',
@@ -545,6 +548,7 @@ export const de: Catalog = {
   'pageEditor.willRead': 'Wird gelesen',
   'pageEditor.read': { one: '{count} Seite lesen', other: '{count} Seiten lesen' },
   'pageEditor.willReread': 'Beim Speichern wird das Dokument erneut zur Texterkennung geschickt.',
+  'pageEditor.keep': { one: '{count} Seite behalten', other: '{count} Seiten behalten' },
   'pageEditor.textKept': 'Der Text bleibt, wie er ist, daher wird keine Texterkennung benötigt.',
 
   'providerModelFields.none': 'Keiner',
@@ -1090,10 +1094,11 @@ export const de: Catalog = {
     one: 'Seite {pages} wirkt leer und wurde nicht zur Texterkennung geschickt.',
     other: 'Die Seiten {pages} wirken leer und wurden nicht zur Texterkennung geschickt.',
   },
-  'documentPage.removeBlankPages': {
-    one: 'Leere Seite {pages} entfernen',
-    other: 'Leere Seiten {pages} entfernen',
+  'documentPage.blankPages': {
+    one: 'Seite {pages} wirkt leer.',
+    other: 'Die Seiten {pages} wirken leer.',
   },
+  'documentPage.reviewBlankPages': 'Seiten prüfen',
   'documentPage.hideJobDetails': 'Details zum Verarbeitungsauftrag ausblenden',
   'documentPage.showJobDetails': 'Details zum Verarbeitungsauftrag anzeigen',
   'documentPage.hideJob': 'Verarbeitungsauftrag ausblenden',
