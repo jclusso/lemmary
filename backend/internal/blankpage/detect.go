@@ -16,7 +16,10 @@ import (
 const RenderEdge = 800
 
 // Detect renders every page of pdfPath and reports, in page order, whether
-// each looks blank.
+// each looks blank. A page also counts as blank when it only shows the page
+// before it through the paper: a duplex scan puts each sheet's back right
+// after its front, and heavy bleed-through can carry as much ink as faint
+// print, so the front is what tells them apart.
 func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) {
 	dir, err := os.MkdirTemp("", "lemmary-blankpage-*")
 	if err != nil {
@@ -29,6 +32,7 @@ func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) 
 		return nil, err
 	}
 	blank := make([]bool, len(paths))
+	var previous measuredPage
 	for i, path := range paths {
 		data, err := os.ReadFile(path)
 		if err != nil {
@@ -38,7 +42,9 @@ func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) 
 		if err != nil {
 			return nil, fmt.Errorf("blankpage: page %d: %w", i+1, err)
 		}
-		blank[i] = IsBlank(img)
+		current := measurePage(img)
+		blank[i] = isBlank(current.ink) || (i > 0 && !blank[i-1] && showsThrough(current, previous))
+		previous = current
 	}
 	return blank, nil
 }

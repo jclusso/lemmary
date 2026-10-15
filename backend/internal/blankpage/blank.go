@@ -37,7 +37,7 @@ const (
 	cellInk = 3
 )
 
-// inkProfile is what IsBlank decides from, measured over the page's inner area.
+// inkProfile is what isBlank decides from, measured over the page's inner area.
 type inkProfile struct {
 	// ink and solid are shares of the inner area.
 	ink, solid float64
@@ -45,10 +45,9 @@ type inkProfile struct {
 	spread float64
 }
 
-// IsBlank reports whether a rendered page carries no print beyond bleed-through,
-// specks and edge shadows.
-func IsBlank(img image.Image) bool {
-	p := measureInk(img)
+// isBlank reports whether a page carries no print beyond bleed-through, specks
+// and edge shadows, judged on the page alone.
+func isBlank(p inkProfile) bool {
 	switch {
 	case p.ink < blankInk:
 		return true

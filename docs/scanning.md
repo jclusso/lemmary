@@ -93,7 +93,9 @@ library, not only scans.
 A page counts as blank when it has almost no dark print. Specks of dust and
 the shadows at a scan's edges are ignored, and so is bleed-through: marks
 pressed through from the front, and the faint image of a whole printed page
-showing through the paper. Check the suggestion before removing: a page
+showing through the paper. In a double-sided scan, a page that only shows the
+page before it, mirrored and fainter, counts as blank even when the
+bleed-through is dark. Check the suggestion before removing: a page
 holding a single faint stamp, or a whole page of badly faded print, may be
 flagged too.
 

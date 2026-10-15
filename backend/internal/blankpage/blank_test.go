@@ -87,8 +87,8 @@ func TestIsBlank(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			img := tc.build()
-			if got := IsBlank(img); got != tc.blank {
-				t.Fatalf("IsBlank = %v, want %v (%+v)", got, tc.blank, measureInk(img))
+			if got := isBlank(measureInk(img)); got != tc.blank {
+				t.Fatalf("isBlank = %v, want %v (%+v)", got, tc.blank, measureInk(img))
 			}
 		})
 	}
