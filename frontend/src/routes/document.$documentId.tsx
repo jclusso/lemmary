@@ -49,8 +49,8 @@ import { ProcessingSteps } from '../components/ProcessingSteps'
 import { Button } from '../components/ui'
 import { ShareDialog, ShareSummary } from '../components/ShareDialog'
 import { PageEditorDialog, type PageChange } from '../components/PageEditorDialog'
-import { SuggestedPageRemoval } from '../components/SuggestedPageRemoval'
-import { unreadPages } from '../lib/api/documentPages'
+import { BlankPagesNotice } from '../components/BlankPagesNotice'
+import { blankSuggestion } from '../lib/api/documentPages'
 import { RelatedDocuments } from '../components/RelatedDocuments'
 import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
@@ -247,7 +247,7 @@ export function DocumentDetailPage() {
   const owned = Boolean(document) && document?.user === pb.authStore.record?.id
   const [sharing, setSharing] = useState(false)
   const [editingPages, setEditingPages] = useState(false)
-  const unread = document ? unreadPages(document) : []
+  const blankPages = document ? blankSuggestion(document) : { pages: [], unread: false }
   const [shareVersion, setShareVersion] = useState(0)
   const back = backTarget(document, owned)
 
@@ -638,6 +638,7 @@ export function DocumentDetailPage() {
             : t('documentPage.duplicateReviewed')}
         </div>
       )}
+      {owned && <BlankPagesNotice suggestion={blankPages} onReview={() => setEditingPages(true)} />}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <Link to={back} className="text-sm text-ink-soft hover:text-oxblood">
@@ -1136,7 +1137,6 @@ export function DocumentDetailPage() {
               {editing && (
                 <span className="text-xs font-normal text-ink-soft">{t('documentPage.ocrEditHint')}</span>
               )}
-              {owned && <SuggestedPageRemoval pages={unread} onReview={() => setEditingPages(true)} />}
             </div>
 
             <div className="flex items-center gap-4 sm:col-span-2">

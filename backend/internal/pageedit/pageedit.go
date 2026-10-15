@@ -168,7 +168,6 @@ func RemovePages(ctx context.Context, app core.App, document *core.Record, remov
 		return Outcome{}, ErrNoPages
 	}
 	record.Confirmed = append(record.Confirmed, plan.confirm...)
-	record.Skipped = slices.DeleteFunc(record.Skipped, func(page int) bool { return slices.Contains(plan.confirm, page) })
 
 	if len(removed) > 0 {
 		outPath := filepath.Join(workDir, "result.pdf")
@@ -245,7 +244,8 @@ func checkRemoval(count int, remove []int) ([]int, error) {
 type removalPlan struct {
 	// kept holds the uploaded numbers of the pages that stay, in order.
 	kept []int
-	// confirm holds the uploaded numbers of pages OCR left out that stay.
+	// confirm holds the uploaded numbers of pages found blank or left out by
+	// OCR that stay.
 	confirm []int
 	// reread is whether the OCR text no longer matches the pages that stay.
 	reread bool
@@ -255,22 +255,24 @@ type removalPlan struct {
 // does to its OCR text. The text covers every page OCR did not leave out, so
 // it still holds when only left-out pages go; a removed page that was read
 // put text in it that has to come out, and a left-out page that stays has to
-// be read.
+// be read. Any page found blank that stays is confirmed, which ends the
+// suggestion to remove it.
 func planRemoval(record models.PageRecord, count int, removed []int) removalPlan {
 	var plan removalPlan
 	for page := 1; page <= count; page++ {
 		uploaded := record.Uploaded(page)
-		switch {
-		case slices.Contains(removed, page):
+		if slices.Contains(removed, page) {
 			if !record.IsSkipped(uploaded) {
 				plan.reread = true
 			}
-		case record.IsSkipped(uploaded):
-			plan.kept = append(plan.kept, uploaded)
-			plan.confirm = append(plan.confirm, uploaded)
+			continue
+		}
+		plan.kept = append(plan.kept, uploaded)
+		if record.IsSkipped(uploaded) {
 			plan.reread = true
-		default:
-			plan.kept = append(plan.kept, uploaded)
+		}
+		if (record.IsSkipped(uploaded) || record.IsBlank(uploaded)) && !record.IsConfirmed(uploaded) {
+			plan.confirm = append(plan.confirm, uploaded)
 		}
 	}
 	return plan

@@ -6,14 +6,13 @@ import (
 	"path/filepath"
 	"slices"
 
-	"lemmary/backend/internal/blankpage"
 	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/pdftool"
 )
 
 // ocrInput is the file an OCR provider reads: the document's PDF without the
-// pages that look blank, so they cost nothing and their bleed-through is not
-// read as text. A page the owner confirmed is always read.
+// pages detect_blank_pages found blank, so they cost nothing and their
+// bleed-through is not read as text. A page the owner confirmed is always read.
 type ocrInput struct {
 	path string
 	// pages is how many pages path holds.
@@ -26,7 +25,7 @@ type ocrInput struct {
 	cleanup func()
 }
 
-// Any failure here sends the whole file: skipping blank pages saves tokens,
+// Any failure here sends the whole file: leaving out blank pages saves tokens,
 // and is not worth failing an OCR run over.
 func prepareOCRInput(ctx context.Context, state *StepState) ocrInput {
 	in := ocrInput{
@@ -44,18 +43,11 @@ func prepareOCRInput(ctx context.Context, state *StepState) ocrInput {
 	}
 	record := models.LoadPageRecord(state.Document)
 	in.pages = count
-	for page := 1; page <= count; page++ {
-		in.current = append(in.current, record.Uploaded(page))
-	}
+	in.current = record.Current(count)
 
-	blank, err := blankpage.Detect(ctx, state.TmpPath, count)
-	if err != nil {
-		state.Logger.Warn("ocr: blank page detection failed; reading every page", "error", err)
-		return in
-	}
 	var remove, skipped []int
-	for i, isBlank := range blank {
-		if uploaded := in.current[i]; isBlank && !record.IsConfirmed(uploaded) {
+	for i, uploaded := range in.current {
+		if record.IsBlank(uploaded) && !record.IsConfirmed(uploaded) {
 			remove = append(remove, i+1)
 			skipped = append(skipped, uploaded)
 		}

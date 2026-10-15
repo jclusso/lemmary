@@ -100,10 +100,13 @@ Seite, das durch das Papier scheint. Prüfen Sie den Vorschlag vor dem Entfernen
 eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
 Schrift kann markiert werden.
 
-Leer wirkende Seiten werden nie zur Texterkennung geschickt. Sie kosten daher
-nichts, und ihr durchscheinender Text landet nicht im Text des Dokuments. Die Datei
-selbst behält sie, bis Sie sie entfernen, und die Dokumentseite schlägt unter dem
-OCR-Text vor, sie zu entfernen; der Vorschlag öffnet denselben Dialog.
+Die Verarbeitung findet diese Seiten für Sie. Ein Schritt **Leere Seiten erkennen**
+läuft vor der Texterkennung, und die Texterkennung lässt aus, was er gefunden hat.
+Leere Seiten kosten daher nichts, und ihr durchscheinender Text landet nicht im Text
+des Dokuments. Die Datei selbst behält sie, bis Sie sie entfernen: Die Dokumentseite
+nennt die leer wirkenden Seiten in einem Hinweis oben, wie bei einem möglichen
+Duplikat, und **Seiten prüfen** öffnet den Dialog mit diesen Seiten ausgewählt.
+Behalten Sie sie stattdessen, endet der Vorschlag.
 
 Lemmary entscheidet selbst, ob eine Änderung eine erneute Texterkennung braucht.
 Werden nur ausgelassene Seiten entfernt, bleibt der Text, wie er ist. Wird eine

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+  blankSuggestion,
   canSave,
   needsReread,
+  suggestedKept,
   suggestedRemovals,
   unreadKept,
-  unreadPages,
   type DocumentPage,
 } from './documentPages'
 
@@ -56,8 +57,14 @@ describe('canSave', () => {
     expect(canSave(pages, new Set())).toBe(true)
   })
 
-  it('has nothing to save without a removal or an unread page', () => {
-    expect(canSave([page(1, false), page(2, true)], new Set())).toBe(false)
+  // Page 2 looks blank but was read: keeping it only ends the suggestion.
+  it('saves keeping a suggested page that was read', () => {
+    expect(suggestedKept([page(1, false), page(2, true)], new Set())).toEqual([2])
+    expect(canSave([page(1, false), page(2, true)], new Set())).toBe(true)
+  })
+
+  it('has nothing to save without a removal or a suggested page', () => {
+    expect(canSave([page(1, false), page(2, false)], new Set())).toBe(false)
   })
 
   it('refuses while no pages are known', () => {
@@ -65,17 +72,28 @@ describe('canSave', () => {
   })
 })
 
-describe('unreadPages', () => {
+describe('blankSuggestion', () => {
   it('numbers an unedited file as uploaded', () => {
-    expect(unreadPages({ page_map: null, ocr_skipped_pages: [4, 2] })).toEqual([2, 4])
+    expect(blankSuggestion({ page_map: null, blank_pages: [4, 2], ocr_skipped_pages: [2, 4] })).toEqual({
+      pages: [2, 4],
+      unread: true,
+    })
   })
 
-  // The file holds uploaded pages 1, 3 and 4; OCR left out 2 and 4.
+  // The file holds uploaded pages 1, 3 and 4; 2 and 4 were found blank.
   it('renumbers through the page map', () => {
-    expect(unreadPages({ page_map: [1, 3, 4], ocr_skipped_pages: [2, 4] })).toEqual([3])
+    expect(blankSuggestion({ page_map: [1, 3, 4], blank_pages: [2, 4] })).toEqual({ pages: [3], unread: false })
   })
 
-  it('is empty when nothing was left out', () => {
-    expect(unreadPages({})).toEqual([])
+  it('leaves out pages the owner kept', () => {
+    expect(blankSuggestion({ blank_pages: [2, 4], confirmed_pages: [4] }).pages).toEqual([2])
+  })
+
+  it('says read when any suggested page is in the text', () => {
+    expect(blankSuggestion({ blank_pages: [2, 4], ocr_skipped_pages: [2] }).unread).toBe(false)
+  })
+
+  it('is empty when nothing was found', () => {
+    expect(blankSuggestion({})).toEqual({ pages: [], unread: false })
   })
 })

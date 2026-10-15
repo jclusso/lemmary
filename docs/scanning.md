@@ -97,10 +97,13 @@ showing through the paper. Check the suggestion before removing: a page
 holding a single faint stamp, or a whole page of badly faded print, may be
 flagged too.
 
-Pages that look blank are never sent to OCR, so they cost nothing to process
-and their bleed-through does not end up in the document's text. The file
-itself keeps them until you remove them, and the document page suggests
-removing them under the OCR text; the suggestion opens the same dialog.
+Processing finds these pages for you. A **Detect blank pages** step runs
+before OCR, and OCR leaves out what it found, so blank pages cost nothing to
+process and their bleed-through does not end up in the document's text. The
+file itself keeps them until you remove them: the document page says which
+pages look blank, in a notice at the top like the one for a likely duplicate,
+and **Review pages** opens the dialog with them selected. Keeping them instead
+ends the suggestion.
 
 Lemmary works out whether a change needs OCR again. Removing only pages that
 were left out keeps the text as it is. Removing a page that was read, or

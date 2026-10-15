@@ -1,7 +1,9 @@
 package models
 
 const (
-	StepPreview          = "preview"
+	StepPreview = "preview"
+	// StepDetectBlankPages runs before OCR, which leaves out what it found.
+	StepDetectBlankPages = "detect_blank_pages"
 	StepOCR              = "ocr"
 	StepDetectDuplicates = "detect_duplicates"
 	StepExtractMetadata  = "extract_metadata"
@@ -16,11 +18,11 @@ const (
 )
 
 var (
-	FullPipelineSteps       = []string{StepPreview, StepOCR, StepDetectDuplicates, StepExtractMetadata, StepApplyMetadata, StepEmbed, StepLinkRelated}
+	FullPipelineSteps       = []string{StepPreview, StepDetectBlankPages, StepOCR, StepDetectDuplicates, StepExtractMetadata, StepApplyMetadata, StepEmbed, StepLinkRelated}
 	ExtractionPipelineSteps = []string{StepExtractMetadata, StepApplyMetadata, StepEmbed, StepLinkRelated}
 	// ImportPreserveSteps runs preview/OCR/near-dup detection without AI metadata
 	// overwrite, so ngx title/tags/correspondent/type survive import.
-	ImportPreserveSteps = []string{StepPreview, StepOCR, StepDetectDuplicates, StepEmbed, StepLinkRelated}
+	ImportPreserveSteps = []string{StepPreview, StepDetectBlankPages, StepOCR, StepDetectDuplicates, StepEmbed, StepLinkRelated}
 )
 
 const (

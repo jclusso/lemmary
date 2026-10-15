@@ -38,6 +38,7 @@ describe('forceStepsForReprocess', () => {
   it('excludes apply_metadata, which is never forced', () => {
     expect(forceStepsForReprocess([...FULL_PIPELINE_STEPS])).toEqual([
       'preview',
+      'detect_blank_pages',
       'ocr',
       'detect_duplicates',
       'extract_metadata',

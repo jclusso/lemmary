@@ -170,8 +170,9 @@ func TestKeepingAnUnreadPageConfirmsIt(t *testing.T) {
 	}
 	document = reload(t, app, document)
 	record := models.LoadPageRecord(document)
-	if !slices.Equal(record.Confirmed, []int{3}) || len(record.Skipped) != 0 {
-		t.Fatalf("record = %+v, want page 3 confirmed and nothing skipped", record)
+	// Skipped stays true to the text until the queued OCR reads page 3.
+	if !slices.Equal(record.Confirmed, []int{3}) || !slices.Equal(record.Skipped, []int{3}) {
+		t.Fatalf("record = %+v, want page 3 confirmed and still skipped", record)
 	}
 	if document.GetString("file") != fileName {
 		t.Fatal("keeping every page replaced the file")
@@ -235,6 +236,13 @@ func TestPlanRemoval(t *testing.T) {
 		if !slices.Equal(plan.kept, tc.kept) || !slices.Equal(plan.confirm, tc.confirm) || plan.reread != tc.reread {
 			t.Errorf("%s: plan = %+v, want kept %v confirm %v reread %v", name, plan, tc.kept, tc.confirm, tc.reread)
 		}
+	}
+
+	// Page 3 was read before it was found blank. Keeping it ends the
+	// suggestion; the text already has it, so nothing is read again.
+	plan := planRemoval(models.PageRecord{Blank: []int{3}}, 3, nil)
+	if !slices.Equal(plan.confirm, []int{3}) || plan.reread {
+		t.Fatalf("keeping a read blank page: plan = %+v, want it confirmed without rereading", plan)
 	}
 }
 
