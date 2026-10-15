@@ -99,7 +99,7 @@ func (r *agentRetriever) surveyDocuments(ctx context.Context, ids []string, ques
 		if err != nil {
 			continue
 		}
-		if !CanReadDocument(r.app, record, r.userID) {
+		if !CanSendToAI(r.app, record, r.userID) {
 			continue
 		}
 		full := record.GetString("ocr_text")

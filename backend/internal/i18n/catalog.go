@@ -901,6 +901,14 @@ var catalog = map[string]map[string]string{
 		"de": "Extraktion und Recherche benötigen einen passenden Anbieter (%s)",
 		"ru": "для извлечения и исследования нужен подходящий провайдер (%s)",
 	},
+	"This document is marked sensitive and is never sent to an AI provider.": {
+		"de": "Dieses Dokument ist als sensibel markiert und wird nie an einen KI-Anbieter gesendet.",
+		"ru": "Этот документ помечен как конфиденциальный и никогда не отправляется ИИ-провайдеру.",
+	},
+	"sensitive_folders must be at most %d characters": {
+		"de": "sensitive_folders darf höchstens %d Zeichen lang sein",
+		"ru": "sensitive_folders: не более %d символов",
+	},
 	"extraction_rules must be at most %d characters": {
 		"de": "extraction_rules darf höchstens %d Zeichen lang sein",
 		"ru": "extraction_rules: не более %d символов",

@@ -377,6 +377,21 @@ Mit `RELATED_LINKING_ENABLED=1` verknüpft die Pipeline Dokumente selbst, in ein
 
 Der Schritt fügt nur Verknüpfungen hinzu, daher kommt eine von Hand gelöste zurück, wenn das Dokument erneut verarbeitet wird. Dokumente, die vor dem Setzen des Flags verarbeitet wurden, werden bei einer erneuten Verarbeitung verknüpft; nur den Schritt `link_related` erneut auszuführen verknüpft nach Ähnlichkeit ohne weiteren KI-Aufruf, während Referenznummern erneut **Metadaten extrahieren** brauchen.
 
+### Sensible Dokumente {#sensitive-documents}
+
+Ein als **sensibel** markiertes Dokument wird nie an einen externen KI-Anbieter gesendet. Markiert wird es mit **Sensibel** auf der Upload-Seite, mit **Als sensibel markieren** auf seiner Seite oder durch Ablegen in einem Unterordner des Import-Ordners, dessen Name unter **Einstellungen → Verarbeitung → Sensible Dokumente** steht (Standard `sensitive`, ohne Beachtung der Groß- und Kleinschreibung in beliebiger Tiefe, also zählt auch `Taxes/sensitive/w2.pdf`). Der Ordner wird wie gewohnt zum Tag.
+
+Für ein sensibles Dokument gilt:
+
+- **OCR** läuft nur dort, wo der Text den Server nie verlässt: native Extraktion (TXT, CSV, DOCX, XLSX) oder der [lokale OCR-Sidecar](/de/local_ocr). Ein Scan ohne beides behält keinen Text und ist nur über Titel und Tags auffindbar.
+- **Extraktion** (`extract_metadata`, `apply_metadata`) wird übersprungen; das Dokument landet zur Benennung im [Posteingang](#review-inbox).
+- **Embeddings** erzeugt nur der [lokale Embedding-Sidecar](/de/local_embeddings), nie ein gehostetes Modell.
+- **KI fragen, KI-Suche, Deep Research, OCR-Übersetzung, KI-Tag-Zuordnung und der MCP-Endpunkt** lassen es ganz aus: Das Modell erfährt nicht, dass es existiert.
+
+**Sensible Dokumente auch von lokalen Anbietern fernhalten** schaltet für sie zusätzlich die lokalen OCR- und Embedding-Sidecars ab. Diese Regeln stecken in den Pipeline-Schritten, daher umgeht sie auch eine erneute Verarbeitung mit erzwungenem Schritt nicht.
+
+Wird ein vorhandenes Dokument als sensibel markiert, werden seine gespeicherten Embeddings gelöscht. Was ein Anbieter vor der Markierung erhalten hat, lässt sich nicht zurückholen; markieren Sie daher beim Upload oder über den Ordner. Das Aufheben der Markierung ändert allein nichts; verarbeiten Sie das Dokument neu, um OCR und Extraktion auszuführen. Die Dokumentliste filtert mit **Nur sensible**, und ein Backup speichert die Markierung in `metadata.json` und stellt sie wieder her.
+
 ## Volltextsuche {#full-text-search}
 
 Die Archivsuche verwendet einen invertierten Index von [Bleve](https://github.com/blevesearch/bleve) (nicht SQLite `LIKE`). Der Index liegt unter `{dataDir}/bleve/documents` (Docker: `/app/pb_data/bleve/documents` auf dem vorhandenen Volume `app_data`). Er ist abgeleitete Daten: Das Leeren von `pb_data` leert auch den Index, und der nächste Start baut ihn aus den Dokumenten neu auf.

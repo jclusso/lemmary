@@ -19,6 +19,7 @@ func newDocumentRecord(t *testing.T, id, title, ocrText string) *core.Record {
 		&core.SelectField{Name: "processing_status", Values: []string{"needs_review", "completed"}},
 		&core.JSONField{Name: "tags"},
 		&core.JSONField{Name: "people_or_organizations"},
+		&core.BoolField{Name: "sensitive"},
 	)
 	record := core.NewRecord(collection)
 	record.Id = id
@@ -30,6 +31,30 @@ func newDocumentRecord(t *testing.T, id, title, ocrText string) *core.Record {
 		t.Fatalf("PostScan: %v", err)
 	}
 	return record
+}
+
+func TestBecameSensitiveOnlyOnTheTransitionIntoTheMark(t *testing.T) {
+	t.Parallel()
+
+	marked := newDocumentRecord(t, "doc1", "W-2", "wages")
+	marked.Set("sensitive", true)
+	if !becameSensitive(marked) {
+		t.Fatal("marking a document sensitive has to drop its vectors")
+	}
+
+	already := newDocumentRecord(t, "doc1", "W-2", "wages")
+	already.Set("sensitive", true)
+	if err := already.PostScan(); err != nil {
+		t.Fatal(err)
+	}
+	already.Set("title", "W-2 2025")
+	if becameSensitive(already) {
+		t.Fatal("editing a document that was already sensitive is not a new mark")
+	}
+
+	if becameSensitive(newDocumentRecord(t, "doc1", "Invoice", "total")) {
+		t.Fatal("an unmarked document has nothing to drop")
+	}
 }
 
 // Only the OCR text is embedded, so an archive whose tags are being tidied must

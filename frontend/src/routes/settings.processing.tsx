@@ -34,6 +34,8 @@ export function SettingsProcessingPage() {
       deep_search_languages: settings.deep_search_languages,
       extraction_rules: settings.extraction_rules,
       always_require_review: settings.always_require_review,
+      sensitive_folders: settings.sensitive_folders,
+      sensitive_block_local: settings.sensitive_block_local,
       embedding_model: settings.embedding_model,
     }))
 
@@ -62,6 +64,8 @@ export function SettingsProcessingPage() {
       deep_search_languages: form.deep_search_languages,
       extraction_rules: form.extraction_rules,
       always_require_review: form.always_require_review,
+      sensitive_folders: form.sensitive_folders,
+      sensitive_block_local: form.sensitive_block_local,
     })
   }
 
@@ -167,6 +171,31 @@ export function SettingsProcessingPage() {
               {t('settingsProcessing.extractionRulesHint')}
             </p>
           </div>
+        </div>
+        <div className="mt-6 rounded-xs border border-line-strong bg-bright p-4">
+          <h3 className="text-sm font-semibold text-ink">{t('settingsProcessing.sensitiveTitle')}</h3>
+          <p className={`${fieldHintClassName} mt-1`}>{t('settingsProcessing.sensitiveIntro')}</p>
+          <label className={`${labelClassName} mt-3`}>
+            <span className={labelTextClassName}>{t('settingsProcessing.sensitiveFolders')}</span>
+            <input
+              type="text"
+              className={inputClassName}
+              placeholder="sensitive"
+              value={form.sensitive_folders}
+              onChange={(e) => updateField('sensitive_folders', e.target.value)}
+            />
+          </label>
+          <p className={fieldHintClassName}>{t('settingsProcessing.sensitiveFoldersHint')}</p>
+          <label className="mt-3 flex items-center gap-2.5 text-sm font-medium text-ink">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-oxblood"
+              checked={form.sensitive_block_local}
+              onChange={(e) => updateField('sensitive_block_local', e.target.checked)}
+            />
+            {t('settingsProcessing.sensitiveBlockLocal')}
+          </label>
+          <p className={`${fieldHintClassName} mt-2`}>{t('settingsProcessing.sensitiveBlockLocalHint')}</p>
         </div>
         <div className="mt-4">
           <SaveSettingsButton saving={saving} />

@@ -142,6 +142,15 @@ export function DocumentFilters({
           onChange={(next) => updateQuery({ correspondent: next })}
         />
       </div>
+      <label className="flex items-center gap-2 self-start text-sm text-ink-soft">
+        <input
+          type="checkbox"
+          className="h-4 w-4 accent-oxblood"
+          checked={query.sensitive}
+          onChange={(event) => updateQuery({ sensitive: event.target.checked })}
+        />
+        {t('documentFilters.sensitiveOnly')}
+      </label>
     </div>
   )
 }

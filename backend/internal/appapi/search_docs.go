@@ -438,7 +438,7 @@ func (r *agentRetriever) hydrate(
 	if err != nil {
 		return ai.DocumentHit{}, false
 	}
-	if !CanReadDocument(r.app, record, r.userID) {
+	if !CanSendToAI(r.app, record, r.userID) {
 		return ai.DocumentHit{}, false
 	}
 
@@ -673,7 +673,7 @@ func readUserDocuments(app documentLookup, userID string, req ai.ReadRequest, ra
 			continue
 		}
 		// Re-check access per record: this is the boundary that has to hold.
-		if !CanReadDocument(app, record, userID) {
+		if !CanSendToAI(app, record, userID) {
 			continue
 		}
 

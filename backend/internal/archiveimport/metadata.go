@@ -94,6 +94,9 @@ func applyMetadata(record *core.Record, meta map[string]any, resolver *taxonomyR
 	if confidence, ok := floatField(meta, "confidence"); ok && confidence >= 0 && confidence <= 1 {
 		record.Set("confidence", confidence)
 	}
+	if sensitive, ok := meta[models.FieldSensitive].(bool); ok {
+		record.Set(models.FieldSensitive, sensitive)
+	}
 	if people := stringsField(meta, "people_or_organizations"); len(people) > 0 {
 		record.Set("people_or_organizations", people)
 	}

@@ -41,7 +41,7 @@ func loadEmbeddingStats(app core.App, cfg config.Config) (embedstore.Stats, erro
 	if config.HasEmbedding(cfg) {
 		model = cfg.EmbeddingModel
 	}
-	return embedstore.LoadStats(app.DB(), model, cfg.EmbeddingDims, chunk.Version, time.Now())
+	return embedstore.LoadStats(app.DB(), model, cfg.EmbeddingDims, chunk.Version, time.Now(), config.EmbedsSensitive(cfg))
 }
 
 // handlePostEmbeddingBackfill answers immediately rather than waiting for the

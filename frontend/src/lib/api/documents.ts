@@ -65,6 +65,7 @@ export type DocumentRecord = {
   checksum?: string
   text_fingerprint?: string
   duplicate_of?: string
+  sensitive?: boolean
   expand?: {
     tags?: TagRecord[]
     duplicate_of?: DocumentRecord
@@ -173,6 +174,7 @@ export type DocumentListFilters = {
   /** tags ids a document must carry all of. */
   tags?: string[]
   untagged?: boolean
+  sensitive?: boolean
   owner?: DocumentOwner
 }
 
@@ -236,6 +238,9 @@ export function buildDocumentFilter(filters: DocumentListFilters): string | unde
   }
   if (filters.untagged) {
     parts.push('tags:length = 0')
+  }
+  if (filters.sensitive) {
+    parts.push('sensitive = true')
   }
   const me = pb.authStore.record?.id ?? ''
   if (filters.owner === 'mine' && me) {
@@ -360,6 +365,12 @@ async function setDocumentsStatus(
       failed === documentIds.length ? allFailed : someFailed(documentIds.length - failed, failed),
     )
   }
+}
+
+/** A sensitive document is never sent to an AI provider; see docs/setup.md. */
+export async function setDocumentSensitive(documentId: string, sensitive: boolean): Promise<void> {
+  await pb.collection('documents').update(documentId, { sensitive }, { requestKey: null })
+  notifyDocumentsChanged()
 }
 
 export function markDocumentsReviewed(documentIds: string[]): Promise<void> {
@@ -529,6 +540,7 @@ type DocumentSearch = {
   undated?: boolean
   tags?: string[]
   untagged?: boolean
+  sensitive?: boolean
   owner?: DocumentOwner
 }
 
@@ -581,6 +593,9 @@ function searchParams(opts: DocumentSearch): URLSearchParams {
   }
   if (opts.untagged) {
     params.set('untagged', 'true')
+  }
+  if (opts.sensitive) {
+    params.set('sensitive', 'true')
   }
   return params
 }

@@ -22,7 +22,8 @@ func countDB(t *testing.T) dbx.Builder {
 	}
 	t.Cleanup(func() { _ = db.Close() })
 	_, err = db.NewQuery(`CREATE TABLE documents (
-		id TEXT PRIMARY KEY, user TEXT, title TEXT, document_date TEXT, tags TEXT, ocr_text TEXT)`).Execute()
+		id TEXT PRIMARY KEY, user TEXT, title TEXT, document_date TEXT, tags TEXT, ocr_text TEXT,
+		sensitive BOOLEAN NOT NULL DEFAULT FALSE)`).Execute()
 	if err != nil {
 		t.Fatalf("create table: %v", err)
 	}
@@ -86,6 +87,20 @@ func TestCountDocumentsScopesToTheOwner(t *testing.T) {
 	}
 	if total != 5 {
 		t.Fatalf("total = %d, want the owner's 5 documents", total)
+	}
+}
+
+func TestCountDocumentsLeavesOutSensitiveDocuments(t *testing.T) {
+	db := countDB(t)
+	if _, err := db.NewQuery(`UPDATE documents SET sensitive = 1 WHERE id = 'd1'`).Execute(); err != nil {
+		t.Fatal(err)
+	}
+	_, total, err := countDocuments(context.Background(), db, countSpec{userID: "me"})
+	if err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if total != 4 {
+		t.Fatalf("total = %d, want the owner's 5 documents less the sensitive one", total)
 	}
 }
 

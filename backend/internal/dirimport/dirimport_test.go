@@ -366,3 +366,35 @@ func TestRefusedFileLeavesNoFolderTags(t *testing.T) {
 		t.Fatalf("%d tags left behind by a refused file", len(tags))
 	}
 }
+
+func TestScanMarksFilesUnderASensitiveFolder(t *testing.T) {
+	s, ownerID := scannerWithAdmin(t)
+	drop(t, s.dir, "plain.txt", "an invoice")
+	drop(t, s.dir, "Sensitive/w2.txt", "a tax form")
+	drop(t, s.dir, "Taxes/medical/bill.txt", "a medical bill")
+
+	res := s.Scan(config.Config{SensitiveFolders: []string{"sensitive", "Medical"}}, time.Now())
+	if res.Created != 3 {
+		t.Fatalf("scan = %+v, want 3 created", res)
+	}
+	docs, err := s.app.FindRecordsByFilter("documents", "user = {:user}", "created", 0, 0, map[string]any{"user": ownerID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var sensitive int
+	for _, doc := range docs {
+		if !doc.GetBool("sensitive") {
+			if len(tagNames(t, s.app, doc)) != 0 {
+				t.Fatalf("only the root file is unmarked, but %s has folder tags", doc.Id)
+			}
+			continue
+		}
+		sensitive++
+		if len(tagNames(t, s.app, doc)) == 0 {
+			t.Fatalf("a sensitive file still gets its folder tags, none on %s", doc.Id)
+		}
+	}
+	if sensitive != 2 {
+		t.Fatalf("sensitive documents = %d, want the two under Sensitive/ and medical/", sensitive)
+	}
+}

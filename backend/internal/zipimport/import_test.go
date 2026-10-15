@@ -42,7 +42,7 @@ func TestCreateDocumentKeepsTheOriginalNameStorable(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if err := CreateDocument(app, collection, user.Id, file, nil); err != nil {
+		if err := CreateDocument(app, collection, user.Id, file, nil, false); err != nil {
 			t.Fatalf("create %q: %v", name, err)
 		}
 		if file.OriginalName != want || !utf8.ValidString(file.OriginalName) {

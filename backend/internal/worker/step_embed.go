@@ -28,6 +28,9 @@ func (s *EmbedStep) ShouldSkip(state *StepState) (bool, error) {
 	if state.Document == nil || state.Document.GetString("duplicate_of") != "" {
 		return true, nil
 	}
+	if sensitiveBlocksEmbedding(state.Cfg, state.Document) {
+		return true, nil
+	}
 	if strings.TrimSpace(state.Document.GetString("ocr_text")) == "" {
 		return true, nil
 	}

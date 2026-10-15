@@ -66,6 +66,15 @@ func Register(app core.App) {
 		if err := e.Next(); err != nil {
 			return err
 		}
+		if becameSensitive(e.Record) {
+			if err := Delete(e.App.DB(), e.Record.Id); err != nil {
+				e.App.Logger().Warn("embedstore delete for a sensitive document failed",
+					"document", e.Record.Id, slog.Any("error", err))
+				return nil
+			}
+			NotifyDeleted(e.Record.Id)
+			return nil
+		}
 		if !touchesEmbeddedText(e.Record) {
 			return nil
 		}
@@ -78,6 +87,16 @@ func Register(app core.App) {
 }
 
 const collectionDocuments = "documents"
+
+// A document marked sensitive loses the vectors an external embedder made of
+// it; the backfill embeds it again only where a local embedder is allowed to.
+func becameSensitive(record *core.Record) bool {
+	if record == nil || !record.GetBool("sensitive") {
+		return false
+	}
+	original := record.Original()
+	return original != nil && !original.GetBool("sensitive")
+}
 
 // ocr_text is the whole list because it is the whole input: a rename or a
 // retag leaves every stored vector as valid as it was. Without the check, every

@@ -303,6 +303,10 @@ func CountChunks(db dbx.Builder, model string, dims int) (int, error) {
 // SQLite string literals have no escape sequences.
 const hasOCRText = "trim(d.ocr_text, '" + " \t\r\n\v\f" + "') <> ''"
 
+// A sensitive document is embeddable only when the caller says the bound
+// embedder may see one.
+const embeddableSensitivity = `({:sensitive} = 1 OR d.sensitive = 0)`
+
 // Shared by Candidates and Stats so the queue length and the queue cannot
 // disagree. Pending and processing documents are excluded because their OCR
 // text is about to be rewritten, duplicates because they are never results.
@@ -313,6 +317,7 @@ const hasOCRText = "trim(d.ocr_text, '" + " \t\r\n\v\f" + "') <> ''"
 const candidateWhere = `
 	d.duplicate_of = '' AND ` + hasOCRText + `
 	AND d.processing_status NOT IN ('pending', 'processing')
+	AND ` + embeddableSensitivity + `
 	AND (
 		e.document_id IS NULL
 		OR (e.status = {:failed} AND (e.next_attempt_at = '' OR e.next_attempt_at <= {:now}))
@@ -324,7 +329,7 @@ const candidateWhere = `
 		))
 	)`
 
-func Candidates(db dbx.Builder, model string, dims, chunkerVersion, limit int, now time.Time) ([]string, error) {
+func Candidates(db dbx.Builder, model string, dims, chunkerVersion, limit int, now time.Time, includeSensitive bool) ([]string, error) {
 	if strings.TrimSpace(model) == "" || limit <= 0 {
 		return nil, nil
 	}
@@ -335,21 +340,22 @@ func Candidates(db dbx.Builder, model string, dims, chunkerVersion, limit int, n
 		LIMIT {:limit}`
 
 	var ids []string
-	err := db.NewQuery(query).Bind(candidateParams(model, dims, chunkerVersion, now, limit)).Column(&ids)
+	err := db.NewQuery(query).Bind(candidateParams(model, dims, chunkerVersion, now, limit, includeSensitive)).Column(&ids)
 	if err != nil {
 		return nil, fmt.Errorf("embedstore: candidates: %w", err)
 	}
 	return ids, nil
 }
 
-func candidateParams(model string, dims, chunkerVersion int, now time.Time, limit int) dbx.Params {
+func candidateParams(model string, dims, chunkerVersion int, now time.Time, limit int, includeSensitive bool) dbx.Params {
 	return dbx.Params{
-		"model":   model,
-		"dims":    dims,
-		"version": chunkerVersion,
-		"failed":  StatusFailed,
-		"now":     now.UTC().Format(timestampLayout),
-		"limit":   limit,
+		"sensitive": includeSensitive,
+		"model":     model,
+		"dims":      dims,
+		"version":   chunkerVersion,
+		"failed":    StatusFailed,
+		"now":       now.UTC().Format(timestampLayout),
+		"limit":     limit,
 	}
 }
 
@@ -391,7 +397,7 @@ func DeleteOrphans(db dbx.Builder) ([]string, error) {
 
 // Total counts only embeddable documents, so "embedded of total" reads as a
 // real progress bar rather than counting drafts and duplicates.
-func LoadStats(db dbx.Builder, model string, dims, chunkerVersion int, now time.Time) (Stats, error) {
+func LoadStats(db dbx.Builder, model string, dims, chunkerVersion int, now time.Time, includeSensitive bool) (Stats, error) {
 	out := Stats{Model: model, Dims: dims, Enabled: strings.TrimSpace(model) != ""}
 	if !out.Enabled {
 		return out, nil
@@ -404,7 +410,8 @@ func LoadStats(db dbx.Builder, model string, dims, chunkerVersion int, now time.
 	}{
 		{&out.Total, `SELECT COUNT(*) FROM documents d
 			WHERE d.duplicate_of = '' AND ` + hasOCRText + `
-			AND d.processing_status NOT IN ('pending', 'processing')`, nil},
+			AND d.processing_status NOT IN ('pending', 'processing')
+			AND ` + embeddableSensitivity, dbx.Params{"sensitive": includeSensitive}},
 		{&out.Embedded, `SELECT COUNT(*) FROM ` + tableEmbeddings + `
 			WHERE status = {:ok} AND stale = 0 AND model = {:model}
 			AND ({:dims} = 0 OR dims = {:dims}) AND chunker_version = {:version}`,
@@ -418,7 +425,7 @@ func LoadStats(db dbx.Builder, model string, dims, chunkerVersion int, now time.
 		{&out.Pending, `SELECT COUNT(*) FROM documents d
 			LEFT JOIN ` + tableEmbeddings + ` e ON e.document_id = d.id
 			WHERE ` + candidateWhere,
-			candidateParams(model, dims, chunkerVersion, now, 1)},
+			candidateParams(model, dims, chunkerVersion, now, 1, includeSensitive)},
 	}
 
 	for _, c := range counts {

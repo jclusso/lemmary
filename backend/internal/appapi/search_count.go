@@ -226,8 +226,9 @@ func countDocuments(ctx context.Context, db dbx.Builder, spec countSpec) ([]coun
 }
 
 // documentConditions is the WHERE of every filtered documents query, aliased d.
+// Sensitive documents are absent: every caller answers an agent.
 func documentConditions(spec countSpec) ([]string, dbx.Params) {
-	where := []string{}
+	where := []string{"d.sensitive = 0"}
 	params := dbx.Params{}
 	if spec.userID != "" {
 		where = append(where, ReadableDocumentsSQL("d", "user"))

@@ -14,8 +14,8 @@ const (
 	// 3 added FieldOwner, which an index built at 2 does not carry. 4 dropped
 	// purpose and the *_original fields, which an older "all" still matches on.
 	// 5 added FieldCustomFields and dropped "all", a copy of every text field
-	// that no query read.
-	MappingVersion = "5"
+	// that no query read. 6 added FieldSensitive.
+	MappingVersion = "6"
 
 	AnalyzerName = "archive"
 
@@ -37,6 +37,10 @@ const (
 	FieldCorrespondentName = "correspondent_name"
 	FieldPeople            = "people_or_organizations"
 	FieldCustomFields      = "custom_fields"
+	// FieldSensitive holds sensitiveTerm on a sensitive document and nothing
+	// otherwise.
+	FieldSensitive = "sensitive"
+	sensitiveTerm  = "true"
 )
 
 // No stemmer, deliberately: one analyzer serves every document, and a document
@@ -70,6 +74,7 @@ func newMapping() (mapping.IndexMapping, error) {
 	doc.AddFieldMappingsAt(FieldCorrespondent, keywordField())
 	doc.AddFieldMappingsAt(FieldTags, keywordField())
 	doc.AddFieldMappingsAt(FieldDocumentDate, dateField())
+	doc.AddFieldMappingsAt(FieldSensitive, keywordField())
 
 	doc.AddFieldMappingsAt(FieldTitle, textField(false, true))
 	doc.AddFieldMappingsAt(FieldSummary, textField(false, true))

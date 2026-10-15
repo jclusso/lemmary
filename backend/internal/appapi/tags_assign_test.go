@@ -23,7 +23,7 @@ func candidateDB(t *testing.T) dbx.Builder {
 	t.Cleanup(func() { _ = db.Close() })
 	_, err = db.NewQuery(`CREATE TABLE documents (
 		id TEXT PRIMARY KEY, user TEXT, tags TEXT, ocr_text TEXT,
-		processing_status TEXT, created TEXT)`).Execute()
+		processing_status TEXT, created TEXT, sensitive BOOLEAN NOT NULL DEFAULT FALSE)`).Execute()
 	if err != nil {
 		t.Fatalf("create table: %v", err)
 	}
@@ -71,6 +71,27 @@ func TestTagAssignCandidatesSkipWhatCannotOrNeedNotBeAsked(t *testing.T) {
 	}
 	if total != len(want) {
 		t.Fatalf("count = %d, want %d", total, len(want))
+	}
+}
+
+func TestTagAssignNeverAsksTheModelAboutASensitiveDocument(t *testing.T) {
+	db := candidateDB(t)
+	if _, err := db.NewQuery(`UPDATE documents SET sensitive = 1 WHERE id = 'wants-it'`).Execute(); err != nil {
+		t.Fatal(err)
+	}
+	ids, err := tagAssignCandidateIDs(db, "me", []string{"tax"}, maxTagAssignDocuments)
+	if err != nil {
+		t.Fatalf("candidate ids: %v", err)
+	}
+	if slices.Contains(ids, "wants-it") {
+		t.Fatalf("candidates = %v, a sensitive document must not be one", ids)
+	}
+	total, err := countTagAssignCandidates(db, "me", []string{"tax"})
+	if err != nil {
+		t.Fatalf("count: %v", err)
+	}
+	if total != len(ids) {
+		t.Fatalf("count = %d, want it to match the %d candidates", total, len(ids))
 	}
 }
 

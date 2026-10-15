@@ -91,6 +91,7 @@ export function UploadFilesPage() {
   // rather than the "use PDF, JPEG, ..." message.
   const [zipRejected, setZipRejected] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [sensitive, setSensitive] = useState(false)
   const [uploadIndex, setUploadIndex] = useState(0)
   const [dragging, setDragging] = useState(false)
   // A dropped folder of a few thousand files takes a moment to walk, and a drop
@@ -230,6 +231,7 @@ export function UploadFilesPage() {
           formData.append('file', file)
           formData.append('user', userId)
           formData.append('processing_status', 'pending')
+          if (sensitive) formData.append('sensitive', 'true')
           const record = await pb.collection('documents').create(formData)
           uploadedIds.push(record.id)
         } catch (err) {
@@ -416,6 +418,20 @@ export function UploadFilesPage() {
             })}
           </p>
         )}
+
+        <label className="flex items-start gap-2 text-sm text-ink">
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 accent-oxblood"
+            checked={sensitive}
+            disabled={uploading}
+            onChange={(event) => setSensitive(event.target.checked)}
+          />
+          <span>
+            {t('uploadIndex.sensitive')}
+            <span className="block text-xs text-ink-faint">{t('uploadIndex.sensitiveHint')}</span>
+          </span>
+        </label>
 
         {error && <p className="text-sm text-madder">{error}</p>}
 

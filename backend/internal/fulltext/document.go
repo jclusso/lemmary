@@ -155,6 +155,9 @@ func buildWith(names *nameCache, rec *core.Record) map[string]any {
 	if t, ok := parseDocumentDate(rec.GetString("document_date")); ok {
 		doc[FieldDocumentDate] = t
 	}
+	if models.IsSensitive(rec) {
+		doc[FieldSensitive] = sensitiveTerm
+	}
 	return doc
 }
 

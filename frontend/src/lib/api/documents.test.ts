@@ -28,6 +28,10 @@ describe('buildDocumentFilter', () => {
     expect(buildDocumentFilter({ ...noFilters, undated: true })).toBe("document_date = ''")
   })
 
+  it('filters on the sensitive mark', () => {
+    expect(buildDocumentFilter({ ...noFilters, sensitive: true })).toBe('sensitive = true')
+  })
+
   it('filters on the absence of tags', () => {
     expect(buildDocumentFilter({ ...noFilters, untagged: true })).toBe('tags:length = 0')
   })

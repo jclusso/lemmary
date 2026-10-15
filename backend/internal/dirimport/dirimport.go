@@ -136,6 +136,9 @@ func (s *Scanner) scan(cfg config.Config, now time.Time) (Result, string) {
 	defer s.removeSealed()
 
 	w, stopped := s.newWalker(ownerID, keep, now)
+	if w != nil {
+		w.sensitiveFolders = cfg.SensitiveFolders
+	}
 	if stopped != "" {
 		return Result{}, stopped
 	}
@@ -153,14 +156,15 @@ var errStop = errors.New("stop")
 
 type walker struct {
 	*Scanner
-	ownerID    string
-	keep       bool
-	now        time.Time
-	root       string
-	collection *core.Collection
-	tags       map[string]string
-	ledger     map[string]string
-	res        Result
+	ownerID          string
+	keep             bool
+	now              time.Time
+	root             string
+	collection       *core.Collection
+	tags             map[string]string
+	sensitiveFolders []string
+	ledger           map[string]string
+	res              Result
 }
 
 func (s *Scanner) newWalker(ownerID string, keep bool, now time.Time) (*walker, string) {
@@ -247,7 +251,7 @@ func (w *walker) importFile(path, rel, stamp string) error {
 		logger.Warn("consume folder: tag lookup failed", "path", path, "error", err)
 		return nil
 	}
-	err = zipimport.CreateDocument(w.app, w.collection, w.ownerID, file, tagIDs)
+	err = zipimport.CreateDocument(w.app, w.collection, w.ownerID, file, tagIDs, config.InSensitiveFolder(rel, w.sensitiveFolders))
 	if err != nil {
 		w.dropTags(created, w.tags)
 	}

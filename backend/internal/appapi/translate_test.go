@@ -93,6 +93,53 @@ func TestDocumentTranslationStoresAndReusesTheTranslation(t *testing.T) {
 	}
 }
 
+func TestDocumentTranslationRefusesASensitiveDocument(t *testing.T) {
+	app := bootQueueApp(t)
+	owner := makeQueueUser(t, app, "owner@example.com")
+	doc := makeQueueDocument(t, app, owner, "completed", "Lohnsteuerbescheinigung")
+	doc.Set("sensitive", true)
+	if err := app.Save(doc); err != nil {
+		t.Fatal(err)
+	}
+	tr := &fakeTranslator{}
+	for _, query := range []string{"", "?force=1"} {
+		if code, _ := callTranslation(t, app, tr, owner, doc.Id, query); code != http.StatusForbidden {
+			t.Fatalf("status %q = %d, want 403", query, code)
+		}
+	}
+	if tr.calls != 0 {
+		t.Fatalf("the model was called %d times for a sensitive document", tr.calls)
+	}
+}
+
+func TestDocumentChatRefusesASensitiveDocument(t *testing.T) {
+	app := bootQueueApp(t)
+	ownerID := makeQueueUser(t, app, "owner@example.com")
+	owner, err := app.FindRecordById("users", ownerID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	doc := makeQueueDocument(t, app, ownerID, "completed", "wages")
+	doc.Set("sensitive", true)
+	if err := app.Save(doc); err != nil {
+		t.Fatal(err)
+	}
+
+	rec := httptest.NewRecorder()
+	e := &core.RequestEvent{}
+	e.Response = rec
+	e.Request = httptest.NewRequest(http.MethodPost, "/api/app/documents/"+doc.Id+"/chat", nil)
+	e.Request.SetPathValue("documentId", doc.Id)
+	e.Auth = owner
+	_, text, handled, err := loadChatDocument(app, e)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !handled || text != "" || rec.Code != http.StatusForbidden {
+		t.Fatalf("handled=%v text=%q status=%d, want a 403 and no text for the model", handled, text, rec.Code)
+	}
+}
+
 func TestDocumentTranslationKeepsAnEditMadeWhileTranslating(t *testing.T) {
 	app := bootQueueApp(t)
 	app.OnRecordUpdate("documents").BindFunc(clearStaleTranslation)

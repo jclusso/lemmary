@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sync"
 	"testing"
 	"time"
@@ -31,6 +32,7 @@ func openTestDB(t *testing.T) *dbx.DB {
 		ocr_text TEXT NOT NULL DEFAULT '',
 		duplicate_of TEXT NOT NULL DEFAULT '',
 		processing_status TEXT NOT NULL DEFAULT 'completed',
+		sensitive BOOLEAN NOT NULL DEFAULT FALSE,
 		created TEXT NOT NULL DEFAULT ''
 	)`).Execute()
 	if err != nil {
@@ -317,7 +319,7 @@ func TestCandidatesCoversEveryReasonToReEmbed(t *testing.T) {
 		t.Fatalf("MarkFailed: %v", err)
 	}
 
-	got, err := Candidates(db, model, 4, 1, 100, now)
+	got, err := Candidates(db, model, 4, 1, 100, now, true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -345,7 +347,7 @@ func TestCandidatesIgnoresDimsBeforeTheFirstResponse(t *testing.T) {
 	}
 
 	// dims 0 is "not recorded yet", not "every stored row is the wrong length".
-	got, err := Candidates(db, state.Model, 0, 1, 10, time.Now())
+	got, err := Candidates(db, state.Model, 0, 1, 10, time.Now(), true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -366,7 +368,7 @@ func TestCandidatesSkipsWhitespaceOnlyOCR(t *testing.T) {
 	insertDocument(t, db, "doc-newlines", "\n\n\t \r\n")
 	insertDocument(t, db, "doc-real", "an actual invoice")
 
-	got, err := Candidates(db, "m", 0, 1, 10, now)
+	got, err := Candidates(db, "m", 0, 1, 10, now, true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -376,12 +378,44 @@ func TestCandidatesSkipsWhitespaceOnlyOCR(t *testing.T) {
 
 	// The same definition backs the progress bar, or Settings would count
 	// documents the queue never reaches.
-	stats, err := LoadStats(db, "m", 0, 1, now)
+	stats, err := LoadStats(db, "m", 0, 1, now, true)
 	if err != nil {
 		t.Fatalf("LoadStats: %v", err)
 	}
 	if stats.Total != 1 {
 		t.Fatalf("total = %d, want 1 embeddable document", stats.Total)
+	}
+}
+
+func TestSensitiveDocumentsAreEmbeddableOnlyWhenTheCallerAllowsIt(t *testing.T) {
+	t.Parallel()
+	db := openTestDB(t)
+	now := time.Now()
+
+	insertDocument(t, db, "doc-plain", "an invoice")
+	insertDocument(t, db, "doc-sensitive", "a tax return", func(p dbx.Params) { p["sensitive"] = true })
+
+	for _, tc := range []struct {
+		include bool
+		want    []string
+	}{
+		{false, []string{"doc-plain"}},
+		{true, []string{"doc-plain", "doc-sensitive"}},
+	} {
+		got, err := Candidates(db, "m", 0, 1, 10, now, tc.include)
+		if err != nil {
+			t.Fatalf("Candidates: %v", err)
+		}
+		if !slices.Equal(got, tc.want) {
+			t.Fatalf("includeSensitive=%v: candidates = %v, want %v", tc.include, got, tc.want)
+		}
+		stats, err := LoadStats(db, "m", 0, 1, now, tc.include)
+		if err != nil {
+			t.Fatalf("LoadStats: %v", err)
+		}
+		if stats.Total != len(tc.want) || stats.Pending != len(tc.want) {
+			t.Fatalf("includeSensitive=%v: total=%d pending=%d, want %d", tc.include, stats.Total, stats.Pending, len(tc.want))
+		}
 	}
 }
 
@@ -396,7 +430,7 @@ func TestATerminalRowEndsTheCandidateLoop(t *testing.T) {
 	// A non-breaking space: not blank to SQLite's trim(), blank to the embedder.
 	insertDocument(t, db, "doc1", " ")
 
-	first, err := Candidates(db, model, 4, 1, 10, now)
+	first, err := Candidates(db, model, 4, 1, 10, now, true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -418,7 +452,7 @@ func TestATerminalRowEndsTheCandidateLoop(t *testing.T) {
 		t.Fatalf("Replace: %v", err)
 	}
 
-	second, err := Candidates(db, model, 4, 1, 10, now)
+	second, err := Candidates(db, model, 4, 1, 10, now, true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -432,7 +466,7 @@ func TestCandidatesReturnsNothingWithoutAModel(t *testing.T) {
 	db := openTestDB(t)
 	insertDocument(t, db, "doc1", "text")
 
-	got, err := Candidates(db, "  ", 0, 1, 10, time.Now())
+	got, err := Candidates(db, "  ", 0, 1, 10, time.Now(), true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -448,7 +482,7 @@ func TestCandidatesRespectsTheLimit(t *testing.T) {
 		insertDocument(t, db, fmt.Sprintf("doc%d", i), "text")
 	}
 
-	got, err := Candidates(db, "m", 0, 1, 2, time.Now())
+	got, err := Candidates(db, "m", 0, 1, 2, time.Now(), true)
 	if err != nil {
 		t.Fatalf("Candidates: %v", err)
 	}
@@ -689,7 +723,7 @@ func TestLoadStatsCountsTheBacklog(t *testing.T) {
 		t.Fatalf("MarkFailed: %v", err)
 	}
 
-	stats, err := LoadStats(db, model, 4, 1, now)
+	stats, err := LoadStats(db, model, 4, 1, now, true)
 	if err != nil {
 		t.Fatalf("LoadStats: %v", err)
 	}
@@ -718,7 +752,7 @@ func TestLoadStatsReportsDisabledWithoutAModel(t *testing.T) {
 	t.Parallel()
 	db := openTestDB(t)
 
-	stats, err := LoadStats(db, "", 0, 1, time.Now())
+	stats, err := LoadStats(db, "", 0, 1, time.Now(), true)
 	if err != nil {
 		t.Fatalf("LoadStats: %v", err)
 	}

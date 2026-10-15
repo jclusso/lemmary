@@ -20,6 +20,7 @@ import (
 	"lemmary/backend/internal/fulltext"
 	"lemmary/backend/internal/i18n"
 	"lemmary/backend/internal/metrics"
+	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/websearch"
 )
 
@@ -373,7 +374,21 @@ func searchPriorDocuments(app core.App, session *core.Record) []ai.DocumentHit {
 		// Losing the carried evidence costs a search, not the answer.
 		app.Logger().Warn("search prior hits failed", slog.Any("error", err))
 	}
-	return priorDocuments
+	return dropSensitiveHits(app, priorDocuments)
+}
+
+// A document cited before it was marked sensitive stays in the stored turn, but
+// is not replayed to the model.
+func dropSensitiveHits(app core.App, hits []ai.DocumentHit) []ai.DocumentHit {
+	kept := hits[:0]
+	for _, hit := range hits {
+		record, err := app.FindRecordById("documents", hit.ID)
+		if err != nil || models.IsSensitive(record) {
+			continue
+		}
+		kept = append(kept, hit)
+	}
+	return kept
 }
 
 // contextWindowFor resolves how much context the bound model has, through the

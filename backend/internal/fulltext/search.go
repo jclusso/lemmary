@@ -57,6 +57,8 @@ type Query struct {
 	// Undated keeps only documents with no document_date. Asking for both this
 	// and a date range is asking for nothing, which the conjunction answers.
 	Undated bool
+	// Sensitive keeps only documents marked sensitive.
+	Sensitive bool
 	// Owner narrows by who owns a readable document: OwnerMine, OwnerShared
 	// (another account shared it with the caller), or empty for both.
 	Owner string
@@ -488,6 +490,9 @@ func filterConjuncts(q Query) []query.Query {
 	}
 	if q.Undated {
 		conjuncts = append(conjuncts, undatedQuery())
+	}
+	if q.Sensitive {
+		conjuncts = append(conjuncts, termQuery(FieldSensitive, sensitiveTerm))
 	}
 	if len(q.IDs) > 0 {
 		conjuncts = append(conjuncts, bleve.NewDocIDQuery(q.IDs))

@@ -262,7 +262,7 @@ func (b *Backfiller) embedBatch(
 ) (batchResult, error) {
 	model := snap.Embedder.Model()
 	dims := snap.Cfg.EmbeddingDims
-	ids, err := embedstore.Candidates(b.app.DB(), model, dims, chunk.Version, batch, time.Now())
+	ids, err := embedstore.Candidates(b.app.DB(), model, dims, chunk.Version, batch, time.Now(), config.EmbedsSensitive(snap.Cfg))
 	if err != nil {
 		return batchResult{}, err
 	}
@@ -311,7 +311,7 @@ func (b *Backfiller) remaining(snap config.Snapshot) int {
 		return 0
 	}
 	stats, err := embedstore.LoadStats(
-		b.app.DB(), snap.Embedder.Model(), snap.Cfg.EmbeddingDims, chunk.Version, time.Now())
+		b.app.DB(), snap.Embedder.Model(), snap.Cfg.EmbeddingDims, chunk.Version, time.Now(), config.EmbedsSensitive(snap.Cfg))
 	if err != nil {
 		return 0
 	}

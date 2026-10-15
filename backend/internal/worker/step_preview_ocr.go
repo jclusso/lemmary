@@ -60,11 +60,16 @@ type OCRStep struct {
 func (s *OCRStep) Name() string { return models.StepOCR }
 
 func (s *OCRStep) ShouldSkip(state *StepState) (bool, error) {
+	existing := strings.TrimSpace(state.Document.GetString("ocr_text"))
+	if sensitiveBlocksOCR(state, s.Provider) {
+		state.OCRText = existing
+		return true, nil
+	}
 	if state.forced(models.StepOCR) {
 		return false, nil
 	}
-	if strings.TrimSpace(state.Document.GetString("ocr_text")) != "" {
-		state.OCRText = strings.TrimSpace(state.Document.GetString("ocr_text"))
+	if existing != "" {
+		state.OCRText = existing
 		return true, nil
 	}
 	return false, nil

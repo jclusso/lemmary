@@ -498,7 +498,7 @@ func (s *Scanner) consume(c *imapclient.Client, collection *core.Collection, own
 			got = refused
 			continue
 		}
-		err = zipimport.CreateDocument(s.app, collection, ownerID, file, nil)
+		err = zipimport.CreateDocument(s.app, collection, ownerID, file, nil, false)
 		var dup *duplicates.ErrDuplicate
 		switch {
 		case err == nil:

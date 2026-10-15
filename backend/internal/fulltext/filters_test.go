@@ -45,6 +45,21 @@ func TestEligibleIDsResolvesFiltersWithoutText(t *testing.T) {
 	}
 }
 
+func TestSensitiveKeepsOnlyMarkedDocuments(t *testing.T) {
+	idx := testIndex(t)
+	mustPut(t, idx, "w2", map[string]any{FieldUser: "u1", FieldTitle: "W-2", FieldSensitive: sensitiveTerm})
+	mustPut(t, idx, "lease", map[string]any{FieldUser: "u1", FieldTitle: "Lease"})
+
+	q := Query{UserID: "u1", Sensitive: true}
+	if !HasDocumentFilters(q) {
+		t.Fatal("the sensitive filter is a document filter")
+	}
+	ids, complete, err := idx.EligibleIDs(q, 10)
+	if err != nil || !complete || len(ids) != 1 || ids[0] != "w2" {
+		t.Fatalf("eligible ids = %v, complete = %v, err = %v", ids, complete, err)
+	}
+}
+
 func TestIDsKeepOnlyTheListedDocuments(t *testing.T) {
 	idx := testIndex(t)
 	mustPut(t, idx, "in", map[string]any{FieldUser: "u1", FieldTitle: "Lease"})

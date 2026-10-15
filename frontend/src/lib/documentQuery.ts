@@ -51,6 +51,8 @@ export type DocumentQuery = {
   tags: string
   /** Only the documents with no tags. */
   untagged: boolean
+  /** Only the documents marked sensitive. */
+  sensitive: boolean
   /** Whose documents: the caller's own, those shared with them, or 'all'. */
   owner: DocumentOwner
   /** 1-based. */
@@ -73,6 +75,7 @@ export const defaultDocumentQuery: DocumentQuery = {
   correspondent: 'all',
   tags: '',
   untagged: false,
+  sensitive: false,
   owner: 'all',
   page: 1,
 }
@@ -125,6 +128,7 @@ export function parseDocumentQuery(raw: DocumentQueryInput): DocumentQuery {
     // Together they match nothing, and the control can only show one.
     tags: untagged ? '' : tagIds(raw.tags).join(','),
     untagged,
+    sensitive: raw.sensitive === true || raw.sensitive === 'true',
     owner: owner(raw.owner),
     page: pageNumber(raw.page),
   }

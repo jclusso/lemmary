@@ -370,6 +370,21 @@ With `RELATED_LINKING_ENABLED=1` the pipeline links documents itself, in a `link
 
 The step only adds links, so one you removed by hand comes back if the document is reprocessed. Documents processed before the flag was set are linked when they are reprocessed; reprocessing only the `link_related` step links by similarity without another AI call, while reference numbers need **Extract metadata** again.
 
+### Sensitive documents
+
+A document marked **sensitive** is never sent to an external AI provider. Mark one with **Sensitive** on the upload page, with **Mark sensitive** on its page, or by dropping it into a consume subfolder named in **Settings → Processing → Sensitive documents** (`sensitive` by default, matched case-insensitively at any depth, so `Taxes/sensitive/w2.pdf` counts). The folder still becomes a tag as usual.
+
+For a sensitive document:
+
+- **OCR** runs only where the text never leaves the server: native extraction (TXT, CSV, DOCX, XLSX) or the [local OCR sidecar](/local_ocr). A scan with neither keeps no text, so it is found by title and tags only.
+- **Extraction** (`extract_metadata`, `apply_metadata`) is skipped, so the document finishes in the [Inbox](#review-inbox) for you to name.
+- **Embeddings** are made only by the [local embeddings sidecar](/local_embeddings), never a hosted model.
+- **Ask AI, AI search, Deep Research, OCR translation, AI tag assignment and the MCP endpoint** leave it out entirely: the model is not told it exists.
+
+**Keep sensitive documents from local providers too** turns off the local OCR and embedding sidecars for them as well. These rules live in the pipeline steps, so reprocessing, including a forced step, cannot get around them.
+
+Marking an existing document sensitive deletes the embeddings already stored for it. It cannot recall what a provider received before the mark was set, so set it at upload or through the folder. Unmarking a document changes nothing by itself; reprocess it to run OCR and extraction. The documents list filters on **Sensitive only**, and a backup carries the mark in `metadata.json` and restores it.
+
 ## Full-text search
 
 Archive search uses a [Bleve](https://github.com/blevesearch/bleve) inverted index (not SQLite `LIKE`). The index lives at `{dataDir}/bleve/documents` (Docker: `/app/pb_data/bleve/documents` on the existing `app_data` volume). It is derived data: wiping `pb_data` also wipes the index, and the next boot rebuilds it from documents.

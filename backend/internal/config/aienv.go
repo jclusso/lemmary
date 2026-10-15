@@ -411,5 +411,6 @@ func (e AIEnv) Defaults() Config {
 		NearDuplicateDetectionEnabled: e.NearDuplicateEnabled,
 		NearDuplicateThreshold:        e.NearDuplicateThreshold,
 		AlwaysRequireReview:           true,
+		SensitiveFolders:              []string{DefaultSensitiveFolder},
 	}
 }

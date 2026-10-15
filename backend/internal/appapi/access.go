@@ -3,6 +3,8 @@ package appapi
 import (
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
+
+	"lemmary/backend/internal/models"
 )
 
 // CollectionShares is the collection holding read-only grants, one row per
@@ -29,6 +31,13 @@ func CanReadDocument(app shareLookup, record *core.Record, userID string) bool {
 		dbx.Params{"document": record.Id, "user": userID},
 	)
 	return err == nil
+}
+
+// CanSendToAI is CanReadDocument for the call sites that hand a document to a
+// language model: a sensitive document is readable by its owner but never
+// leaves for a provider, so to the model it does not exist.
+func CanSendToAI(app shareLookup, record *core.Record, userID string) bool {
+	return !models.IsSensitive(record) && CanReadDocument(app, record, userID)
 }
 
 // ReadableDocumentsSQL is the same predicate for the handlers that query the

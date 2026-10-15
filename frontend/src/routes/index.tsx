@@ -62,6 +62,7 @@ export function IndexPage() {
         undated: query.undated,
         tags: tagIds(query.tags),
         untagged: query.untagged,
+        sensitive: query.sensitive,
         owner: query.owner,
       })
       saveBlob(await fetchDocumentsArchive(ids), 'lemmary-filtered-export.zip')

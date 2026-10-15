@@ -80,6 +80,7 @@ export function useDocumentList({
     correspondent: correspondentFilter,
     tags: tagFilter,
     untagged,
+    sensitive,
     page,
   } = query
   const statusFilter = fixedStatus ?? query.status
@@ -169,6 +170,7 @@ export function useDocumentList({
           correspondent: correspondentFilter,
           tags: tagIds(tagFilter),
           untagged,
+          sensitive,
           owner: ownerFilter,
         })
         const result = text
@@ -184,6 +186,7 @@ export function useDocumentList({
               undated,
               tags: tagIds(tagFilter),
               untagged,
+              sensitive,
               owner: ownerFilter,
             })
           : await pb.collection('documents').getList<DocumentRecord>(page, pageSize, {
@@ -267,6 +270,7 @@ export function useDocumentList({
     correspondentFilter,
     tagFilter,
     untagged,
+    sensitive,
     debouncedSearch,
     ownerFilter,
     updateQuery,

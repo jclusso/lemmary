@@ -229,7 +229,11 @@ export function DocumentAskPage() {
         <p className="text-sm text-ink-soft">{t('documentAsk.intro')}</p>
       </div>
 
-      {!hasOcrText ? (
+      {document?.sensitive ? (
+        <div className="rounded-none border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          {t('documentPage.askSensitive')}
+        </div>
+      ) : !hasOcrText ? (
         <div className="rounded-none border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           {t('documentAsk.noOcr')}
         </div>

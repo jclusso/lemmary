@@ -341,9 +341,14 @@ func finalizeDocumentWithoutApply(app core.App, document *core.Record, steps []s
 	}
 	if slices.Contains(steps, models.StepApplyMetadata) {
 		// Apply sets the status when it runs; if it was skipped, leave what
-		// earlier steps set.
+		// earlier steps set. A sensitive document skipped it on purpose, and
+		// with no model naming it a person has to.
 		if document.GetString("processing_status") == models.DocStatusProcessing {
-			document.Set("processing_status", models.DocStatusCompleted)
+			status := models.DocStatusCompleted
+			if models.IsSensitive(document) {
+				status = models.DocStatusNeedsReview
+			}
+			document.Set("processing_status", status)
 			return app.Save(document)
 		}
 		return nil

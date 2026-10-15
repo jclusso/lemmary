@@ -350,6 +350,7 @@ func buildExportMetadata(record *core.Record, index taxonomyIndex, originalFilen
 		"people_or_organizations": models.PeopleOrOrganizations(record),
 		"custom_fields":           exportCustomFields(index.values[record.Id], index.customFields),
 		"processing_status":       record.GetString("processing_status"),
+		"sensitive":               models.IsSensitive(record),
 		"metadata_source":         record.GetString("metadata_source"),
 		"confidence":              record.GetFloat("confidence"),
 		"checksum":                record.GetString("checksum"),

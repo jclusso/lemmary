@@ -42,6 +42,8 @@ func settingsRecordForTest(t *testing.T) *core.Record {
 		&core.DateField{Name: "imap_since"},
 		&core.SelectField{Name: "imap_skip_types", Values: []string{"pdf", "office", "image", "text"}, MaxSelect: 4},
 		&core.SelectField{Name: "mcp_capabilities", Values: config.MCPCapabilities, MaxSelect: 5},
+		&core.TextField{Name: "sensitive_folders", Max: config.MaxSensitiveFoldersChars},
+		&core.BoolField{Name: "sensitive_block_local"},
 	)
 	record := core.NewRecord(collection)
 	record.Id = config.SingletonID
@@ -293,6 +295,34 @@ func TestPatchTurnsAlwaysRequireReviewOnAndOff(t *testing.T) {
 	}
 	if record.GetBool("always_require_review") {
 		t.Fatal("always_require_review stayed on after a patch turning it off")
+	}
+}
+
+func TestPatchNormalizesSensitiveFoldersAndBoundsThem(t *testing.T) {
+	t.Parallel()
+	record := settingsRecordForTest(t)
+
+	if err := applySettingsPatch(nil, record, settingsPatchRequest{
+		SensitiveFolders:    new(" sensitive,\nMedical , SENSITIVE "),
+		SensitiveBlockLocal: new(true),
+	}); err != nil {
+		t.Fatalf("applySettingsPatch: %v", err)
+	}
+	if got := record.GetString("sensitive_folders"); got != "sensitive, Medical" {
+		t.Fatalf("sensitive_folders = %q, want the deduplicated list", got)
+	}
+	if !record.GetBool("sensitive_block_local") {
+		t.Fatal("sensitive_block_local stayed off after a patch turning it on")
+	}
+
+	err := applySettingsPatch(nil, record, settingsPatchRequest{
+		SensitiveFolders: new(strings.Repeat("x", config.MaxSensitiveFoldersChars+1)),
+	})
+	if err == nil {
+		t.Fatal("an oversized folder list must be refused, not truncated")
+	}
+	if (settingsPatchRequest{SensitiveFolders: new("sensitive")}).touchesManaged() {
+		t.Fatal("what sensitive means is the tenant's choice, not a managed setting")
 	}
 }
 

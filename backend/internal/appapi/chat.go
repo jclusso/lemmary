@@ -15,6 +15,7 @@ import (
 	"lemmary/backend/internal/aiprovider"
 	"lemmary/backend/internal/chat"
 	"lemmary/backend/internal/config"
+	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/websearch"
 )
 
@@ -217,6 +218,9 @@ func loadChatDocument(app core.App, e *core.RequestEvent) (*core.Record, string,
 	// This answers document access; session ownership is resolved later.
 	if !e.HasSuperuserAuth() && !CanReadDocument(app, document, e.Auth.Id) {
 		return nil, "", true, writeError(e, http.StatusForbidden, "You do not have access to this document.")
+	}
+	if models.IsSensitive(document) {
+		return nil, "", true, writeError(e, http.StatusForbidden, "This document is marked sensitive and is never sent to an AI provider.")
 	}
 
 	ocrText := strings.TrimSpace(document.GetString("ocr_text"))

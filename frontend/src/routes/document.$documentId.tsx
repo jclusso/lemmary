@@ -6,6 +6,7 @@ import { ensureAuth } from '../lib/auth'
 import {
   describeJobOverrides,
   markDocumentsReviewed,
+  setDocumentSensitive,
   openDocumentFile,
   overridesForSteps,
   reprocessDocument,
@@ -95,6 +96,7 @@ export function DocumentDetailPage() {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [markingReviewed, setMarkingReviewed] = useState(false)
+  const [togglingSensitive, setTogglingSensitive] = useState(false)
   const [acceptingSuggestion, setAcceptingSuggestion] = useState(false)
   const [reprocessing, setReprocessing] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -233,6 +235,8 @@ export function DocumentDetailPage() {
   }, [documentId])
 
   const hasOcrText = Boolean(document?.ocr_text?.trim())
+  const sensitive = Boolean(document?.sensitive)
+  const canAsk = hasOcrText && !sensitive
   // A document another account shared is read-only: the rules refuse every
   // write, so offering the controls would only produce 403s.
   const owned = Boolean(document) && document?.user === pb.authStore.record?.id
@@ -241,7 +245,7 @@ export function DocumentDetailPage() {
   const back = backTarget(document, owned)
 
   const { resultLanguage } = useAppMeta()
-  const canTranslate = Boolean(resultLanguage) && hasOcrText && !editing
+  const canTranslate = Boolean(resultLanguage) && hasOcrText && !editing && !sensitive
   const [ocrView, setOcrView] = useState<OcrView>('original')
   const translationWanted = canTranslate && ocrView !== 'original'
   const ocrText = document?.ocr_text ?? ''
@@ -500,6 +504,26 @@ export function DocumentDetailPage() {
     }
   }
 
+  async function onToggleSensitive() {
+    if (!document) return
+
+    try {
+      setTogglingSensitive(true)
+      setMessage('')
+      setError('')
+      await setDocumentSensitive(document.id, !sensitive)
+      const refreshed = await pb.collection('documents').getOne<DocumentRecord>(document.id, {
+        expand: DOCUMENT_EXPAND,
+      })
+      applyLoadedDocument(refreshed)
+      setMessage(sensitive ? t('documentPage.unmarkedSensitive') : t('documentPage.markedSensitive'))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('documentPage.sensitiveError'))
+    } finally {
+      setTogglingSensitive(false)
+    }
+  }
+
   // The chips hide while editing, but a click can still be in flight when the
   // form unlocks. Then, like load(), the server copy must not replace the
   // half-edited form; only the picker's selection and its known tags learn
@@ -638,6 +662,14 @@ export function DocumentDetailPage() {
           <p className="text-sm text-ink-soft">
             {t('documentPage.status', { status: DOCUMENT_STATUS_LABELS[document.processing_status] })}
           </p>
+          {sensitive && (
+            <p
+              className="mt-1 inline-block rounded-xs border border-oxblood px-2 py-0.5 text-xs font-medium text-oxblood"
+              title={t('documentPage.sensitiveHint')}
+            >
+              {t('documentPage.sensitiveBadge')}
+            </p>
+          )}
           <ShareSummary
             documentId={documentId}
             ownerId={document.user}
@@ -745,6 +777,17 @@ export function DocumentDetailPage() {
             </Button>
           )}
           {owned && (
+            <Button
+              variant="secondary"
+              aria-pressed={sensitive}
+              disabled={togglingSensitive || editing}
+              title={editing ? t('documentPage.lockFirst') : t('documentPage.sensitiveHint')}
+              onClick={() => void onToggleSensitive()}
+            >
+              {sensitive ? t('documentPage.unmarkSensitive') : t('documentPage.markSensitive')}
+            </Button>
+          )}
+          {owned && (
             <Button variant="secondary" onClick={() => setSharing(true)}>
               {t('bulk.share')}
             </Button>
@@ -752,12 +795,16 @@ export function DocumentDetailPage() {
           <Link
             to="/document/$documentId/ask"
             params={{ documentId }}
-            aria-disabled={!hasOcrText}
+            aria-disabled={!canAsk}
             title={
-              hasOcrText ? t('documentPage.askTitle') : t('documentPage.askNeedsOcr')
+              sensitive
+                ? t('documentPage.askSensitive')
+                : hasOcrText
+                  ? t('documentPage.askTitle')
+                  : t('documentPage.askNeedsOcr')
             }
             className={`rounded-xs border px-4 py-2 text-sm font-medium transition-colors ${
-              hasOcrText
+              canAsk
                 ? 'border-ink bg-ink text-paper hover:bg-oxblood'
                 : 'pointer-events-none border-line bg-paper text-ink-faint'
             }`}

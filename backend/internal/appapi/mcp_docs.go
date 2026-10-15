@@ -265,7 +265,7 @@ func getMCPDocument(app core.App, userID, baseURL string, args mcpGetArgs) (mcpG
 		return mcpGetResult{}, fmt.Errorf("id is required")
 	}
 	record, err := app.FindRecordById("documents", id)
-	if err != nil || !CanReadDocument(app, record, userID) {
+	if err != nil || !CanSendToAI(app, record, userID) {
 		return mcpGetResult{}, fmt.Errorf("no document %s", id)
 	}
 	expandMCPDocuments(app, []*core.Record{record})

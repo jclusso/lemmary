@@ -37,6 +37,7 @@ describe('parseDocumentQuery', () => {
       correspondent: 'def456',
       tags: 'tag1,tag2',
       untagged: false,
+      sensitive: false,
       owner: 'all',
       undated: true,
       page: 3,
@@ -101,6 +102,7 @@ describe('documentQuerySearch', () => {
       correspondent: 'cor1',
       tags: 'tag1,tag2',
       untagged: false,
+      sensitive: true,
       owner: 'shared' as const,
       undated: false,
       page: 4,
@@ -165,6 +167,15 @@ describe('the untagged filter', () => {
       untagged: true,
     })
     expect(hasActiveFilters({ ...defaultDocumentQuery, untagged: true })).toBe(true)
+  })
+})
+
+describe('the sensitive filter', () => {
+  test('survives the URL as a string and stays out of it when off', () => {
+    expect(parseDocumentQuery({ sensitive: 'true' }).sensitive).toBe(true)
+    expect(parseDocumentQuery({ sensitive: 'yes' }).sensitive).toBe(false)
+    expect(documentQuerySearch({ ...defaultDocumentQuery, sensitive: false })).toEqual({})
+    expect(hasActiveFilters({ ...defaultDocumentQuery, sensitive: true })).toBe(true)
   })
 })
 

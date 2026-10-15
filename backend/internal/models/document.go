@@ -25,6 +25,15 @@ const MaxFileBytes int64 = 47 << 20 // 49,283,072
 // past the bytes it arrived in.
 const MaxOCRTextRunes = int(MaxFileBytes)
 
+// FieldSensitive is the documents field an owner sets to keep a document away
+// from external AI providers.
+const FieldSensitive = "sensitive"
+
+// IsSensitive is the single reading of that field every AI call site shares.
+func IsSensitive(record *core.Record) bool {
+	return record != nil && record.GetBool(FieldSensitive)
+}
+
 // PeopleOrOrganizations reads the documents.people_or_organizations JSON field.
 // PocketBase hands JSON fields back as []string, []any, or a raw string
 // depending on whether the record came from a save or a fresh DB read, so all

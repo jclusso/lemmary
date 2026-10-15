@@ -114,6 +114,7 @@ func documentSearchQuery(params url.Values, text, userID string) fulltext.Query 
 		DateTo:           strings.TrimSpace(params.Get("date_to")),
 		Undated:          params.Get("undated") == "true",
 		Untagged:         params.Get("untagged") == "true",
+		Sensitive:        params.Get("sensitive") == "true",
 		Owner:            params.Get("owner"),
 	}
 	if typeID := strings.TrimSpace(params.Get("document_type")); typeID != "" && typeID != "all" {

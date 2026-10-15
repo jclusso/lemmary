@@ -55,6 +55,7 @@ var tagAssignJobs = importjob.NewRegistry[tagAssignResult](importjob.DefaultRete
 func tagAssignCandidateWhere(tagIDs []string, params dbx.Params) string {
 	params["user_count"] = len(tagIDs)
 	return `d.user = {:user}
+	AND d.sensitive = 0
 	AND COALESCE(d.ocr_text, '') != ''
 	AND d.processing_status NOT IN ({:pending}, {:processing})
 	AND (

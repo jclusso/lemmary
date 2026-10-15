@@ -54,6 +54,10 @@ export type AppSettings = {
   extraction_rules: string
   /** Tenant-owned, so a managed instance keeps it. */
   always_require_review: boolean
+  /** Comma-separated consume-folder names whose files arrive marked sensitive. */
+  sensitive_folders: string
+  /** Keep sensitive documents from the local OCR and embedding sidecars too. */
+  sensitive_block_local: boolean
   near_duplicate_detection_enabled: boolean
   near_duplicate_threshold: number
   /** Consume folder (INGEST_DIR). Owner is a users id; empty means the first admin. */

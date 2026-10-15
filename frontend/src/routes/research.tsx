@@ -356,6 +356,7 @@ function listFilters(query: DocumentQuery): DocumentListFilters {
     undated: query.undated,
     tags: tagIds(query.tags),
     untagged: query.untagged,
+    sensitive: query.sensitive,
     owner: query.owner,
   }
 }

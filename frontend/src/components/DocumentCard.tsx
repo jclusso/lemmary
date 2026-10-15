@@ -144,6 +144,14 @@ export function DocumentCard({
             >
               {DOCUMENT_STATUS_LABELS[document.processing_status]}
             </span>
+            {document.sensitive && (
+              <span
+                title={t('documentPage.sensitiveHint')}
+                className="inline-flex border border-oxblood px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-oxblood"
+              >
+                {t('documentPage.sensitiveBadge')}
+              </span>
+            )}
           </div>
           {document.document_date && (
             <span className="font-mono text-xs tabular-nums text-ink-soft">{document.document_date.slice(0, 10)}</span>

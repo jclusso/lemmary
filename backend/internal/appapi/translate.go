@@ -13,6 +13,7 @@ import (
 	"lemmary/backend/internal/ai"
 	"lemmary/backend/internal/aiprovider"
 	"lemmary/backend/internal/config"
+	"lemmary/backend/internal/models"
 )
 
 const translateTimeout = 10 * time.Minute
@@ -48,6 +49,9 @@ func handleDocumentTranslation(app core.App, snapshot func() config.Snapshot) fu
 			return writeJSON(e, http.StatusOK, map[string]string{"text": stored})
 		}
 
+		if models.IsSensitive(document) {
+			return writeError(e, http.StatusForbidden, "This document is marked sensitive and is never sent to an AI provider.")
+		}
 		snap := snapshot()
 		if snap.Cfg.ProcessingResultLanguage == "" {
 			return writeError(e, http.StatusBadRequest, "No result language is set; update Settings.")

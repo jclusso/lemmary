@@ -52,6 +52,7 @@ func readableDocument(id, user, title, ocr string) *core.Record {
 		&core.TextField{Name: "document_type"},
 		&core.TextField{Name: "correspondent"},
 		&core.JSONField{Name: "tags"},
+		&core.BoolField{Name: "sensitive"},
 	)
 	rec := core.NewRecord(col)
 	rec.Id = id
@@ -85,6 +86,25 @@ func TestReadUserDocumentsRefusesAnotherOwnersDocument(t *testing.T) {
 	}
 	if len(asSuper) != 2 {
 		t.Fatalf("superuser should read both, got %#v", asSuper)
+	}
+}
+
+func TestReadUserDocumentsNeverHandsASensitiveDocumentToTheModel(t *testing.T) {
+	sensitive := readableDocument("w2", "me", "W-2", "wages 50,000")
+	sensitive.Set("sensitive", true)
+	app := stubDocuments{recs: map[string]*core.Record{
+		"lease": readableDocument("lease", "me", "My lease", "rent is 900 EUR"),
+		"w2":    sensitive,
+	}}
+
+	for _, userID := range []string{"me", ""} {
+		got, err := readUserDocuments(app, userID, ai.ReadRequest{IDs: []string{"lease", "w2"}}, nil, focusExcerptBytes)
+		if err != nil {
+			t.Fatalf("readUserDocuments: %v", err)
+		}
+		if len(got) != 1 || got[0].ID != "lease" {
+			t.Fatalf("user %q: got %#v, want only the lease: not even a superuser read sends it", userID, got)
+		}
 	}
 }
 
