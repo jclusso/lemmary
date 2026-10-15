@@ -65,8 +65,8 @@ function SectionSelect({ groups, current }: { groups: NavGroup[]; current?: Rout
 }
 
 /**
- * The frame every admin page renders in: one heading that says where you are
- * and one sidebar holding every admin page, settings sections included, so no
+ * The frame every admin page renders in: a sidebar holding every admin page,
+ * settings sections included, beside the page's own title and intro, so no
  * page says "admin only" or carries a tab bar of its own.
  */
 export function AdminLayout() {
@@ -82,18 +82,14 @@ export function AdminLayout() {
   )
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <div className="mb-6 border-b border-line pb-4">
-        <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-ochre">
+    <div className="mx-auto flex max-w-6xl flex-col gap-6 md:flex-row md:gap-10">
+      <aside className="flex flex-col gap-4 md:w-48 md:shrink-0 md:gap-6">
+        <p className="flex items-center gap-1.5 pt-1 text-xs font-semibold uppercase tracking-[0.14em] text-ochre">
           <ShieldIcon />
           {t('admin.title')}
         </p>
-        <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">{current?.label}</h1>
-        <p className="mt-1 text-sm text-ink-soft">{t('admin.intro')}</p>
-      </div>
-      <div className="flex flex-col gap-6 md:flex-row md:gap-10">
         <SectionSelect groups={groups} current={current} />
-        <nav aria-label={t('admin.sectionsLabel')} className="hidden w-48 shrink-0 flex-col gap-5 md:flex">
+        <nav aria-label={t('admin.sectionsLabel')} className="hidden flex-col gap-5 md:flex">
           {groups.map((group) => (
             <div key={group.key} role="group" aria-label={group.heading}>
               <p aria-hidden="true" className={sidebarHeadingClass}>
@@ -107,9 +103,13 @@ export function AdminLayout() {
             </div>
           ))}
         </nav>
-        <div className="min-w-0 max-w-3xl flex-1">
-          <Outlet />
+      </aside>
+      <div className="min-w-0 max-w-3xl flex-1">
+        <div className="mb-6">
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-ink">{current?.label}</h1>
+          {current?.intro && <p className="mt-1 text-sm text-ink-soft">{current.intro}</p>}
         </div>
+        <Outlet />
       </div>
     </div>
   )

@@ -13,7 +13,6 @@ import {
   labelClassName,
   labelTextClassName,
   sectionClassName,
-  sectionTitleClassName,
 } from '../components/ui'
 import { t, tNode } from '../i18n'
 
@@ -51,7 +50,6 @@ export function SettingsWorkerPage() {
   return (
     <form onSubmit={onSubmit}>
       <section className={sectionClassName}>
-        <h2 className={sectionTitleClassName}>{t('settingsWorker.title')}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={labelClassName}>
             <span className={labelTextClassName}>{t('settingsWorker.timeout')}</span>

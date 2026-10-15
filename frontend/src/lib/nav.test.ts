@@ -42,6 +42,16 @@ describe('nav items', () => {
     ])
   })
 
+  test('gives every admin page an intro for its header', () => {
+    const items = adminNavGroups('http://pb.test/_/', { hostEditable: true, ingest: true }).flatMap(
+      (group) => group.items,
+    )
+
+    for (const item of items) {
+      if (item.kind === 'route') expect(item.intro, item.label).toBeTruthy()
+    }
+  })
+
   test('points the PocketBase entry at the dashboard', () => {
     const groups = adminNavGroups('http://pb.test/_/', { hostEditable: true, ingest: false })
     expect(groups.at(-1)?.items.at(-1)).toEqual({

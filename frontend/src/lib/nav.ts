@@ -28,6 +28,8 @@ export type RouteNavItem = {
   exact?: boolean
   /** Which count to show beside the label, if any. */
   badgeKey?: NavBadgeKey
+  /** One line under the page title saying what the page is for. */
+  intro?: string
 }
 
 export type ExternalNavItem = {
@@ -106,19 +108,19 @@ export function adminNavGroups(
   { hostEditable, ingest }: { hostEditable: boolean; ingest: boolean },
 ): NavGroup[] {
   const settings: (NavItem | false)[] = [
-    { kind: 'route', label: t('settings.tabAppearance'), to: '/settings', exact: true },
-    hostEditable && { kind: 'route', label: t('settings.tabAi'), to: '/settings/ai' },
-    { kind: 'route', label: t('settings.tabProcessing'), to: '/settings/processing' },
-    { kind: 'route', label: t('settings.tabFields'), to: '/settings/fields' },
-    hostEditable && { kind: 'route', label: t('settings.tabWorker'), to: '/settings/worker' },
-    hostEditable && { kind: 'route', label: t('settings.tabDuplicates'), to: '/settings/duplicates' },
-    ingest && { kind: 'route', label: t('settings.tabIngest'), to: '/settings/ingest' },
-    { kind: 'route', label: t('settings.tabMcp'), to: '/settings/mcp' },
+    { kind: 'route', label: t('settings.tabAppearance'), to: '/settings', exact: true, intro: t('admin.introAppearance') },
+    hostEditable && { kind: 'route', label: t('settings.tabAi'), to: '/settings/ai', intro: t('admin.introAi') },
+    { kind: 'route', label: t('settings.tabProcessing'), to: '/settings/processing', intro: t('admin.introProcessing') },
+    { kind: 'route', label: t('settings.tabFields'), to: '/settings/fields', intro: t('admin.introFields') },
+    hostEditable && { kind: 'route', label: t('settings.tabWorker'), to: '/settings/worker', intro: t('admin.introWorker') },
+    hostEditable && { kind: 'route', label: t('settings.tabDuplicates'), to: '/settings/duplicates', intro: t('admin.introDuplicates') },
+    ingest && { kind: 'route', label: t('settings.tabIngest'), to: '/settings/ingest', intro: t('admin.introIngest') },
+    { kind: 'route', label: t('settings.tabMcp'), to: '/settings/mcp', intro: t('admin.introMcp') },
   ]
   const instance: (NavItem | false)[] = [
-    { kind: 'route', label: t('nav.users'), to: '/management' },
-    { kind: 'route', label: t('nav.maintenance'), to: '/maintenance' },
-    hostEditable && { kind: 'route', label: t('nav.ocrTest'), to: '/ocr-test' },
+    { kind: 'route', label: t('nav.users'), to: '/management', intro: t('admin.introUsers') },
+    { kind: 'route', label: t('nav.maintenance'), to: '/maintenance', intro: t('maintenance.intro') },
+    hostEditable && { kind: 'route', label: t('nav.ocrTest'), to: '/ocr-test', intro: t('ocrTest.intro') },
     hostEditable && { kind: 'external', label: t('nav.admin'), href: pbAdminUrl },
   ]
   return [

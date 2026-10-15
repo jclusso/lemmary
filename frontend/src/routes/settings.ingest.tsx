@@ -16,7 +16,6 @@ import {
   labelClassName,
   labelTextClassName,
   sectionClassName,
-  sectionTitleClassName,
   selectClassName,
 } from '../components/ui'
 import { lang, t, tNode } from '../i18n'
@@ -115,7 +114,6 @@ export function SettingsIngestPage() {
   return (
     <form onSubmit={onSubmit}>
       <section className={sectionClassName}>
-        <h2 className={sectionTitleClassName}>{t('settingsIngest.title')}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className={labelClassName}>
             <label className={labelClassName}>

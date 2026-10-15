@@ -14,7 +14,6 @@ import {
   labelClassName,
   labelTextClassName,
   sectionClassName,
-  sectionTitleClassName,
 } from '../components/ui'
 import { t } from '../i18n'
 
@@ -70,7 +69,6 @@ export function SettingsProcessingPage() {
   return (
     <form onSubmit={onSubmit}>
       <section className={sectionClassName}>
-        <h2 className={sectionTitleClassName}>{t('settingsProcessing.title')}</h2>
         {/* In a panel of its own: it is the only setting here that decides
             where a finished document goes. */}
         <div className="mb-4 rounded-xs border border-line-strong bg-bright p-4">

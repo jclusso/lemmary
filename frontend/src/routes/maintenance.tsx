@@ -361,8 +361,6 @@ export function MaintenancePage() {
 
   return (
     <div className="max-w-3xl">
-      <p className="mb-5 text-sm text-ink-soft">{t('maintenance.intro')}</p>
-
       <div className="flex flex-col gap-5">
         <section className={sectionClassName}>
           <h2 className={sectionTitleClassName}>{t('maintenance.failedTitle')}</h2>
