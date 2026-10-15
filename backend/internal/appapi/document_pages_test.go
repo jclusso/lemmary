@@ -122,3 +122,39 @@ func TestDocumentPagesRefusesATextDocument(t *testing.T) {
 		t.Fatalf("bad body = %d, want 400", code)
 	}
 }
+
+// The page record decides what OCR reads and whether an edit costs OCR again,
+// so an owner patching it through the records API must not move it.
+func TestRecordsAPIKeepsThePageRecord(t *testing.T) {
+	app := bootQueueApp(t)
+	bindPageRecordGuard(app)
+	owner := makeQueueUser(t, app, "owner@example.com")
+	doc := makeQueueDocument(t, app, owner, models.DocStatusCompleted, "text")
+	models.PageRecord{Skipped: []int{2}}.Store(doc)
+	if err := app.Save(doc); err != nil {
+		t.Fatal(err)
+	}
+
+	record, err := app.FindRecordById("documents", doc.Id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	record.Set(models.OCRSkippedPagesField, []int{1, 2, 3})
+	e := &core.RecordRequestEvent{RequestEvent: &core.RequestEvent{App: app}, Record: record}
+	e.Collection = record.Collection()
+	e.Response = httptest.NewRecorder()
+	e.Request = httptest.NewRequest(http.MethodPatch, "/api/collections/documents/records/"+doc.Id, nil)
+	if err := app.OnRecordUpdateRequest().Trigger(e, func(e *core.RecordRequestEvent) error {
+		return e.App.Save(e.Record)
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	fresh, err := app.FindRecordById("documents", doc.Id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := models.LoadPageRecord(fresh).Skipped; len(got) != 1 || got[0] != 2 {
+		t.Fatalf("skipped = %v after a records API update, want [2]", got)
+	}
+}

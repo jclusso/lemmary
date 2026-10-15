@@ -97,9 +97,21 @@ showing through the paper. Check the suggestion before removing: a page
 holding a single faint stamp, or a whole page of badly faded print, may be
 flagged too.
 
-The preview and the OCR text are rebuilt from the shorter file. The title,
-tags and other details stay as they are. The file as first uploaded is kept,
-and **Restore original** in the same dialog puts it back.
+Pages that look blank are never sent to OCR, so they cost nothing to process
+and their bleed-through does not end up in the document's text. The file
+itself keeps them until you remove them, and the document page lists them
+with a **Review** button.
+
+Lemmary works out whether a change needs OCR again. Removing only pages that
+were left out keeps the text as it is. Removing a page that was read, or
+keeping a page that was left out, sends the document to OCR again; a page you
+keep is read from then on, even if it looks blank. The dialog says which of
+the two will happen before you save. The title, tags and other details stay
+as they are either way.
+
+The file as first uploaded is kept, and **Restore original** in the same
+dialog puts it back, again sending it to OCR only if a page that comes back
+was not a blank one.
 
 ## Limits
 

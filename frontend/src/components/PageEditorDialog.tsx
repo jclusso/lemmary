@@ -1,19 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
 import {
-  canRemove,
+  canSave,
   getDocumentPages,
+  needsReread,
   removeDocumentPages,
   restoreDocumentOriginal,
   suggestedRemovals,
+  unreadKept,
   type DocumentPages,
+  type PageEditOutcome,
 } from '../lib/api/documentPages'
 import { Button } from './ui'
 
+export type PageChange = 'removed' | 'kept' | 'restored'
+
 /**
  * Removes pages from the owner's PDF. Pages that look blank arrive selected;
- * the owner confirms or changes the choice. The file as uploaded is kept by the
- * backend, so the dialog also offers to put it back.
+ * the owner confirms or changes the choice, and a page OCR left out that they
+ * keep is read. The file as uploaded is kept by the backend, so the dialog
+ * also offers to put it back. Whether OCR runs again is the backend's call.
  */
 export function PageEditorDialog({
   documentId,
@@ -24,7 +30,7 @@ export function PageEditorDialog({
   documentId: string
   open: boolean
   onClose: () => void
-  onChanged: (change: 'removed' | 'restored') => void
+  onChanged: (change: PageChange, outcome: PageEditOutcome) => void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const [data, setData] = useState<DocumentPages | null>(null)
@@ -75,12 +81,11 @@ export function PageEditorDialog({
     })
   }
 
-  async function run(action: () => Promise<unknown>, change: 'removed' | 'restored') {
+  async function run(action: () => Promise<PageEditOutcome>, change: PageChange) {
     setBusy(true)
     setError('')
     try {
-      await action()
-      onChanged(change)
+      onChanged(change, await action())
       onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : t('pageEditor.changeFailed'))
@@ -92,6 +97,8 @@ export function PageEditorDialog({
   const pages = data?.pages ?? []
   const blankCount = pages.filter((page) => page.blank).length
   const keepsNone = pages.length > 0 && selected.size === pages.length
+  const toRead = unreadKept(pages, selected).length
+  const savable = canSave(pages, selected)
 
   return (
     <dialog
@@ -135,6 +142,8 @@ export function PageEditorDialog({
                       <span className="font-medium text-ink">{t('pageEditor.page', { page: page.page })}</span>
                       {isSelected ? (
                         <span className="font-semibold text-madder">{t('pageEditor.willRemove')}</span>
+                      ) : page.unread ? (
+                        <span className="font-semibold text-ink">{t('pageEditor.willRead')}</span>
                       ) : (
                         page.blank && <span className="text-ink-soft">{t('pageEditor.looksBlank')}</span>
                       )}
@@ -145,6 +154,11 @@ export function PageEditorDialog({
             })}
           </ul>
           {keepsNone && <p className="mt-3 text-sm text-madder">{t('pageEditor.keepOne')}</p>}
+          {savable && (
+            <p className="mt-3 text-sm text-ink-muted">
+              {needsReread(pages, selected) ? t('pageEditor.willReread') : t('pageEditor.textKept')}
+            </p>
+          )}
         </>
       )}
 
@@ -166,16 +180,20 @@ export function PageEditorDialog({
             {t('common.cancel')}
           </Button>
           <Button
-            variant="danger"
-            disabled={busy || !canRemove(selected, pages.length)}
+            variant={selected.size > 0 ? 'danger' : 'primary'}
+            disabled={busy || !savable}
             onClick={() =>
               void run(
                 () => removeDocumentPages(documentId, [...selected].sort((a, b) => a - b)),
-                'removed',
+                selected.size > 0 ? 'removed' : 'kept',
               )
             }
           >
-            {busy ? t('pageEditor.working') : t('pageEditor.remove', { count: selected.size })}
+            {busy
+              ? t('pageEditor.working')
+              : selected.size > 0 || toRead === 0
+                ? t('pageEditor.remove', { count: selected.size })
+                : t('pageEditor.read', { count: toRead })}
           </Button>
         </div>
       </div>

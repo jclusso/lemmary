@@ -32,6 +32,7 @@ func Register(
 	RegisterAppName(app)
 	app.OnRecordUpdate("documents").BindFunc(clearStaleTranslation)
 	app.OnRecordUpdateRequest("documents").BindFunc(saveFieldsWithDocument)
+	bindPageRecordGuard(app)
 	app.OnRecordCreateRequest(models.CustomFieldsCollection).BindFunc(saveChoicesWithField)
 	app.OnRecordUpdateRequest(models.CustomFieldsCollection).BindFunc(saveChoicesWithField)
 	app.OnServe().Bind(&hook.Handler[*core.ServeEvent]{
@@ -140,12 +141,6 @@ func Register(
 			return e.Next()
 		},
 	})
-}
-
-func registerDocumentPageRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App) {
-	g.GET("/documents/{documentId}/pages", bindAuth(handleGetDocumentPages(app)))
-	g.POST("/documents/{documentId}/pages/removal", bindAuth(handlePostDocumentPageRemoval(app)))
-	g.POST("/documents/{documentId}/original/restore", bindAuth(handlePostDocumentOriginalRestore(app)))
 }
 
 func registerImportRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App, lim limits.Limits) {

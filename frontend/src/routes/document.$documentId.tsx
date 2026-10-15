@@ -48,14 +48,15 @@ import { ProcessingStatus } from '../components/ProcessingStatus'
 import { ProcessingSteps } from '../components/ProcessingSteps'
 import { Button } from '../components/ui'
 import { ShareDialog, ShareSummary } from '../components/ShareDialog'
-import { PageEditorDialog } from '../components/PageEditorDialog'
+import { PageEditorDialog, type PageChange } from '../components/PageEditorDialog'
+import { unreadPages } from '../lib/api/documentPages'
 import { RelatedDocuments } from '../components/RelatedDocuments'
 import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
 import { useAppMeta } from '../hooks/useAppMeta'
 import { previewKind } from '../lib/documentPreview'
 import { anyJobRunning } from '../lib/api/jobs'
-import { t, tNode } from '../i18n'
+import { lang, t, tNode } from '../i18n'
 
 type OcrView = 'original' | 'translated' | 'both'
 
@@ -71,6 +72,14 @@ const OCR_VIEW_LABELS: Record<OcrView, string> = {
  */
 function backTarget(document: DocumentRecord | null, owned: boolean): '/' | '/inbox' {
   return owned && document?.processing_status === 'needs_review' ? '/inbox' : '/'
+}
+
+const listFormat = new Intl.ListFormat(lang, { style: 'long', type: 'conjunction' })
+
+function pageChangeMessage(change: PageChange, reread: boolean): string {
+  if (change === 'kept') return t('documentPage.pagesKept')
+  const done = change === 'removed' ? t('documentPage.pagesRemoved') : t('documentPage.originalRestored')
+  return `${done} ${reread ? t('documentPage.textRereading') : t('documentPage.textUnchanged')}`
 }
 
 function backLabel(to: '/' | '/inbox') {
@@ -239,6 +248,7 @@ export function DocumentDetailPage() {
   const owned = Boolean(document) && document?.user === pb.authStore.record?.id
   const [sharing, setSharing] = useState(false)
   const [editingPages, setEditingPages] = useState(false)
+  const unread = document ? unreadPages(document) : []
   const [shareVersion, setShareVersion] = useState(0)
   const back = backTarget(document, owned)
 
@@ -629,6 +639,14 @@ export function DocumentDetailPage() {
             : t('documentPage.duplicateReviewed')}
         </div>
       )}
+      {owned && unread.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 border border-line bg-surface px-4 py-3 text-sm text-ink">
+          <span>{t('documentPage.unreadPages', { count: unread.length, pages: listFormat.format(unread.map(String)) })}</span>
+          <Button variant="secondary" size="sm" onClick={() => setEditingPages(true)}>
+            {t('documentPage.reviewPages')}
+          </Button>
+        </div>
+      )}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <Link to={back} className="text-sm text-ink-soft hover:text-oxblood">
@@ -799,11 +817,9 @@ export function DocumentDetailPage() {
           documentId={documentId}
           open={editingPages}
           onClose={() => setEditingPages(false)}
-          onChanged={(change) => {
+          onChanged={(change, outcome) => {
             setError('')
-            setMessage(
-              change === 'removed' ? t('documentPage.pagesRemoved') : t('documentPage.originalRestored'),
-            )
+            setMessage(pageChangeMessage(change, outcome.reread))
           }}
         />
       )}

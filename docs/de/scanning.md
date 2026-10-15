@@ -100,9 +100,21 @@ Seite, das durch das Papier scheint. Prüfen Sie den Vorschlag vor dem Entfernen
 eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
 Schrift kann markiert werden.
 
-Vorschau und OCR-Text werden aus der kürzeren Datei neu erstellt. Titel, Tags und
-andere Angaben bleiben unverändert. Die ursprünglich hochgeladene Datei wird
-aufbewahrt, und **Original wiederherstellen** im selben Dialog stellt sie wieder her.
+Leer wirkende Seiten werden nie zur Texterkennung geschickt. Sie kosten daher
+nichts, und ihr durchscheinender Text landet nicht im Text des Dokuments. Die Datei
+selbst behält sie, bis Sie sie entfernen, und die Dokumentseite listet sie mit
+einer Schaltfläche **Prüfen** auf.
+
+Lemmary entscheidet selbst, ob eine Änderung eine erneute Texterkennung braucht.
+Werden nur ausgelassene Seiten entfernt, bleibt der Text, wie er ist. Wird eine
+gelesene Seite entfernt oder eine ausgelassene Seite behalten, geht das Dokument
+erneut zur Texterkennung; eine behaltene Seite wird von da an gelesen, auch wenn sie
+leer wirkt. Der Dialog zeigt vor dem Speichern, was davon passiert. Titel, Tags und
+andere Angaben bleiben in beiden Fällen unverändert.
+
+Die ursprünglich hochgeladene Datei wird aufbewahrt, und **Original
+wiederherstellen** im selben Dialog stellt sie wieder her. Auch dann geht das
+Dokument nur zur Texterkennung, wenn eine zurückkehrende Seite keine leere war.
 
 ## Grenzen {#limits}
 

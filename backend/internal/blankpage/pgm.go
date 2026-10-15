@@ -1,4 +1,4 @@
-package pageedit
+package blankpage
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-var errBadPGM = errors.New("pageedit: not an 8-bit binary PGM")
+var errBadPGM = errors.New("blankpage: not an 8-bit binary PGM")
 
 // decodePGM reads the binary greymap pdftoppm -gray writes. The standard
 // library has no decoder for it, and the format is a short text header in

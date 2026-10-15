@@ -2,10 +2,8 @@ package pageedit
 
 import (
 	"context"
-	"errors"
 	"os/exec"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 
@@ -149,126 +147,5 @@ func TestInspectKeepsAPageWithOneShortLine(t *testing.T) {
 	}
 	if overview.Pages[0].Blank {
 		t.Fatal("a page reading \"Page 1\" was flagged blank")
-	}
-}
-
-func TestRemovePagesThenRestore(t *testing.T) {
-	requirePoppler(t)
-	app := testpb.Open(t)
-	document := makeDocument(t, app, makeUser(t, app), "scan.pdf", testpdf.Multipage(4))
-
-	if err := RemovePages(context.Background(), app, document, []int{2, 4}); err != nil {
-		t.Fatal(err)
-	}
-	document = reload(t, app, document)
-	pages := storedPages(t, app, document, "file")
-	if len(pages) != 2 || !strings.Contains(pages[0], "Page 1") || !strings.Contains(pages[1], "Page 3") {
-		t.Fatalf("pages after removal = %q, want Page 1 and Page 3", pages)
-	}
-	if got := len(storedPages(t, app, document, "original_file")); got != 4 {
-		t.Fatalf("original has %d pages, want 4", got)
-	}
-	if !strings.HasPrefix(document.GetString("file"), "scan_") {
-		t.Fatalf("file name = %q, want it to keep the upload's name", document.GetString("file"))
-	}
-	if document.GetString("processing_status") != models.DocStatusPending {
-		t.Fatalf("status = %q, want pending", document.GetString("processing_status"))
-	}
-	job, err := app.FindFirstRecordByFilter("processing_jobs", "document = {:doc}", map[string]any{"doc": document.Id})
-	if err != nil {
-		t.Fatalf("no job queued: %v", err)
-	}
-	var steps, force []string
-	if err := job.UnmarshalJSONField("steps", &steps); err != nil {
-		t.Fatal(err)
-	}
-	if err := job.UnmarshalJSONField("force_steps", &force); err != nil {
-		t.Fatal(err)
-	}
-	if slices.Contains(steps, models.StepApplyMetadata) {
-		t.Fatalf("steps = %v; removing pages must not overwrite metadata", steps)
-	}
-	if !slices.Contains(force, models.StepPreview) || !slices.Contains(force, models.StepOCR) {
-		t.Fatalf("force_steps = %v, want preview and ocr", force)
-	}
-
-	if err := RemovePages(context.Background(), app, document, []int{1}); !errors.Is(err, ErrBusy) {
-		t.Fatalf("removal during processing = %v, want ErrBusy", err)
-	}
-	finishJobs(t, app, document.Id)
-
-	// A second removal keeps the first backup: restoring goes back to the scan.
-	if err := RemovePages(context.Background(), app, document, []int{1}); err != nil {
-		t.Fatal(err)
-	}
-	document = reload(t, app, document)
-	if got := len(storedPages(t, app, document, "original_file")); got != 4 {
-		t.Fatalf("original after a second removal has %d pages, want 4", got)
-	}
-	finishJobs(t, app, document.Id)
-
-	if err := RestoreOriginal(app, document); err != nil {
-		t.Fatal(err)
-	}
-	document = reload(t, app, document)
-	if got := len(storedPages(t, app, document, "file")); got != 4 {
-		t.Fatalf("restored file has %d pages, want 4", got)
-	}
-	if document.GetString("original_file") != "" {
-		t.Fatal("the backup survived the restore")
-	}
-	finishJobs(t, app, document.Id)
-	if err := RestoreOriginal(app, document); !errors.Is(err, ErrNoOriginal) {
-		t.Fatalf("second restore = %v, want ErrNoOriginal", err)
-	}
-}
-
-func TestRemovePagesRefuses(t *testing.T) {
-	requirePoppler(t)
-	app := testpb.Open(t)
-	owner := makeUser(t, app)
-	document := makeDocument(t, app, owner, "scan.pdf", testpdf.Multipage(2))
-
-	for name, tc := range map[string]struct {
-		pages []int
-		want  error
-	}{
-		"nothing":      {nil, ErrNoPages},
-		"every page":   {[]int{1, 2}, ErrAllPages},
-		"a page past":  {[]int{3}, ErrPageOutOfDoc},
-		"page zero":    {[]int{0}, ErrPageOutOfDoc},
-		"repeated all": {[]int{1, 1, 2}, ErrAllPages},
-	} {
-		if err := RemovePages(context.Background(), app, document, tc.pages); !errors.Is(err, tc.want) {
-			t.Errorf("%s: err = %v, want %v", name, err, tc.want)
-		}
-	}
-
-	text := makeDocument(t, app, owner, "note.txt", []byte("plain text"))
-	if err := RemovePages(context.Background(), app, text, []int{1}); !errors.Is(err, ErrNotPDF) {
-		t.Fatalf("text document: err = %v, want ErrNotPDF", err)
-	}
-	if _, err := Inspect(context.Background(), app, text); !errors.Is(err, ErrNotPDF) {
-		t.Fatalf("inspect text document: err = %v, want ErrNotPDF", err)
-	}
-}
-
-func TestKeptRanges(t *testing.T) {
-	got, err := keptRanges(7, []int{1, 4, 5, 7})
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := []pageRange{{2, 3}, {6, 6}}
-	if !slices.Equal(got, want) {
-		t.Fatalf("ranges = %v, want %v", got, want)
-	}
-}
-
-func TestUploadNameDropsPocketBaseSuffix(t *testing.T) {
-	if got := uploadName("scan_a1b2c3d4e5.pdf"); got != "scan.pdf" {
-		t.Fatalf("uploadName = %q, want scan.pdf", got)
-	}
-	if got := uploadName("scan.pdf"); got != "scan.pdf" {
-		t.Fatalf("uploadName = %q, want scan.pdf unchanged", got)
 	}
 }

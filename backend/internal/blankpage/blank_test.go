@@ -1,4 +1,4 @@
-package pageedit
+package blankpage
 
 import (
 	"image"

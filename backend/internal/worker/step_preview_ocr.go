@@ -125,14 +125,17 @@ func resolveOCRText(ctx context.Context, state *StepState, provider ocr.Provider
 		return text, "native", nil
 	}
 
+	in := prepareOCRInput(ctx, state)
+	defer in.cleanup()
+
 	ocrCtx, cancel := context.WithTimeout(ctx, state.Cfg.OCRTimeout)
 	defer cancel()
 
-	text, err = provider.ExtractText(ocrCtx, state.TmpPath, state.MimeType)
+	text, err = provider.ExtractText(ocrCtx, in.path, state.MimeType)
 	if err != nil {
 		return "", "", err
 	}
-	// At least one: a document from before page_count was stamped reads 0.
-	metrics.OCRPages(max(1, int64(state.Document.GetFloat("page_count"))))
+	metrics.OCRPages(int64(in.pages))
+	in.record(state)
 	return text, provider.Name(), nil
 }

@@ -65,6 +65,10 @@ export type DocumentRecord = {
   checksum?: string
   text_fingerprint?: string
   duplicate_of?: string
+  /** Uploaded page number of each page of the current file; null while it is the upload. */
+  page_map?: number[] | null
+  /** Uploaded page numbers that looked blank and were not sent to OCR. */
+  ocr_skipped_pages?: number[] | null
   expand?: {
     tags?: TagRecord[]
     duplicate_of?: DocumentRecord
