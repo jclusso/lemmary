@@ -197,7 +197,12 @@ func (r *PipelineRunner) runStep(ctx context.Context, p *pipelineRun, idx int) (
 
 	p.logger.Info("step running", "step", stepName, "attempt", p.runs[idx].Attempts)
 
-	if err := step.Run(ctx, p.state); err != nil {
+	p.state.RanWith.Provider, p.state.RanWith.Model = "", ""
+	err = step.Run(ctx, p.state)
+	if p.state.RanWith.Provider != "" {
+		p.runs[idx].Provider, p.runs[idx].Model = p.state.RanWith.Provider, p.state.RanWith.Model
+	}
+	if err != nil {
 		if errors.Is(err, ErrStepSoft) {
 			markStepSoftFailed(&p.runs[idx], err)
 			saveStepRuns(p.job, p.runs)

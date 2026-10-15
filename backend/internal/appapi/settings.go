@@ -47,6 +47,7 @@ type settingsResponse struct {
 	ExtractionRules               string  `json:"extraction_rules"`
 	NearDuplicateDetectionEnabled bool    `json:"near_duplicate_detection_enabled"`
 	NearDuplicateThreshold        float64 `json:"near_duplicate_threshold"`
+	BlankPageAICheckEnabled       bool    `json:"blank_page_ai_check_enabled"`
 	AlwaysRequireReview           bool    `json:"always_require_review"`
 	// The consume folder. Owner empty means the first admin's paired account.
 	IngestDirOwner          string `json:"ingest_dir_owner"`
@@ -91,6 +92,7 @@ type settingsPatchRequest struct {
 	ExtractionRules               *string   `json:"extraction_rules"`
 	NearDuplicateDetectionEnabled *bool     `json:"near_duplicate_detection_enabled"`
 	NearDuplicateThreshold        *float64  `json:"near_duplicate_threshold"`
+	BlankPageAICheckEnabled       *bool     `json:"blank_page_ai_check_enabled"`
 	AlwaysRequireReview           *bool     `json:"always_require_review"`
 	IngestDirOwner                *string   `json:"ingest_dir_owner"`
 	IngestDirIntervalMin          *int      `json:"ingest_dir_interval_min"`
@@ -122,6 +124,7 @@ func (r settingsPatchRequest) touchesManaged() bool {
 		r.WebSearchProviderID != nil ||
 		r.NearDuplicateDetectionEnabled != nil ||
 		r.NearDuplicateThreshold != nil ||
+		r.BlankPageAICheckEnabled != nil ||
 		r.OCRTimeoutSec != nil ||
 		r.OpenAITimeoutSec != nil ||
 		r.WorkerTimeoutSec != nil ||
@@ -284,6 +287,7 @@ func settingsResponseFromConfig(cfg config.Config) settingsResponse {
 		ExtractionRules:               cfg.ExtractionRules,
 		NearDuplicateDetectionEnabled: cfg.NearDuplicateDetectionEnabled,
 		NearDuplicateThreshold:        threshold,
+		BlankPageAICheckEnabled:       cfg.BlankPageAICheckEnabled,
 		AlwaysRequireReview:           cfg.AlwaysRequireReview,
 		IngestDirOwner:                cfg.IngestDirOwner,
 		IngestDirIntervalMin:          cfg.IngestDirIntervalMin,
@@ -407,6 +411,9 @@ func applyProcessingPatch(record *core.Record, req settingsPatchRequest) error {
 	}
 	if req.NearDuplicateDetectionEnabled != nil {
 		record.Set("near_duplicate_detection_enabled", *req.NearDuplicateDetectionEnabled)
+	}
+	if req.BlankPageAICheckEnabled != nil {
+		record.Set("blank_page_ai_check_enabled", *req.BlankPageAICheckEnabled)
 	}
 	if req.AlwaysRequireReview != nil {
 		record.Set("always_require_review", *req.AlwaysRequireReview)

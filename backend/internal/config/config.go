@@ -68,6 +68,9 @@ type Config struct {
 	ExtractionRules               string
 	NearDuplicateDetectionEnabled bool
 	NearDuplicateThreshold        float64
+	// BlankPageAICheckEnabled sends the pages the local blank check cannot
+	// settle to the OCR model, when that model can look at images.
+	BlankPageAICheckEnabled bool
 	// AlwaysRequireReview finishes every extracted document on needs_review, so
 	// nothing reaches completed except by a person saying so.
 	AlwaysRequireReview bool
@@ -274,6 +277,7 @@ func ApplyManaged(app core.App, env AIEnv) error {
 	}
 	settings.Set("near_duplicate_detection_enabled", env.NearDuplicateEnabled)
 	settings.Set("near_duplicate_threshold", env.NearDuplicateThreshold)
+	settings.Set("blank_page_ai_check_enabled", env.BlankPageAICheck)
 	settings.Set("ocr_timeout_sec", int(env.OCRTimeout.Seconds()))
 	settings.Set("openai_timeout_sec", int(env.AITimeout.Seconds()))
 	settings.Set("worker_timeout_sec", int(env.WorkerTimeout.Seconds()))
@@ -361,6 +365,7 @@ func configFromRecord(app core.App, record *core.Record) (Config, error) {
 		ExtractionRules:               strings.TrimSpace(record.GetString("extraction_rules")),
 		NearDuplicateDetectionEnabled: record.GetBool("near_duplicate_detection_enabled"),
 		NearDuplicateThreshold:        threshold,
+		BlankPageAICheckEnabled:       record.GetBool("blank_page_ai_check_enabled"),
 		AlwaysRequireReview:           record.GetBool("always_require_review"),
 		IngestDirOwner:                strings.TrimSpace(record.GetString("ingest_dir_owner")),
 		IngestDirIntervalMin:          ingestInterval,
@@ -446,6 +451,7 @@ func applyConfigToRecord(record *core.Record, cfg Config) {
 	record.Set("extraction_prompt_version", cfg.ExtractionPromptVer)
 	record.Set("extraction_rules", cfg.ExtractionRules)
 	record.Set("near_duplicate_detection_enabled", cfg.NearDuplicateDetectionEnabled)
+	record.Set("blank_page_ai_check_enabled", cfg.BlankPageAICheckEnabled)
 	threshold := cfg.NearDuplicateThreshold
 	if threshold <= 0 || threshold > 1 {
 		threshold = DefaultNearDuplicateThreshold

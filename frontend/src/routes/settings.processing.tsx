@@ -34,6 +34,7 @@ export function SettingsProcessingPage() {
       deep_search_languages: settings.deep_search_languages,
       extraction_rules: settings.extraction_rules,
       always_require_review: settings.always_require_review,
+      blank_page_ai_check_enabled: settings.blank_page_ai_check_enabled,
       embedding_model: settings.embedding_model,
     }))
 
@@ -58,6 +59,8 @@ export function SettingsProcessingPage() {
 
     await save({
       ...timeouts,
+      // Operator-owned on a managed host, like the timeouts.
+      ...(timeoutsEditable ? { blank_page_ai_check_enabled: form.blank_page_ai_check_enabled } : {}),
       processing_result_language: form.processing_result_language,
       deep_search_languages: form.deep_search_languages,
       extraction_rules: form.extraction_rules,
@@ -87,6 +90,20 @@ export function SettingsProcessingPage() {
             {t('settingsProcessing.alwaysReviewHint')}
           </p>
         </div>
+        {timeoutsEditable && (
+          <div className="mb-4">
+            <label className="flex items-center gap-2.5 text-sm font-medium text-ink">
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-oxblood"
+                checked={form.blank_page_ai_check_enabled}
+                onChange={(e) => updateField('blank_page_ai_check_enabled', e.target.checked)}
+              />
+              {t('settingsProcessing.blankPageAICheck')}
+            </label>
+            <p className={`${fieldHintClassName} mt-2`}>{t('settingsProcessing.blankPageAICheckHint')}</p>
+          </div>
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           {timeoutsEditable && (
             <>

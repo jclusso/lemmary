@@ -93,3 +93,24 @@ func TestIsBlank(t *testing.T) {
 		})
 	}
 }
+
+// Only the pages between nearly no ink and plenty of print are left for a
+// second opinion.
+func TestWhatTheLocalCheckIsSureOf(t *testing.T) {
+	white := measureInk(page(250))
+	printed := page(250)
+	paragraph(printed, 30)
+	heavyBleed := page(250)
+	paragraph(heavyBleed, 140)
+	fill(heavyBleed, image.Rect(60, 450, 500, 456), 40)
+
+	if !surelyBlank(white) {
+		t.Fatal("white paper is not surely blank")
+	}
+	if p := measureInk(printed); p.solid < contentSolid {
+		t.Fatalf("a page of print is not surely content: %+v", p)
+	}
+	if p := measureInk(heavyBleed); surelyBlank(p) || p.solid >= contentSolid {
+		t.Fatalf("heavy bleed-through was taken as settled: %+v", p)
+	}
+}

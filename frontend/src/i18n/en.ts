@@ -1367,6 +1367,9 @@ export const en = {
   'settingsProcessing.alwaysReview': 'Always require review for new documents',
   'settingsProcessing.alwaysReviewHint':
     'Every document the AI extracts metadata for waits in the Inbox, however confident the extraction was — reprocessed documents included. Nothing completes but by your saying so. Off, only low-confidence extractions and possible duplicates land there. While a document waits, the AI may also suggest new tags for it; accepting one creates the tag.',
+  'settingsProcessing.blankPageAICheck': 'Check unclear blank pages with AI',
+  'settingsProcessing.blankPageAICheckHint':
+    'Most pages are judged blank or printed on this server. The few it cannot settle, such as heavy bleed-through or very faint print, are shown to the OCR model with the page before each, and its answer decides them. Needs an AI OCR model; costs one request for a document with such a page and nothing for the rest.',
   'settingsProcessing.ocrTimeout': 'OCR timeout (seconds)',
   'settingsProcessing.ocrTimeoutHint': 'How long one OCR call may take before the step fails.',
   'settingsProcessing.aiTimeout': 'AI timeout (seconds)',

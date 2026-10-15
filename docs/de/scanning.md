@@ -98,7 +98,17 @@ die Schatten an den Rändern eines Scans werden ignoriert, ebenso Durchscheinend
 von der Vorderseite durchgedrückte Spuren und das blasse Bild einer ganzen bedruckten
 Seite, das durch das Papier scheint. Bei einem beidseitigen Scan gilt eine Seite, die
 nur die vorherige Seite gespiegelt und blasser zeigt, auch dann als leer, wenn das
-Durchscheinende dunkel ist. Prüfen Sie den Vorschlag vor dem Entfernen: Auch
+Durchscheinende dunkel ist.
+
+Die meisten Seiten sind eindeutig leer oder eindeutig bedruckt. Über die wenigen
+dazwischen kann das OCR-Modell entscheiden: Aktivieren Sie **Unklare leere Seiten mit
+KI prüfen** unter Einstellungen → Verarbeitung. Diese Seiten gehen jeweils mit der
+vorherigen Seite in einer Anfrage pro Dokument an das OCR-Modell, und seine Antwort
+ersetzt die lokale Einschätzung. Dafür muss ein KI-Modell als OCR-Anbieter eingestellt
+sein; ein Dokument ohne unklare Seite löst keine Anfrage aus. Schlägt die Anfrage fehl,
+bleibt die lokale Einschätzung bestehen, und der Schritt zeigt eine Warnung.
+
+Prüfen Sie den Vorschlag vor dem Entfernen: Auch
 eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
 Schrift kann markiert werden.
 

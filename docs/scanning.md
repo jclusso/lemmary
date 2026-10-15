@@ -95,7 +95,17 @@ the shadows at a scan's edges are ignored, and so is bleed-through: marks
 pressed through from the front, and the faint image of a whole printed page
 showing through the paper. In a double-sided scan, a page that only shows the
 page before it, mirrored and fainter, counts as blank even when the
-bleed-through is dark. Check the suggestion before removing: a page
+bleed-through is dark.
+
+Most pages are plainly blank or plainly printed. For the few in between, you
+can let the OCR model decide: turn on **Check unclear blank pages with AI** in
+Settings → Processing. Those pages, each with the page before it, go to the OCR
+model in one request per document, and its answer replaces the local guess.
+It needs an AI model as the OCR provider; a document with no unclear page makes
+no request. If the request fails, the local guess stands and the step shows a
+warning.
+
+Check the suggestion before removing: a page
 holding a single faint stamp, or a whole page of badly faded print, may be
 flagged too.
 

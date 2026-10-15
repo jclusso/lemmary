@@ -1439,6 +1439,9 @@ export const de: Catalog = {
   'settingsProcessing.alwaysReview': 'Neue Dokumente immer prüfen lassen',
   'settingsProcessing.alwaysReviewHint':
     'Jedes Dokument, für das die KI Metadaten extrahiert, wartet im Posteingang, egal wie sicher die Extraktion war – erneut verarbeitete Dokumente eingeschlossen. Nichts wird ohne Ihre Zustimmung abgeschlossen. Ist die Option aus, landen dort nur unsichere Extraktionen und mögliche Duplikate. Solange ein Dokument wartet, kann die KI auch neue Tags vorschlagen; wer einen annimmt, legt den Tag an.',
+  'settingsProcessing.blankPageAICheck': 'Unklare leere Seiten mit KI prüfen',
+  'settingsProcessing.blankPageAICheckHint':
+    'Die meisten Seiten werden auf diesem Server als leer oder bedruckt eingestuft. Die wenigen, die er nicht entscheiden kann, etwa stark durchscheinender Text oder sehr blasser Druck, werden dem OCR-Modell zusammen mit der jeweils vorherigen Seite gezeigt, und seine Antwort entscheidet. Erfordert ein KI-OCR-Modell; kostet eine Anfrage für ein Dokument mit einer solchen Seite und für alle anderen nichts.',
   'settingsProcessing.ocrTimeout': 'OCR-Zeitlimit (Sekunden)',
   'settingsProcessing.ocrTimeoutHint':
     'Wie lange ein einzelner OCR-Aufruf dauern darf, bevor der Schritt fehlschlägt.',
