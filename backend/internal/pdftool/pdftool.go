@@ -186,6 +186,12 @@ func RenderPagesAs(ctx context.Context, pdfPath, outDir string, format Format, m
 // RenderPage renders a single page of pdfPath to outPath (a .png path), scaled
 // so the longest edge is maxEdge pixels.
 func RenderPage(ctx context.Context, pdfPath, outPath string, maxEdge, page int) error {
+	return RenderPageAs(ctx, pdfPath, outPath, PNG, maxEdge, page)
+}
+
+// RenderPageAs is RenderPage in the given format; outPath carries that
+// format's extension.
+func RenderPageAs(ctx context.Context, pdfPath, outPath string, format Format, maxEdge, page int) error {
 	if err := RequirePDF(pdfPath); err != nil {
 		return err
 	}
@@ -196,11 +202,12 @@ func RenderPage(ctx context.Context, pdfPath, outPath string, maxEdge, page int)
 	ctx, cancel := context.WithTimeout(ctx, RenderTimeout)
 	defer cancel()
 
-	// -singlefile makes pdftoppm write exactly outPrefix+".png" with no page
-	// suffix, so the output path is known without listing the directory.
-	outPrefix := strings.TrimSuffix(outPath, ".png")
+	// -singlefile makes pdftoppm write exactly outPrefix plus the extension,
+	// with no page suffix, so the output path is known without listing the
+	// directory.
+	outPrefix := strings.TrimSuffix(outPath, format.ext)
 	_, err := run(ctx, "pdftoppm",
-		"-png",
+		format.flag,
 		"-f", strconv.Itoa(page),
 		"-l", strconv.Itoa(page),
 		"-scale-to", strconv.Itoa(maxEdge),

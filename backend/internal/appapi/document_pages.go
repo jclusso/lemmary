@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -17,8 +18,33 @@ type removePagesRequest struct {
 	Pages []int `json:"pages"`
 }
 
-// handleGetDocumentPages renders the pages of the caller's own PDF, each with a
-// thumbnail and whether it looks blank.
+// handleGetDocumentPageThumbnail renders one page of the caller's own PDF.
+func handleGetDocumentPageThumbnail(app core.App) func(*core.RequestEvent) error {
+	return func(e *core.RequestEvent) error {
+		page, convErr := strconv.Atoi(e.Request.PathValue("page"))
+		if convErr != nil {
+			return writeError(e, http.StatusBadRequest, "Page not found.")
+		}
+		document, handled, err := loadOwnDocument(app, e)
+		if handled {
+			return err
+		}
+		data, err := pageedit.Thumbnail(e.Request.Context(), app, document, page)
+		if err != nil {
+			return writePageEditError(app, e, err)
+		}
+		e.Response.Header().Set("Content-Type", "image/jpeg")
+		// The file name is part of the record, so a page edit gives the
+		// editor a fresh list and the old thumbnails are never asked for again.
+		e.Response.Header().Set("Cache-Control", "private, max-age=300")
+		e.Response.WriteHeader(http.StatusOK)
+		_, writeErr := e.Response.Write(data)
+		return writeErr
+	}
+}
+
+// handleGetDocumentPages lists the pages of the caller's own PDF and which
+// look blank.
 func handleGetDocumentPages(app core.App) func(*core.RequestEvent) error {
 	return func(e *core.RequestEvent) error {
 		document, handled, err := loadOwnDocument(app, e)
@@ -40,6 +66,7 @@ func bindPageRecordGuard(app core.App) {
 
 func registerDocumentPageRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App) {
 	g.GET("/documents/{documentId}/pages", bindAuth(handleGetDocumentPages(app)))
+	g.GET("/documents/{documentId}/pages/{page}", bindAuth(handleGetDocumentPageThumbnail(app)))
 	g.POST("/documents/{documentId}/pages/removal", bindAuth(handlePostDocumentPageRemoval(app)))
 	g.POST("/documents/{documentId}/original/restore", bindAuth(handlePostDocumentOriginalRestore(app)))
 }

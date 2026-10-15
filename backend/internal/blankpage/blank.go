@@ -24,41 +24,25 @@ const (
 	// or pen mark pressed through from the front.
 	faintInk   = 0.001
 	faintSolid = 0.0001
-	// A page whose ink reaches over bleedSpread of the grid while staying this
-	// short of near-black is heavy bleed-through: the whole of the other side
-	// showing faintly. Real print on a mostly empty page is the reverse,
-	// near-black and confined to a few cells.
-	bleedSolid  = 0.0025
-	bleedSpread = 0.4
-	gridCols    = 12
-	gridRows    = 16
-	// cellInk is the ink, in pixels, that makes a grid cell count as inked, so
-	// a speck or two does not.
-	cellInk = 3
 )
 
 // inkProfile is what isBlank decides from, measured over the page's inner area.
 type inkProfile struct {
 	// ink and solid are shares of the inner area.
 	ink, solid float64
-	// spread is the share of grid cells holding ink.
-	spread float64
 }
 
 // contentSolid is the near-black share past which a page is printed beyond
-// doubt. Printed pages in real scans measure 2% and more; the heaviest
-// bleed-through seen so far 0.5%.
+// doubt. Printed pages measure from 0.3% (a scanner that renders toner as a
+// light grey) to over 2%, and the heaviest bleed-through seen so far 0.5%,
+// so only pages above every bleed-through are settled by it.
 const contentSolid = 0.015
 
-// isBlank reports whether a page carries no print beyond bleed-through, specks
-// and edge shadows, judged on the page alone.
+// isBlank reports whether a page is blank on its own: next to no ink at all,
+// or a few faint marks. Faint ink across the whole page is not enough, because
+// a page printed in light toner looks exactly like heavy bleed-through; only
+// the page before it (showsThrough) or a second opinion can tell them apart.
 func isBlank(p inkProfile) bool {
-	return surelyBlank(p) || (p.solid < bleedSolid && p.spread >= bleedSpread)
-}
-
-// surelyBlank is the part of isBlank no second opinion would overturn: next to
-// no ink at all, or a few faint marks.
-func surelyBlank(p inkProfile) bool {
 	return p.ink < blankInk || (p.ink < faintInk && p.solid < faintSolid)
 }
 
@@ -83,35 +67,22 @@ func measureInk(img image.Image) inkProfile {
 	total := inner.Dx() * inner.Dy()
 	paper := median(histogram, total)
 
-	var cells [gridRows][gridCols]int
 	ink, solid := 0, 0
 	for y := inner.Min.Y; y < inner.Max.Y; y++ {
-		row := (y - inner.Min.Y) * gridRows / inner.Dy()
 		for x := inner.Min.X; x < inner.Max.X; x++ {
 			level := int(luminance(img, x, y))
 			if level >= paper-inkContrast {
 				continue
 			}
 			ink++
-			cells[row][(x-inner.Min.X)*gridCols/inner.Dx()]++
 			if level < paper-solidContrast {
 				solid++
 			}
 		}
 	}
-
-	inked := 0
-	for _, row := range cells {
-		for _, count := range row {
-			if count >= cellInk {
-				inked++
-			}
-		}
-	}
 	return inkProfile{
-		ink:    float64(ink) / float64(total),
-		solid:  float64(solid) / float64(total),
-		spread: float64(inked) / float64(gridRows*gridCols),
+		ink:   float64(ink) / float64(total),
+		solid: float64(solid) / float64(total),
 	}
 }
 

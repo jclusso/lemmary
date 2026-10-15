@@ -13,7 +13,6 @@ const page = (number: number, blank: boolean, unread = false): DocumentPage => (
   page: number,
   blank,
   unread,
-  thumbnail: '',
 })
 
 // Page 2 and 4 look blank and OCR left them out; page 3 is blank but was read.

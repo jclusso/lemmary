@@ -14,7 +14,6 @@ package pageedit
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -63,10 +62,9 @@ var rereadSteps = []string{models.StepOCR, models.StepDetectDuplicates, models.S
 // Page is one page of the editor. Blank means it looks blank and the owner has
 // not said otherwise; Unread that OCR left it out.
 type Page struct {
-	Number    int    `json:"page"`
-	Blank     bool   `json:"blank"`
-	Unread    bool   `json:"unread"`
-	Thumbnail string `json:"thumbnail"`
+	Number int  `json:"page"`
+	Blank  bool `json:"blank"`
+	Unread bool `json:"unread"`
 }
 
 type Overview struct {
@@ -79,8 +77,9 @@ type Outcome struct {
 	Reread bool `json:"reread"`
 }
 
-// Inspect renders every page of the document's PDF, measuring each for
-// blankness and returning a thumbnail of it.
+// Inspect lists the pages of the document's PDF and which look blank. The
+// thumbnails come one page at a time from Thumbnail, so the editor can open
+// before the slowest page is rendered.
 func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview, error) {
 	if !isPDF(document) {
 		return Overview{}, ErrNotPDF
@@ -107,28 +106,50 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 	if err != nil {
 		return Overview{}, err
 	}
-	// A JPEG straight from pdftoppm: compressing a noisy scan as PNG takes it
-	// over twenty times longer, and the browser shows a JPEG as well.
-	thumbs, err := pdftool.RenderPagesAs(ctx, pdfPath, filepath.Join(workDir, "thumbs"), pdftool.JPEG, thumbEdge, count)
-	if err != nil {
-		return Overview{}, err
-	}
-
 	pages := make([]Page, 0, count)
 	for i := range count {
-		thumb, err := os.ReadFile(thumbs[i])
-		if err != nil {
-			return Overview{}, fmt.Errorf("page %d: %w", i+1, err)
-		}
 		uploaded := record.Uploaded(i + 1)
 		pages = append(pages, Page{
-			Number:    i + 1,
-			Blank:     blank[i] && !record.IsConfirmed(uploaded),
-			Unread:    record.IsSkipped(uploaded),
-			Thumbnail: "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(thumb),
+			Number: i + 1,
+			Blank:  blank[i] && !record.IsConfirmed(uploaded),
+			Unread: record.IsSkipped(uploaded),
 		})
 	}
 	return Overview{Pages: pages, HasOriginal: document.GetString("original_file") != ""}, nil
+}
+
+// Thumbnail renders one page of the document's PDF as a JPEG: straight from
+// pdftoppm, because compressing a noisy scan as PNG takes it over twenty times
+// longer and the browser shows a JPEG as well.
+func Thumbnail(ctx context.Context, app core.App, document *core.Record, page int) ([]byte, error) {
+	if !isPDF(document) {
+		return nil, ErrNotPDF
+	}
+	if page < 1 {
+		return nil, ErrPageOutOfDoc
+	}
+	workDir, err := os.MkdirTemp("", "lemmary-pageedit-*")
+	if err != nil {
+		return nil, err
+	}
+	defer os.RemoveAll(workDir)
+
+	pdfPath := filepath.Join(workDir, "document.pdf")
+	if err := copyStoredFile(app, document, "file", pdfPath); err != nil {
+		return nil, err
+	}
+	count, err := pdftool.PageCount(ctx, pdfPath)
+	if err != nil {
+		return nil, err
+	}
+	if page > count {
+		return nil, ErrPageOutOfDoc
+	}
+	outPath := filepath.Join(workDir, "page.jpg")
+	if err := pdftool.RenderPageAs(ctx, pdfPath, outPath, pdftool.JPEG, thumbEdge, page); err != nil {
+		return nil, err
+	}
+	return os.ReadFile(outPath)
 }
 
 // blankPages is what the detect_blank_pages step recorded, which may include
