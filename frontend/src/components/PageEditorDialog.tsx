@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '../i18n'
 import {
   canSave,
+  fetchPageThumbnail,
   getDocumentPages,
   needsReread,
   removeDocumentPages,
@@ -15,6 +16,56 @@ import {
 import { Button } from './ui'
 
 export type PageChange = 'removed' | 'kept' | 'restored'
+
+/** Thumbnails fetched at once: the server renders each, and may have few CPUs. */
+const THUMB_CONCURRENCY = 3
+
+/**
+ * Fetches each page's thumbnail once the page list is in, so the dialog opens
+ * before the slowest page is rendered. Keyed by the list it was loaded for,
+ * because a reopened dialog may describe a file with pages removed.
+ */
+function usePageThumbnails(documentId: string, list: DocumentPages | null) {
+  const [loaded, setLoaded] = useState<{ list: DocumentPages | null; urls: Record<number, string> }>({
+    list: null,
+    urls: {},
+  })
+
+  useEffect(() => {
+    if (!list) return
+    let cancelled = false
+    const urls: string[] = []
+    const queue = list.pages.map((page) => page.page)
+    const worker = async () => {
+      for (;;) {
+        const page = queue.shift()
+        if (page === undefined || cancelled) return
+        try {
+          const url = await fetchPageThumbnail(documentId, page)
+          if (cancelled) {
+            URL.revokeObjectURL(url)
+            return
+          }
+          urls.push(url)
+          setLoaded((current) =>
+            current.list === list
+              ? { list, urls: { ...current.urls, [page]: url } }
+              : { list, urls: { [page]: url } },
+          )
+        } catch {
+          // The page can still be chosen by its number.
+        }
+      }
+    }
+    void Promise.all(Array.from({ length: THUMB_CONCURRENCY }, worker))
+    return () => {
+      cancelled = true
+      for (const url of urls) URL.revokeObjectURL(url)
+    }
+  }, [documentId, list])
+
+  return loaded.list === list ? loaded.urls : {}
+}
 
 /**
  * Removes pages from the owner's PDF. Pages that look blank arrive selected;
@@ -39,6 +90,7 @@ export function PageEditorDialog({
   const [loading, setLoading] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const thumbnails = usePageThumbnails(documentId, open ? data : null)
 
   const load = useCallback(
     async (signal: AbortSignal) => {
@@ -135,11 +187,15 @@ export function PageEditorDialog({
                         : 'border-line hover:border-ink'
                     }`}
                   >
-                    <img
-                      src={page.thumbnail}
-                      alt={t('pageEditor.page', { page: page.page })}
-                      className={`w-full border border-line bg-paper ${isSelected ? 'opacity-40' : ''}`}
-                    />
+                    {thumbnails[page.page] ? (
+                      <img
+                        src={thumbnails[page.page]}
+                        alt={t('pageEditor.page', { page: page.page })}
+                        className={`w-full border border-line bg-paper ${isSelected ? 'opacity-40' : ''}`}
+                      />
+                    ) : (
+                      <span className="block aspect-[17/22] w-full animate-pulse border border-line bg-paper" />
+                    )}
                     <span className="flex items-center justify-between gap-2 text-xs">
                       <span className="font-medium text-ink">{t('pageEditor.page', { page: page.page })}</span>
                       {isSelected ? (

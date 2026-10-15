@@ -94,11 +94,12 @@ ausgewählt. Passen Sie die Auswahl bei Bedarf an und klicken Sie dann auf
 **Entfernen**. Das funktioniert mit jedem PDF in Ihrer Bibliothek, nicht nur mit Scans.
 
 Eine Seite gilt als leer, wenn sie fast keinen dunklen Druck enthält. Staubkörner und
-die Schatten an den Rändern eines Scans werden ignoriert, ebenso Durchscheinendes:
-von der Vorderseite durchgedrückte Spuren und das blasse Bild einer ganzen bedruckten
-Seite, das durch das Papier scheint. Bei einem beidseitigen Scan gilt eine Seite, die
-nur die vorherige Seite gespiegelt und blasser zeigt, auch dann als leer, wenn das
-Durchscheinende dunkel ist.
+die Schatten an den Rändern eines Scans werden ignoriert, ebenso von der Vorderseite
+durchgedrückte Spuren. Bei einem beidseitigen Scan gilt eine Seite, die nur die
+vorherige Seite gespiegelt und blasser zeigt, auch dann als leer, wenn das
+Durchscheinende dunkel ist. Eine Seite mit blasser Tinte ohne Vergleichsseite bleibt
+erhalten: Manche Scanner geben Druck als helles Grau wieder, das genauso misst wie
+Durchscheinendes, und eine leere Seite zu behalten ist der harmlosere Fehler.
 
 Die meisten Seiten sind eindeutig leer oder eindeutig bedruckt. Über die wenigen
 dazwischen kann das OCR-Modell entscheiden: Aktivieren Sie **Unklare leere Seiten mit
@@ -108,9 +109,8 @@ ersetzt die lokale Einschätzung. Dafür muss ein KI-Modell als OCR-Anbieter ein
 sein; ein Dokument ohne unklare Seite löst keine Anfrage aus. Schlägt die Anfrage fehl,
 bleibt die lokale Einschätzung bestehen, und der Schritt zeigt eine Warnung.
 
-Prüfen Sie den Vorschlag vor dem Entfernen: Auch
-eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
-Schrift kann markiert werden.
+Prüfen Sie den Vorschlag vor dem Entfernen: Auch eine Seite mit nur einem blassen
+Stempel kann markiert werden.
 
 Die Verarbeitung findet diese Seiten für Sie. Ein Schritt **Leere Seiten erkennen**
 läuft vor der Texterkennung, und die Texterkennung lässt aus, was er gefunden hat.

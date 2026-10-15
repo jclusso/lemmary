@@ -62,12 +62,15 @@ func TestIsBlank(t *testing.T) {
 			fill(img, image.Rect(238, 150, 240, 182), 130)
 			return img
 		}, true},
-		{"heavy bleed-through across the sheet", func() *image.RGBA {
+		// Heavy bleed-through and a page printed in light toner measure the
+		// same, so on its own such a page is not called blank; the page
+		// before it or the AI check decides.
+		{"faint ink across the whole sheet", func() *image.RGBA {
 			img := page(250)
 			paragraph(img, 140)
 			fill(img, image.Rect(300, 400, 304, 404), 40)
 			return img
-		}, true},
+		}, false},
 		{"one dark line on an empty page", func() *image.RGBA {
 			img := page(250)
 			fill(img, image.Rect(80, 300, 200, 303), 20)
@@ -104,13 +107,13 @@ func TestWhatTheLocalCheckIsSureOf(t *testing.T) {
 	paragraph(heavyBleed, 140)
 	fill(heavyBleed, image.Rect(60, 450, 500, 456), 40)
 
-	if !surelyBlank(white) {
-		t.Fatal("white paper is not surely blank")
+	if !isBlank(white) {
+		t.Fatal("white paper is not blank")
 	}
 	if p := measureInk(printed); p.solid < contentSolid {
 		t.Fatalf("a page of print is not surely content: %+v", p)
 	}
-	if p := measureInk(heavyBleed); surelyBlank(p) || p.solid >= contentSolid {
+	if p := measureInk(heavyBleed); isBlank(p) || p.solid >= contentSolid {
 		t.Fatalf("heavy bleed-through was taken as settled: %+v", p)
 	}
 }

@@ -91,11 +91,12 @@ the selection if needed, then press **Remove**. This works on any PDF in your
 library, not only scans.
 
 A page counts as blank when it has almost no dark print. Specks of dust and
-the shadows at a scan's edges are ignored, and so is bleed-through: marks
-pressed through from the front, and the faint image of a whole printed page
-showing through the paper. In a double-sided scan, a page that only shows the
-page before it, mirrored and fainter, counts as blank even when the
-bleed-through is dark.
+the shadows at a scan's edges are ignored, and so are marks pressed through
+from the front. In a double-sided scan, a page that only shows the page before
+it, mirrored and fainter, counts as blank even when the bleed-through is dark.
+A page of faint ink with nothing to compare it to is kept: some scanners render
+print as a light grey that measures the same as bleed-through, and keeping a
+blank page is the safer mistake.
 
 Most pages are plainly blank or plainly printed. For the few in between, you
 can let the OCR model decide: turn on **Check unclear blank pages with AI** in
@@ -105,9 +106,8 @@ It needs an AI model as the OCR provider; a document with no unclear page makes
 no request. If the request fails, the local guess stands and the step shows a
 warning.
 
-Check the suggestion before removing: a page
-holding a single faint stamp, or a whole page of badly faded print, may be
-flagged too.
+Check the suggestion before removing: a page holding a single faint stamp may
+be flagged too.
 
 Processing finds these pages for you. A **Detect blank pages** step runs
 before OCR, and OCR leaves out what it found, so blank pages cost nothing to

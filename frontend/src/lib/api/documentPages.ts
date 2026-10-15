@@ -1,5 +1,7 @@
 import { t } from '../../i18n'
 import { apiFetch } from '../apiClient'
+import { ensureAuth } from '../auth'
+import { pb, pbUrl } from '../pb'
 import type { DocumentRecord } from './documents'
 
 export type DocumentPage = {
@@ -8,8 +10,6 @@ export type DocumentPage = {
   blank: boolean
   /** OCR left the page out, so the document's text has nothing from it. */
   unread: boolean
-  /** A JPEG data URL. */
-  thumbnail: string
 }
 
 export type DocumentPages = {
@@ -87,7 +87,20 @@ export function blankSuggestion(
   }
 }
 
-/** Renders every page of the caller's own PDF, flagging the ones that look blank. */
+/** One page of the caller's own PDF as a JPEG, returned as an object URL to revoke. */
+export async function fetchPageThumbnail(documentId: string, page: number): Promise<string> {
+  await ensureAuth()
+  const response = await fetch(
+    `${pbUrl}/api/app/documents/${encodeURIComponent(documentId)}/pages/${page}`,
+    { headers: { Authorization: pb.authStore.token } },
+  )
+  if (!response.ok) {
+    throw new Error(t('pageEditor.loadFailed'))
+  }
+  return URL.createObjectURL(await response.blob())
+}
+
+/** Lists the pages of the caller's own PDF, flagging the ones that look blank. */
 export function getDocumentPages(documentId: string, signal?: AbortSignal) {
   return apiFetch<DocumentPages>(`/api/app/documents/${encodeURIComponent(documentId)}/pages`, {
     signal,

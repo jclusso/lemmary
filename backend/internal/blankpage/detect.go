@@ -55,7 +55,7 @@ func Detect(ctx context.Context, pdfPath string, pageCount int) ([]Verdict, erro
 		blank := isBlank(current.ink) || (i > 0 && !verdicts[i-1].Blank && showsThrough(current, previous))
 		verdicts[i] = Verdict{
 			Blank: blank,
-			Sure:  surelyBlank(current.ink) || current.ink.solid >= contentSolid,
+			Sure:  isBlank(current.ink) || current.ink.solid >= contentSolid,
 		}
 		previous = current
 	}

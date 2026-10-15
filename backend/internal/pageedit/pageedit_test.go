@@ -2,6 +2,7 @@ package pageedit
 
 import (
 	"context"
+	"errors"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -122,15 +123,31 @@ func TestInspectFlagsTheBlankPages(t *testing.T) {
 		if page.Number != i+1 {
 			t.Fatalf("page %d numbered %d", i+1, page.Number)
 		}
-		if !strings.HasPrefix(page.Thumbnail, "data:image/jpeg;base64,") {
-			t.Fatalf("page %d thumbnail = %.40q", page.Number, page.Thumbnail)
-		}
 		if want := page.Number == 3; page.Blank != want {
 			t.Fatalf("page %d blank = %v, want %v", page.Number, page.Blank, want)
 		}
 	}
 	if overview.HasOriginal {
 		t.Fatal("an unedited document reports an original")
+	}
+}
+
+func TestThumbnailRendersOnePage(t *testing.T) {
+	requirePoppler(t)
+	app := testpb.Open(t)
+	document := makeDocument(t, app, makeUser(t, app), "scan.pdf", testpdf.Multipage(2))
+
+	data, err := Thumbnail(context.Background(), app, document, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasPrefix(string(data), "\xff\xd8") {
+		t.Fatalf("thumbnail is not a JPEG: %q", data[:min(4, len(data))])
+	}
+	for _, page := range []int{0, 3} {
+		if _, err := Thumbnail(context.Background(), app, document, page); !errors.Is(err, ErrPageOutOfDoc) {
+			t.Fatalf("page %d: err = %v, want ErrPageOutOfDoc", page, err)
+		}
 	}
 }
 
