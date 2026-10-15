@@ -96,7 +96,9 @@ ausgewählt. Passen Sie die Auswahl bei Bedarf an und klicken Sie dann auf
 Eine Seite gilt als leer, wenn sie fast keinen dunklen Druck enthält. Staubkörner und
 die Schatten an den Rändern eines Scans werden ignoriert, ebenso Durchscheinendes:
 von der Vorderseite durchgedrückte Spuren und das blasse Bild einer ganzen bedruckten
-Seite, das durch das Papier scheint. Prüfen Sie den Vorschlag vor dem Entfernen: Auch
+Seite, das durch das Papier scheint. Bei einem beidseitigen Scan gilt eine Seite, die
+nur die vorherige Seite gespiegelt und blasser zeigt, auch dann als leer, wenn das
+Durchscheinende dunkel ist. Prüfen Sie den Vorschlag vor dem Entfernen: Auch
 eine Seite mit nur einem blassen Stempel oder eine ganze Seite stark verblasster
 Schrift kann markiert werden.
 
