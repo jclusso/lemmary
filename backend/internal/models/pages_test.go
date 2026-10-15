@@ -3,6 +3,8 @@ package models
 import (
 	"slices"
 	"testing"
+
+	"github.com/pocketbase/pocketbase/core"
 )
 
 func TestPageRecordUploaded(t *testing.T) {
@@ -22,5 +24,24 @@ func TestPageRecordWithSkipped(t *testing.T) {
 	slices.Sort(got)
 	if want := []int{2, 5, 6}; !slices.Equal(got, want) {
 		t.Fatalf("skipped = %v, want %v", got, want)
+	}
+}
+
+// A detection that found nothing is still a detection: stored as an empty
+// list, not as no value, so the editor trusts it instead of guessing again.
+func TestPageRecordKnowsAnEmptyDetection(t *testing.T) {
+	docs := core.NewBaseCollection("documents")
+	for _, name := range PageRecordFields {
+		docs.Fields.Add(&core.JSONField{Name: name})
+	}
+	doc := core.NewRecord(docs)
+
+	PageRecord{}.Store(doc)
+	if LoadPageRecord(doc).Detected() {
+		t.Fatal("a record never detected reads as detected")
+	}
+	PageRecord{}.WithBlank([]int{1, 2}, nil).Store(doc)
+	if !LoadPageRecord(doc).Detected() {
+		t.Fatal("a detection that found nothing reads as never run")
 	}
 }

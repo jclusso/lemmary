@@ -15,12 +15,21 @@ import (
 // pixels of solid ink when a page is measured.
 const RenderEdge = 800
 
-// Detect renders every page of pdfPath and reports, in page order, whether
+// Verdict is what the local check makes of one page.
+type Verdict struct {
+	Blank bool
+	// Sure is false for a page between nearly no ink and plenty of print,
+	// where heavy bleed-through and faint real print look alike. Blank is the
+	// best local guess there; a second opinion may overturn it.
+	Sure bool
+}
+
+// Detect renders every page of pdfPath and judges, in page order, whether
 // each looks blank. A page also counts as blank when it only shows the page
 // before it through the paper: a duplex scan puts each sheet's back right
 // after its front, and heavy bleed-through can carry as much ink as faint
 // print, so the front is what tells them apart.
-func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) {
+func Detect(ctx context.Context, pdfPath string, pageCount int) ([]Verdict, error) {
 	dir, err := os.MkdirTemp("", "lemmary-blankpage-*")
 	if err != nil {
 		return nil, err
@@ -31,7 +40,7 @@ func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) 
 	if err != nil {
 		return nil, err
 	}
-	blank := make([]bool, len(paths))
+	verdicts := make([]Verdict, len(paths))
 	var previous measuredPage
 	for i, path := range paths {
 		data, err := os.ReadFile(path)
@@ -43,8 +52,12 @@ func Detect(ctx context.Context, pdfPath string, pageCount int) ([]bool, error) 
 			return nil, fmt.Errorf("blankpage: page %d: %w", i+1, err)
 		}
 		current := measurePage(img)
-		blank[i] = isBlank(current.ink) || (i > 0 && !blank[i-1] && showsThrough(current, previous))
+		blank := isBlank(current.ink) || (i > 0 && !verdicts[i-1].Blank && showsThrough(current, previous))
+		verdicts[i] = Verdict{
+			Blank: blank,
+			Sure:  surelyBlank(current.ink) || current.ink.solid >= contentSolid,
+		}
 		previous = current
 	}
-	return blank, nil
+	return verdicts, nil
 }

@@ -45,17 +45,21 @@ type inkProfile struct {
 	spread float64
 }
 
+// contentSolid is the near-black share past which a page is printed beyond
+// doubt. Printed pages in real scans measure 2% and more; the heaviest
+// bleed-through seen so far 0.5%.
+const contentSolid = 0.015
+
 // isBlank reports whether a page carries no print beyond bleed-through, specks
 // and edge shadows, judged on the page alone.
 func isBlank(p inkProfile) bool {
-	switch {
-	case p.ink < blankInk:
-		return true
-	case p.ink < faintInk && p.solid < faintSolid:
-		return true
-	default:
-		return p.solid < bleedSolid && p.spread >= bleedSpread
-	}
+	return surelyBlank(p) || (p.solid < bleedSolid && p.spread >= bleedSpread)
+}
+
+// surelyBlank is the part of isBlank no second opinion would overturn: next to
+// no ink at all, or a few faint marks.
+func surelyBlank(p inkProfile) bool {
+	return p.ink < blankInk || (p.ink < faintInk && p.solid < faintSolid)
 }
 
 // measureInk compares every pixel with the paper, which is the median level,

@@ -34,6 +34,10 @@ type StepState struct {
 	Metadata *models.ExtractedMetadata
 
 	ForceSteps map[string]bool
+
+	// RanWith names the provider and model a step called, for a step that only
+	// sometimes calls one; the pipeline copies it onto the step's run.
+	RanWith struct{ Provider, Model string }
 }
 
 func (s *StepState) forced(stepName string) bool {

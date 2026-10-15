@@ -25,7 +25,8 @@ type PageRecord struct {
 	// Map holds the uploaded page number of each page of the current file, in
 	// order. Empty while the file is the upload itself.
 	Map []int
-	// Blank are pages the detect_blank_pages step found blank.
+	// Blank are pages the detect_blank_pages step found blank. Nil until the
+	// step has run on this file; empty once it ran and found none.
 	Blank []int
 	// Skipped are pages left out of ocr_text. Kept apart from Blank because
 	// the two can disagree: text read before a page was found blank still
@@ -48,7 +49,11 @@ func LoadPageRecord(document *core.Record) PageRecord {
 // Store writes the record onto document; saving it is the caller's.
 func (p PageRecord) Store(document *core.Record) {
 	document.Set(PageMapField, emptyAsNil(p.Map))
-	document.Set(BlankPagesField, emptyAsNil(sorted(p.Blank)))
+	if p.Blank == nil {
+		document.Set(BlankPagesField, nil)
+	} else {
+		document.Set(BlankPagesField, append([]int{}, sorted(p.Blank)...))
+	}
 	document.Set(OCRSkippedPagesField, emptyAsNil(sorted(p.Skipped)))
 	document.Set(ConfirmedPagesField, emptyAsNil(sorted(p.Confirmed)))
 }
@@ -70,6 +75,9 @@ func (p PageRecord) Current(count int) []int {
 	return pages
 }
 
+// Detected reports whether the detect_blank_pages step has run on this file.
+func (p PageRecord) Detected() bool { return p.Blank != nil }
+
 func (p PageRecord) IsBlank(uploaded int) bool     { return slices.Contains(p.Blank, uploaded) }
 func (p PageRecord) IsSkipped(uploaded int) bool   { return slices.Contains(p.Skipped, uploaded) }
 func (p PageRecord) IsConfirmed(uploaded int) bool { return slices.Contains(p.Confirmed, uploaded) }
@@ -78,7 +86,7 @@ func (p PageRecord) IsConfirmed(uploaded int) bool { return slices.Contains(p.Co
 // uploaded numbers in current, with blank. Entries for pages no longer in the
 // file stay: a restore brings those pages back as they were.
 func (p PageRecord) WithBlank(current, blank []int) PageRecord {
-	p.Blank = replaceFor(p.Blank, current, blank)
+	p.Blank = append([]int{}, replaceFor(p.Blank, current, blank)...)
 	return p
 }
 

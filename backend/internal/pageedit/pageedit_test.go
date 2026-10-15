@@ -149,3 +149,25 @@ func TestInspectKeepsAPageWithOneShortLine(t *testing.T) {
 		t.Fatal("a page reading \"Page 1\" was flagged blank")
 	}
 }
+
+// Once the step has run, the editor shows what it recorded, which may be an
+// AI's answer, rather than measuring again and disagreeing with it.
+func TestInspectFollowsTheRecordedDetection(t *testing.T) {
+	requirePoppler(t)
+	app := testpb.Open(t)
+	document := makeDocument(t, app, makeUser(t, app), "scan.pdf", testpdf.MixedText(3, 2))
+	models.PageRecord{}.WithBlank([]int{1, 2, 3}, []int{2}).Store(document)
+	if err := app.Save(document); err != nil {
+		t.Fatal(err)
+	}
+
+	overview, err := Inspect(context.Background(), app, document)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, want := range []bool{false, true, false} {
+		if overview.Pages[i].Blank != want {
+			t.Fatalf("page %d blank = %v, want %v", i+1, overview.Pages[i].Blank, want)
+		}
+	}
+}

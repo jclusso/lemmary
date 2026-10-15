@@ -102,7 +102,8 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 	if count > MaxPages {
 		return Overview{}, ErrTooManyPages
 	}
-	blank, err := blankpage.Detect(ctx, pdfPath, count)
+	record := models.LoadPageRecord(document)
+	blank, err := blankPages(ctx, record, pdfPath, count)
 	if err != nil {
 		return Overview{}, err
 	}
@@ -113,7 +114,6 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 		return Overview{}, err
 	}
 
-	record := models.LoadPageRecord(document)
 	pages := make([]Page, 0, count)
 	for i := range count {
 		thumb, err := os.ReadFile(thumbs[i])
@@ -129,6 +129,27 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 		})
 	}
 	return Overview{Pages: pages, HasOriginal: document.GetString("original_file") != ""}, nil
+}
+
+// blankPages is what the detect_blank_pages step recorded, which may include
+// an AI's answer the editor should agree with, or the local check for a file
+// the step has not seen.
+func blankPages(ctx context.Context, record models.PageRecord, pdfPath string, count int) ([]bool, error) {
+	blank := make([]bool, count)
+	if record.Detected() {
+		for i := range blank {
+			blank[i] = record.IsBlank(record.Uploaded(i + 1))
+		}
+		return blank, nil
+	}
+	verdicts, err := blankpage.Detect(ctx, pdfPath, count)
+	if err != nil {
+		return nil, err
+	}
+	for i, v := range verdicts {
+		blank[i] = v.Blank
+	}
+	return blank, nil
 }
 
 // RemovePages takes the given pages out of the document's PDF. Every page OCR
