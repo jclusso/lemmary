@@ -3,8 +3,12 @@
 //
 // The first removal keeps the uploaded file in original_file. Later removals
 // leave it alone, so a restore always returns to what the scanner produced.
-// Either change replaces the document's file and queues preview and OCR again;
-// metadata is left as it is, because the owner may have corrected it.
+//
+// An edit works out from the document's models.PageRecord whether its OCR text
+// still holds. Removing only pages that OCR left out as blank, or restoring
+// them, changes no text and queues nothing; removing a page that was read, or
+// keeping one that was not, queues OCR again. Metadata is never re-extracted,
+// because the owner may have corrected it.
 package pageedit
 
 import (
@@ -17,27 +21,27 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sync"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/filesystem"
 
+	"lemmary/backend/internal/blankpage"
 	"lemmary/backend/internal/config"
 	"lemmary/backend/internal/duplicates"
 	"lemmary/backend/internal/i18n"
 	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/pdftool"
+	"lemmary/backend/internal/preview"
 	"lemmary/backend/internal/worker"
 )
 
 const (
 	// MaxPages bounds an inspection, which renders every page in one request.
 	MaxPages = 200
-	// renderEdge is large enough that a short line of text is still several
-	// pixels of solid ink when the page is measured for blankness.
-	renderEdge = 800
-	// thumbEdge is what the editor shows; half the measured render.
+	// thumbEdge is what the editor shows.
 	thumbEdge = 400
 )
 
@@ -52,17 +56,27 @@ var (
 	ErrSameAsAnother = i18n.Errorf("Another document already has exactly these pages.")
 )
 
-// Page is one page of the editor: its number, whether it looks blank, and a
-// JPEG thumbnail as a data URL.
+// rereadSteps run after an edit that changed which pages the text should come
+// from. apply_metadata is left out so corrected metadata stays.
+var rereadSteps = []string{models.StepOCR, models.StepDetectDuplicates, models.StepEmbed, models.StepLinkRelated}
+
+// Page is one page of the editor. Blank means it looks blank and the owner has
+// not said otherwise; Unread that OCR left it out.
 type Page struct {
 	Number    int    `json:"page"`
 	Blank     bool   `json:"blank"`
+	Unread    bool   `json:"unread"`
 	Thumbnail string `json:"thumbnail"`
 }
 
 type Overview struct {
 	Pages       []Page `json:"pages"`
 	HasOriginal bool   `json:"has_original"`
+}
+
+// Outcome tells the caller whether the edit queued OCR again.
+type Outcome struct {
+	Reread bool `json:"reread"`
 }
 
 // Inspect renders every page of the document's PDF, measuring each for
@@ -88,175 +102,203 @@ func Inspect(ctx context.Context, app core.App, document *core.Record) (Overview
 	if count > MaxPages {
 		return Overview{}, ErrTooManyPages
 	}
-	// Two renders rather than one shared: pdftoppm writes a raw grey page and a
-	// small JPEG in a fraction of the time it takes to compress one PNG of a
-	// noisy scan, and neither needs re-encoding here.
-	measured, err := pdftool.RenderPagesAs(ctx, pdfPath, filepath.Join(workDir, "measure"), pdftool.Gray, renderEdge, count)
+	blank, err := blankpage.Detect(ctx, pdfPath, count)
 	if err != nil {
 		return Overview{}, err
 	}
+	// A JPEG straight from pdftoppm: compressing a noisy scan as PNG takes it
+	// over twenty times longer, and the browser shows a JPEG as well.
 	thumbs, err := pdftool.RenderPagesAs(ctx, pdfPath, filepath.Join(workDir, "thumbs"), pdftool.JPEG, thumbEdge, count)
 	if err != nil {
 		return Overview{}, err
 	}
 
+	record := models.LoadPageRecord(document)
 	pages := make([]Page, 0, count)
 	for i := range count {
-		page, err := inspectPage(measured[i], thumbs[i])
+		thumb, err := os.ReadFile(thumbs[i])
 		if err != nil {
 			return Overview{}, fmt.Errorf("page %d: %w", i+1, err)
 		}
-		page.Number = i + 1
-		pages = append(pages, page)
+		uploaded := record.Uploaded(i + 1)
+		pages = append(pages, Page{
+			Number:    i + 1,
+			Blank:     blank[i] && !record.IsConfirmed(uploaded),
+			Unread:    record.IsSkipped(uploaded),
+			Thumbnail: "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(thumb),
+		})
 	}
 	return Overview{Pages: pages, HasOriginal: document.GetString("original_file") != ""}, nil
 }
 
-func inspectPage(measurePath, thumbPath string) (Page, error) {
-	data, err := os.ReadFile(measurePath)
-	if err != nil {
-		return Page{}, err
-	}
-	img, err := decodePGM(data)
-	if err != nil {
-		return Page{}, err
-	}
-	thumb, err := os.ReadFile(thumbPath)
-	if err != nil {
-		return Page{}, err
-	}
-	return Page{
-		Blank:     IsBlank(img),
-		Thumbnail: "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(thumb),
-	}, nil
-}
-
-// RemovePages replaces the document's file with one lacking the given pages.
-func RemovePages(ctx context.Context, app core.App, document *core.Record, remove []int) error {
+// RemovePages takes the given pages out of the document's PDF. Every page OCR
+// left out that stays is taken as the owner saying it has content, which is
+// why remove may be empty: keeping such pages is an edit of its own.
+func RemovePages(ctx context.Context, app core.App, document *core.Record, remove []int) (Outcome, error) {
 	if !isPDF(document) {
-		return ErrNotPDF
+		return Outcome{}, ErrNotPDF
 	}
 	release, err := claim(app, document)
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
 	defer release()
 	workDir, err := os.MkdirTemp("", "lemmary-pageedit-*")
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
 	defer os.RemoveAll(workDir)
 
 	sourcePath := filepath.Join(workDir, "source.pdf")
 	if err := copyStoredFile(app, document, "file", sourcePath); err != nil {
-		return err
+		return Outcome{}, err
 	}
 	count, err := pdftool.PageCount(ctx, sourcePath)
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
-	ranges, err := keptRanges(count, remove)
+	removed, err := checkRemoval(count, remove)
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
 
-	outPath := filepath.Join(workDir, "result.pdf")
-	if err := writeRanges(ctx, sourcePath, ranges, workDir, outPath); err != nil {
-		return err
+	record := models.LoadPageRecord(document)
+	plan := planRemoval(record, count, removed)
+	if len(removed) == 0 && len(plan.confirm) == 0 {
+		return Outcome{}, ErrNoPages
 	}
-	data, err := os.ReadFile(outPath)
-	if err != nil {
-		return err
-	}
+	record.Confirmed = append(record.Confirmed, plan.confirm...)
+	record.Skipped = slices.DeleteFunc(record.Skipped, func(page int) bool { return slices.Contains(plan.confirm, page) })
 
-	var backup []byte
-	if document.GetString("original_file") == "" {
-		if backup, err = os.ReadFile(sourcePath); err != nil {
-			return err
+	if len(removed) > 0 {
+		outPath := filepath.Join(workDir, "result.pdf")
+		if err := pdftool.Without(ctx, sourcePath, count, removed, outPath); err != nil {
+			return Outcome{}, err
 		}
+		var backupPath string
+		if document.GetString("original_file") == "" {
+			backupPath = sourcePath
+		}
+		if err := replaceFile(ctx, app, document, outPath, backupPath); err != nil {
+			return Outcome{}, err
+		}
+		record.Map = plan.kept
 	}
-	return replaceFile(app, document, data, backup, false)
+	record.Store(document)
+	return Outcome{Reread: plan.reread}, save(app, document, plan.reread)
 }
 
 // RestoreOriginal puts the as-uploaded file back and forgets the backup.
-func RestoreOriginal(app core.App, document *core.Record) error {
+func RestoreOriginal(ctx context.Context, app core.App, document *core.Record) (Outcome, error) {
 	if document.GetString("original_file") == "" {
-		return ErrNoOriginal
+		return Outcome{}, ErrNoOriginal
 	}
 	release, err := claim(app, document)
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
 	defer release()
 	workDir, err := os.MkdirTemp("", "lemmary-pageedit-*")
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
 	defer os.RemoveAll(workDir)
 
 	originalPath := filepath.Join(workDir, "original.pdf")
 	if err := copyStoredFile(app, document, "original_file", originalPath); err != nil {
-		return err
+		return Outcome{}, err
 	}
-	data, err := os.ReadFile(originalPath)
+	count, err := pdftool.PageCount(ctx, originalPath)
 	if err != nil {
-		return err
+		return Outcome{}, err
 	}
-	return replaceFile(app, document, data, nil, true)
+
+	record := models.LoadPageRecord(document)
+	reread := restoreNeedsReread(record, count)
+	if err := replaceFile(ctx, app, document, originalPath, ""); err != nil {
+		return Outcome{}, err
+	}
+	document.Set("original_file", nil)
+	record.Map = nil
+	record.Store(document)
+	return Outcome{Reread: reread}, save(app, document, reread)
 }
 
-type pageRange struct{ from, to int }
-
-// keptRanges turns the pages to remove into the runs of pages that stay.
-func keptRanges(count int, remove []int) ([]pageRange, error) {
-	if len(remove) == 0 {
-		return nil, ErrNoPages
-	}
-	removed := make(map[int]bool, len(remove))
+// checkRemoval validates pages against the file and returns them without
+// repeats.
+func checkRemoval(count int, remove []int) ([]int, error) {
+	var removed []int
 	for _, page := range remove {
 		if page < 1 || page > count {
 			return nil, ErrPageOutOfDoc
 		}
-		removed[page] = true
+		if !slices.Contains(removed, page) {
+			removed = append(removed, page)
+		}
 	}
 	if len(removed) == count {
 		return nil, ErrAllPages
 	}
+	return removed, nil
+}
 
-	var ranges []pageRange
+type removalPlan struct {
+	// kept holds the uploaded numbers of the pages that stay, in order.
+	kept []int
+	// confirm holds the uploaded numbers of pages OCR left out that stay.
+	confirm []int
+	// reread is whether the OCR text no longer matches the pages that stay.
+	reread bool
+}
+
+// planRemoval works out what removing the given pages of the current file
+// does to its OCR text. The text covers every page OCR did not leave out, so
+// it still holds when only left-out pages go; a removed page that was read
+// put text in it that has to come out, and a left-out page that stays has to
+// be read.
+func planRemoval(record models.PageRecord, count int, removed []int) removalPlan {
+	var plan removalPlan
 	for page := 1; page <= count; page++ {
-		if removed[page] {
-			continue
+		uploaded := record.Uploaded(page)
+		switch {
+		case slices.Contains(removed, page):
+			if !record.IsSkipped(uploaded) {
+				plan.reread = true
+			}
+		case record.IsSkipped(uploaded):
+			plan.kept = append(plan.kept, uploaded)
+			plan.confirm = append(plan.confirm, uploaded)
+			plan.reread = true
+		default:
+			plan.kept = append(plan.kept, uploaded)
 		}
-		if n := len(ranges); n > 0 && ranges[n-1].to == page-1 {
-			ranges[n-1].to = page
-			continue
-		}
-		ranges = append(ranges, pageRange{from: page, to: page})
 	}
-	return ranges, nil
+	return plan
 }
 
-func writeRanges(ctx context.Context, sourcePath string, ranges []pageRange, workDir, outPath string) error {
-	if len(ranges) == 1 {
-		return pdftool.ExtractRange(ctx, sourcePath, ranges[0].from, ranges[0].to, outPath)
+// restoreNeedsReread reports whether bringing back the upload's count pages
+// adds any page the OCR text does not already account for: one that was read
+// before it was removed, or one never measured at all.
+func restoreNeedsReread(record models.PageRecord, count int) bool {
+	if len(record.Map) == 0 {
+		return true
 	}
-	parts := make([]string, 0, len(ranges))
-	for i, r := range ranges {
-		part := filepath.Join(workDir, fmt.Sprintf("part-%d.pdf", i+1))
-		if err := pdftool.ExtractRange(ctx, sourcePath, r.from, r.to, part); err != nil {
-			return err
+	for page := 1; page <= count; page++ {
+		if !slices.Contains(record.Map, page) && !record.IsSkipped(page) {
+			return true
 		}
-		parts = append(parts, part)
 	}
-	return pdftool.Merge(ctx, outPath, parts...)
+	return false
 }
 
-// replaceFile saves data as the document's file, optionally keeping backup as
-// original_file or dropping the backup, and queues the steps that read the
-// file. One transaction for the reason reprocess.queueOne gives: the job must
-// not become visible before the pending status lands.
-func replaceFile(app core.App, document *core.Record, data, backup []byte, dropBackup bool) error {
+// replaceFile sets path as the document's file, with a fresh checksum and
+// first-page preview, and backupPath, when given, as original_file. Saving is
+// the caller's.
+func replaceFile(ctx context.Context, app core.App, document *core.Record, path, backupPath string) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
 	checksum, err := duplicates.SHA256Reader(bytes.NewReader(data))
 	if err != nil {
 		return err
@@ -274,26 +316,43 @@ func replaceFile(app core.App, document *core.Record, data, backup []byte, dropB
 	if err != nil {
 		return err
 	}
-	document.Set("file", file)
-	document.Set("checksum", checksum)
-	if backup != nil {
+	// Made here rather than by a queued preview step: an edit that leaves the
+	// text alone queues nothing, and a job would also settle the document's
+	// status, taking it out of the Inbox.
+	previewFile, err := preview.GenerateFirstPagePNG(ctx, path)
+	if err != nil {
+		return err
+	}
+	if backupPath != "" {
+		backup, err := os.ReadFile(backupPath)
+		if err != nil {
+			return err
+		}
 		original, err := filesystem.NewFileFromBytes(backup, name)
 		if err != nil {
 			return err
 		}
 		document.Set("original_file", original)
 	}
-	if dropBackup {
-		document.Set("original_file", nil)
+	document.Set("file", file)
+	document.Set("checksum", checksum)
+	document.Set("preview", previewFile)
+	return nil
+}
+
+// save stores the document and, when its text has to be read again, queues
+// that. One transaction for the reason reprocess.queueOne gives: the job must
+// not become visible before the pending status lands.
+func save(app core.App, document *core.Record, reread bool) error {
+	if !reread {
+		return app.Save(document)
 	}
 	document.Set("processing_status", models.DocStatusPending)
-
 	return app.RunInTransaction(func(txApp core.App) error {
 		if err := txApp.Save(document); err != nil {
 			return err
 		}
-		_, err := worker.Enqueue(txApp, document.Id, models.ImportPreserveSteps,
-			[]string{models.StepPreview, models.StepOCR}, config.Overrides{})
+		_, err := worker.Enqueue(txApp, document.Id, rereadSteps, []string{models.StepOCR}, config.Overrides{})
 		return err
 	})
 }
@@ -360,4 +419,20 @@ func copyStoredFile(app core.App, document *core.Record, field, dst string) erro
 		return err
 	}
 	return out.Close()
+}
+
+// GuardPageRecord puts back whatever page record a records API request
+// carried: the server alone keeps it in step with the file. A create, or an
+// update that replaces the file, starts an empty record, because there is no
+// earlier file for it to number.
+func GuardPageRecord(e *core.RecordRequestEvent) error {
+	fresh := e.Record.IsNew() || len(e.Record.GetUnsavedFiles("file")) > 0
+	for _, field := range models.PageRecordFields {
+		if fresh {
+			e.Record.Set(field, nil)
+		} else {
+			e.Record.Set(field, e.Record.Original().Get(field))
+		}
+	}
+	return e.Next()
 }

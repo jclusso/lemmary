@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/router"
 	"lemmary/backend/internal/i18n"
 	"lemmary/backend/internal/pageedit"
 )
@@ -32,8 +33,19 @@ func handleGetDocumentPages(app core.App) func(*core.RequestEvent) error {
 	}
 }
 
-// handlePostDocumentPageRemoval replaces the caller's PDF with one lacking the
-// listed pages and queues preview and OCR for it.
+func bindPageRecordGuard(app core.App) {
+	app.OnRecordCreateRequest("documents").BindFunc(pageedit.GuardPageRecord)
+	app.OnRecordUpdateRequest("documents").BindFunc(pageedit.GuardPageRecord)
+}
+
+func registerDocumentPageRoutes(g *router.RouterGroup[*core.RequestEvent], app core.App) {
+	g.GET("/documents/{documentId}/pages", bindAuth(handleGetDocumentPages(app)))
+	g.POST("/documents/{documentId}/pages/removal", bindAuth(handlePostDocumentPageRemoval(app)))
+	g.POST("/documents/{documentId}/original/restore", bindAuth(handlePostDocumentOriginalRestore(app)))
+}
+
+// handlePostDocumentPageRemoval takes the listed pages out of the caller's PDF
+// and reports whether OCR was queued again.
 func handlePostDocumentPageRemoval(app core.App) func(*core.RequestEvent) error {
 	return func(e *core.RequestEvent) error {
 		var req removePagesRequest
@@ -44,10 +56,11 @@ func handlePostDocumentPageRemoval(app core.App) func(*core.RequestEvent) error 
 		if handled {
 			return err
 		}
-		if err := pageedit.RemovePages(e.Request.Context(), app, document, req.Pages); err != nil {
+		outcome, err := pageedit.RemovePages(e.Request.Context(), app, document, req.Pages)
+		if err != nil {
 			return writePageEditError(app, e, err)
 		}
-		return writeJSON(e, http.StatusOK, map[string]string{"status": "queued"})
+		return writeJSON(e, http.StatusOK, outcome)
 	}
 }
 
@@ -59,10 +72,11 @@ func handlePostDocumentOriginalRestore(app core.App) func(*core.RequestEvent) er
 		if handled {
 			return err
 		}
-		if err := pageedit.RestoreOriginal(app, document); err != nil {
+		outcome, err := pageedit.RestoreOriginal(e.Request.Context(), app, document)
+		if err != nil {
 			return writePageEditError(app, e, err)
 		}
-		return writeJSON(e, http.StatusOK, map[string]string{"status": "queued"})
+		return writeJSON(e, http.StatusOK, outcome)
 	}
 }
 

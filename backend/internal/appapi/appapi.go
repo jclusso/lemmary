@@ -32,6 +32,7 @@ func Register(
 	RegisterAppName(app)
 	app.OnRecordUpdate("documents").BindFunc(clearStaleTranslation)
 	app.OnRecordUpdateRequest("documents").BindFunc(saveFieldsWithDocument)
+	bindPageRecordGuard(app)
 	app.OnRecordCreateRequest(models.CustomFieldsCollection).BindFunc(saveChoicesWithField)
 	app.OnRecordUpdateRequest(models.CustomFieldsCollection).BindFunc(saveChoicesWithField)
 	app.OnServe().Bind(&hook.Handler[*core.ServeEvent]{
@@ -61,9 +62,6 @@ func Register(
 			g.POST("/documents/{documentId}/chat", bindAuth(handleDocumentChat(app, rt))).
 				Bind(apis.BodyLimit(chatMaxBodyBytes))
 			g.POST("/documents/{documentId}/translation", bindAuth(handleDocumentTranslation(app, rt.Snapshot)))
-			g.GET("/documents/{documentId}/pages", bindAuth(handleGetDocumentPages(app)))
-			g.POST("/documents/{documentId}/pages/removal", bindAuth(handlePostDocumentPageRemoval(app)))
-			g.POST("/documents/{documentId}/original/restore", bindAuth(handlePostDocumentOriginalRestore(app)))
 			g.POST("/documents/export", bindAuth(handleExportDocuments(app)))
 			g.GET("/documents/search", bindAuth(handleDocumentSearch(app, rt, idx)))
 			g.GET("/documents/timeline", bindAuth(handleDocumentsTimeline(app)))
@@ -135,6 +133,7 @@ func Register(
 			g.GET("/tags/assign", bindAuth(handleGetTagAssignPreview(app)))
 			g.POST("/tags/assign", bindAuth(handlePostTagAssign(app, rt)))
 			g.GET("/tags/assign/status", bindAuth(handleGetTagAssignStatus(app)))
+			registerDocumentPageRoutes(g, app)
 			registerImportRoutes(g, app, lim)
 			registerSplitRoutes(g, app, rt, lim)
 			registerScanRoutes(g, app, rt, lim)
