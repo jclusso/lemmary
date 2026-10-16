@@ -34,6 +34,10 @@ type StepState struct {
 	Metadata *models.ExtractedMetadata
 
 	ForceSteps map[string]bool
+
+	// RanWith names the provider and model a step called, for a step that only
+	// sometimes calls one; the pipeline copies it onto the step's run.
+	RanWith struct{ Provider, Model string }
 }
 
 func (s *StepState) forced(stepName string) bool {
@@ -45,6 +49,7 @@ func (s *StepState) forced(stepName string) bool {
 func buildRegistry(ocrProvider ocr.Provider, aiExtractor ai.Extractor, embedder ai.Embedder, linking RelatedLinking) map[string]Step {
 	steps := []Step{
 		&PreviewStep{},
+		&DetectBlankPagesStep{},
 		&OCRStep{Provider: ocrProvider},
 		&DetectDuplicatesStep{},
 		&ExtractMetadataStep{Extractor: aiExtractor, ExtractReferences: linking.Enabled},

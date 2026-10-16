@@ -55,6 +55,8 @@ export type AppSettings = {
   /** Tenant-owned, so a managed instance keeps it. */
   always_require_review: boolean
   near_duplicate_detection_enabled: boolean
+  /** Ask the OCR model about pages the local blank-page check cannot settle. */
+  blank_page_ai_check_enabled: boolean
   near_duplicate_threshold: number
   /** Consume folder (INGEST_DIR). Owner is a users id; empty means the first admin. */
   ingest_dir_owner: string

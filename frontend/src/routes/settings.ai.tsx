@@ -1,6 +1,6 @@
 import { type SubmitEvent } from 'react'
 
-import { listAIProviders } from '../lib/api/providers'
+import { listAIProviders, ocrSeesPageImages } from '../lib/api/providers'
 import { getEmbeddingStats, type EmbeddingStats } from '../lib/api/settings'
 import { ProviderModelFields } from '../components/ProviderModelFields'
 import { ProvidersBlock } from '../components/settings/ProvidersBlock'
@@ -27,6 +27,7 @@ type Bindings = {
   embedding_model: string
   // No model beside it: a web-search API takes none.
   websearch_provider_id: string
+  blank_page_ai_check_enabled: boolean
 }
 
 // Without this, switching the embedding model looks instantaneous while the
@@ -41,6 +42,36 @@ function EmbeddingStatsLine({ stats }: { stats: EmbeddingStats | null }) {
   if (stats.failed > 0) parts.push(t('settingsAi.statsFailed', { count: stats.failed }))
 
   return <p className={fieldHintClassName}>{parts.join(' · ')}.</p>
+}
+
+// Sits under the OCR binding because it only works through that model, and
+// says so instead of switching on to no effect when the model cannot look.
+function BlankPageAICheck({
+  enabled,
+  available,
+  onChange,
+}: {
+  enabled: boolean
+  available: boolean
+  onChange: (enabled: boolean) => void
+}) {
+  return (
+    <div className="sm:col-span-2">
+      <label className={`flex items-center gap-2 text-sm ${available ? 'text-ink' : 'text-ink-soft'}`}>
+        <input
+          type="checkbox"
+          className="h-4 w-4 accent-oxblood"
+          checked={enabled && available}
+          disabled={!available}
+          onChange={(event) => onChange(event.target.checked)}
+        />
+        {t('settingsAi.blankPageAICheck')}
+      </label>
+      <p className={`${fieldHintClassName} mt-1`}>
+        {available ? t('settingsAi.blankPageAICheckHint') : t('settingsAi.blankPageAICheckUnavailable')}
+      </p>
+    </div>
+  )
 }
 
 export function SettingsAIPage() {
@@ -74,6 +105,7 @@ export function SettingsAIPage() {
     embedding_provider_id: settings.embedding_provider_id,
     embedding_model: settings.embedding_model,
     websearch_provider_id: settings.websearch_provider_id,
+    blank_page_ai_check_enabled: settings.blank_page_ai_check_enabled,
   }))
 
   async function onSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -129,6 +161,13 @@ export function SettingsAIPage() {
               purpose="ocr"
               onProviderChange={(id) => updateField('ocr_provider_id', id)}
               onModelChange={(value) => updateField('ocr_model', value)}
+            />
+            <BlankPageAICheck
+              enabled={form.blank_page_ai_check_enabled}
+              available={ocrSeesPageImages(
+                providers?.find((provider) => provider.id === form.ocr_provider_id)?.sdk,
+              )}
+              onChange={(value) => updateField('blank_page_ai_check_enabled', value)}
             />
             <ProviderModelFields
               label={t('settingsAi.general')}

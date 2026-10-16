@@ -2,6 +2,7 @@ import { lang, t } from '../i18n'
 
 export type ProcessingStep =
   | 'preview'
+  | 'detect_blank_pages'
   | 'ocr'
   | 'detect_duplicates'
   | 'extract_metadata'
@@ -52,6 +53,7 @@ export type ProcessingJobRecord = {
 
 export const FULL_PIPELINE_STEPS: ProcessingStep[] = [
   'preview',
+  'detect_blank_pages',
   'ocr',
   'detect_duplicates',
   'extract_metadata',
@@ -69,6 +71,7 @@ export const EXTRACTION_PIPELINE_STEPS: ProcessingStep[] = [
 
 export const PROCESSING_STEP_LABELS: Record<ProcessingStep, string> = {
   preview: t('processing.stepPreview'),
+  detect_blank_pages: t('processing.stepDetectBlankPages'),
   ocr: 'OCR',
   detect_duplicates: t('processing.stepDetectDuplicates'),
   extract_metadata: t('processing.stepExtractMetadata'),
@@ -79,6 +82,7 @@ export const PROCESSING_STEP_LABELS: Record<ProcessingStep, string> = {
 
 export const PROCESSING_STEP_DESCRIPTIONS: Record<ProcessingStep, string> = {
   preview: t('processing.descPreview'),
+  detect_blank_pages: t('processing.descDetectBlankPages'),
   ocr: t('processing.descOcr'),
   detect_duplicates: t('processing.descDetectDuplicates'),
   extract_metadata: t('processing.descExtractMetadata'),

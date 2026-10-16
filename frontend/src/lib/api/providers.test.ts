@@ -4,6 +4,7 @@ import {
   canEmbedProvider,
   canWebSearchProvider,
   isLLMProvider,
+  ocrSeesPageImages,
   providerDocs,
   keylessProviderHint,
   eligibleProviders,
@@ -253,5 +254,19 @@ describe('providerOptionLabel', () => {
   it('shows the SDK only when the alias does not already name it', () => {
     expect(providerOptionLabel({ alias: 'Docling', sdk: 'docling' })).toBe('Docling (Local OCR)')
     expect(providerOptionLabel({ alias: 'Local embeddings', sdk: 'local' })).toBe('Local embeddings')
+  })
+})
+
+describe('ocrSeesPageImages', () => {
+  it('is true for OCR read through a chat model', () => {
+    for (const sdk of ['openai', 'anthropic', 'openrouter', 'opencode', 'chatgpt']) {
+      expect(ocrSeesPageImages(sdk)).toBe(true)
+    }
+  })
+
+  it('is false for OCR that only returns text', () => {
+    for (const sdk of ['mistral', 'google_vision', 'docling', undefined]) {
+      expect(ocrSeesPageImages(sdk)).toBe(false)
+    }
   })
 })
