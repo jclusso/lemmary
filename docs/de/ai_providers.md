@@ -249,7 +249,10 @@ zugewiesen, die der Benutzer schreibt, und sind daher bereits in der Sprache, di
 Benutzer gewählt hat. Ohne Ergebnissprache behält jedes Dokument seine Hauptsprache, also
 die, in der der größte Teil seines Texts geschrieben ist; eine Rechnung mit einem
 übersetzten Kundenservice-Hinweis erhält ihren Titel daher weiterhin in der Sprache der
-Rechnung. Die Extraktion speichert diese Sprache auch am Dokument, und die Dokumentseite
+Rechnung. Diese Sprache wird vor der Extraktion aus dem OCR-Text gemessen und dem Modell
+vorgegeben; einen Text, der zum Messen zu kurz ist, etwa einen Kassenbon, beurteilt das
+Modell selbst, und eine von Hand am Dokument gesetzte Sprache bleibt beim erneuten
+Verarbeiten erhalten. Die Extraktion speichert diese Sprache auch am Dokument, und die Dokumentseite
 bietet eine Übersetzung nur an, wenn sie von der Ergebnissprache abweicht.
 
 ## Modelle in den Einstellungen zuweisen {#binding-models-in-settings}

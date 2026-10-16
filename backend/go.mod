@@ -4,6 +4,7 @@ go 1.27.1
 
 require (
 	cloud.google.com/go/vision/v2 v2.15.0
+	github.com/abadojack/whatlanggo v1.0.1
 	github.com/anthropics/anthropic-sdk-go v1.73.0
 	github.com/blevesearch/bleve/v2 v2.6.1
 	github.com/blevesearch/bleve_index_api v1.4.1

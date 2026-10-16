@@ -360,6 +360,21 @@ func TestBuildExtractionSystemPromptUsesTheMainLanguage(t *testing.T) {
 	}
 }
 
+// A measured language is stated, not left for the model to judge; a result
+// language still outranks it.
+func TestBuildExtractionSystemPromptStatesAKnownDocumentLanguage(t *testing.T) {
+	t.Parallel()
+	prompt := buildExtractionSystemPrompt("", "", ExtractionCatalog{DocumentLanguage: "es"})
+	if !strings.Contains(prompt, "The document is written in Spanish. Always write title, summary, document_type, and correspondent in Spanish") {
+		t.Fatalf("expected the measured language to be stated, got:\n%s", prompt)
+	}
+
+	prompt = buildExtractionSystemPrompt("en", "", ExtractionCatalog{DocumentLanguage: "es"})
+	if strings.Contains(prompt, "written in Spanish") || !strings.Contains(prompt, "correspondent in English") {
+		t.Fatalf("expected the result language to win, got:\n%s", prompt)
+	}
+}
+
 func TestBuildExtractionSystemPromptAppendsAdminRules(t *testing.T) {
 	t.Parallel()
 	const rules = "Treat Rechnung as the document type Invoice."

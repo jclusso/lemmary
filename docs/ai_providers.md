@@ -237,6 +237,9 @@ are exempt: they are assigned from a list the user writes, so they are already i
 the language that user chose. With no result language, each document keeps its
 main language, the one most of its text is written in, so a bill with a
 translated customer service notice is still titled in the bill's language.
+That language is measured from the OCR text before extraction and given to the
+model; a text too short to measure, such as a receipt, is left to the model, and
+a language set by hand on a document is kept when it is reprocessed.
 Extraction also records that language on the document, and the document page
 offers a translation only when it differs from the result language.
 

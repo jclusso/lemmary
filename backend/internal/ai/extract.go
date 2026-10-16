@@ -46,6 +46,10 @@ type ExtractionCatalog struct {
 	ExtractReferences bool
 	// CustomFields are the admin's own document fields, asked for by name.
 	CustomFields []models.CustomField
+	// DocumentLanguage is the document's main language when the pipeline knows
+	// it, measured or set by its owner; the metadata is then written in it
+	// rather than in whatever language the model judges the document to be.
+	DocumentLanguage string
 }
 
 type Extractor interface {
@@ -70,9 +74,13 @@ Return ONLY valid JSON with these fields:
 
 `
 
-	if resultLanguage != "" {
+	switch {
+	case resultLanguage != "":
 		prompt += fmt.Sprintf("Always write title, summary, document_type, and correspondent in %s, whatever language the source document is in; write people_or_organizations as the document spells them.", langcode.EnglishName(resultLanguage))
-	} else {
+	case catalog.DocumentLanguage != "":
+		name := langcode.EnglishName(catalog.DocumentLanguage)
+		prompt += fmt.Sprintf("The document is written in %s. Always write title, summary, document_type, and correspondent in %s; write people_or_organizations as the document spells them.", name, name)
+	default:
 		prompt += "Always write title, summary, and people_or_organizations in the document's main language."
 	}
 	prompt += " The main language is the one most of the text is written in: short passages in other languages, such as a translated notice or a customer service line, do not change it."

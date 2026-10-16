@@ -11,6 +11,7 @@ import (
 
 	"lemmary/backend/internal/ai"
 	"lemmary/backend/internal/config"
+	"lemmary/backend/internal/langdetect"
 	"lemmary/backend/internal/logfmt"
 	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/strutil"
@@ -76,6 +77,7 @@ func (s *ExtractMetadataStep) Run(ctx context.Context, state *StepState) error {
 	}
 	catalog.SuggestNewTags = state.Cfg.AlwaysRequireReview
 	catalog.ExtractReferences = s.ExtractReferences
+	catalog.DocumentLanguage = documentLanguage(state.Document, ocrText)
 
 	state.Logger.Info("starting AI extraction",
 		"provider", s.Extractor.Name(),
@@ -84,6 +86,7 @@ func (s *ExtractMetadataStep) Run(ctx context.Context, state *StepState) error {
 		"catalog_correspondent_names", len(catalog.Correspondents),
 		"catalog_document_type_names", len(catalog.DocumentTypes),
 		"catalog_tag_names", len(catalog.Tags),
+		"document_language", catalog.DocumentLanguage,
 	)
 
 	aiStart := time.Now()
@@ -107,12 +110,28 @@ func (s *ExtractMetadataStep) Run(ctx context.Context, state *StepState) error {
 		"tags", len(metadata.Tags),
 	)
 
+	if catalog.DocumentLanguage != "" {
+		metadata.Language = catalog.DocumentLanguage
+	}
 	state.Metadata = metadata
 	saveMetadataJSON(state.Job, metadata)
 	if err := state.App.Save(state.Job); err != nil {
 		return fmt.Errorf("save metadata snapshot: %w", err)
 	}
 	return nil
+}
+
+// documentLanguage is the language extraction writes in when no result language
+// overrides it: the one the owner set, kept across a reprocess, else the one
+// most of the text is measured to be in. Empty leaves it to the model.
+func documentLanguage(document *core.Record, ocrText string) string {
+	if document.GetString("metadata_source") == models.MetadataSourceUser {
+		if code := document.GetString("language"); code != "" {
+			return code
+		}
+	}
+	code, _ := langdetect.MainLanguage(ocrText)
+	return code
 }
 
 // The names the extraction prompt offers the model.
