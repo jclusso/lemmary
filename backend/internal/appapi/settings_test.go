@@ -660,6 +660,28 @@ func TestPatchSettingsStoresResultLanguageAsACode(t *testing.T) {
 	}
 }
 
+func TestPatchSettingsStoresDeepSearchLanguagesAsCodes(t *testing.T) {
+	app := bootQueueApp(t)
+	rt := &config.Runtime{}
+
+	rec := callManaged(t, handlePatchSettings(app, rt), http.MethodPatch, "", `{"deep_search_languages":"DE, en-US, de"}`)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("patch = %d %s", rec.Code, rec.Body)
+	}
+	record, err := config.FindSettingsRecord(app, rt.Env())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := record.GetString("deep_search_languages"); got != "de,en" {
+		t.Fatalf("stored %q, want de,en", got)
+	}
+
+	rec = callManaged(t, handlePatchSettings(app, rt), http.MethodPatch, "", `{"deep_search_languages":"de,spanish"}`)
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), `\"spanish\" is not an ISO 639-1`) {
+		t.Fatalf("patch spanish = %d %s, want a 400 naming the entry", rec.Code, rec.Body)
+	}
+}
+
 // Branding is tenant-owned: a managed instance sets the models, not the name.
 func TestBrandingIsNotAManagedSetting(t *testing.T) {
 	t.Parallel()

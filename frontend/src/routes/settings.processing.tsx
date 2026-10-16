@@ -16,7 +16,7 @@ import {
   sectionClassName,
   sectionTitleClassName,
 } from '../components/ui'
-import { LanguageCombobox } from '../components/LanguageCombobox'
+import { LanguageCombobox, LanguageMultiCombobox } from '../components/LanguageCombobox'
 import { t } from '../i18n'
 
 /**
@@ -138,15 +138,15 @@ export function SettingsProcessingPage() {
             </p>
           </div>
           <div className={labelClassName}>
-            <label className={labelClassName}>
-              <span className={labelTextClassName}>{t('settingsProcessing.deepSearchLanguages')}</span>
-              <input
-                className={inputClassName}
-                placeholder={t('settingsProcessing.deepSearchLanguagesPlaceholder')}
-                value={form.deep_search_languages}
-                onChange={(e) => updateField('deep_search_languages', e.target.value)}
-              />
+            <label htmlFor="deep-search-languages" className={labelTextClassName}>
+              {t('settingsProcessing.deepSearchLanguages')}
             </label>
+            <LanguageMultiCombobox
+              id="deep-search-languages"
+              value={form.deep_search_languages.split(',').filter(Boolean)}
+              onChange={(codes) => updateField('deep_search_languages', codes.join(','))}
+              placeholder={t('settingsProcessing.deepSearchLanguagesAdd')}
+            />
             <p className={fieldHintClassName}>
               {form.embedding_model.trim() !== ''
                 ? t('settingsProcessing.deepSearchLanguagesEmbeddingHint')

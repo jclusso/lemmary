@@ -1409,7 +1409,7 @@ export const de: Catalog = {
   'settingsProcessing.resultLanguageHint':
     'Schreibt Titel, Zusammenfassung, Typ und Korrespondent in dieser Sprache, gleich in welcher Sprache das Dokument verfasst ist, und bietet für Dokumente in anderen Sprachen eine Übersetzung des OCR-Texts an. Tags sind ausgenommen: Sie stammen aus Ihrer eigenen Liste, in welcher Sprache Sie diese auch geschrieben haben. Wählen Sie „Wie das jeweilige Dokument“, um die Hauptsprache jedes Dokuments zu behalten.',
   'settingsProcessing.deepSearchLanguages': 'Sprachen für Deep Search',
-  'settingsProcessing.deepSearchLanguagesPlaceholder': 'z. B. de,en,uk',
+  'settingsProcessing.deepSearchLanguagesAdd': 'Sprache hinzufügen',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':
     'Mit einem konfigurierten Embedding-Modell erreicht eine Suche bereits Dokumente in jeder Sprache; diese Liste wird nur verwendet, wenn Deep Search auf die Stichwortsuche zurückfällt.',
   'settingsProcessing.deepSearchLanguagesHint':

@@ -20,8 +20,8 @@ func TestNormalizeResultLanguage(t *testing.T) {
 			t.Fatalf("save app_settings: %v", err)
 		}
 
-		if err := normalizeResultLanguage(app); err != nil {
-			t.Fatalf("normalizeResultLanguage: %v", err)
+		if err := normalizeLanguageSettings(app); err != nil {
+			t.Fatalf("normalizeLanguageSettings: %v", err)
 		}
 		saved, err := app.FindRecordById("app_settings", settings.Id)
 		if err != nil {
@@ -30,6 +30,30 @@ func TestNormalizeResultLanguage(t *testing.T) {
 		if got := saved.GetString("processing_result_language"); got != want {
 			t.Fatalf("%q normalized to %q, want %q", raw, got, want)
 		}
+	}
+}
+
+func TestNormalizeDeepSearchLanguages(t *testing.T) {
+	app := bootMigratedApp(t)
+	collection, err := app.FindCollectionByNameOrId("app_settings")
+	if err != nil {
+		t.Fatalf("app_settings collection: %v", err)
+	}
+	settings := core.NewRecord(collection)
+	settings.Set("deep_search_languages", "DE, english,uk,de")
+	if err := app.Save(settings); err != nil {
+		t.Fatalf("save app_settings: %v", err)
+	}
+
+	if err := normalizeLanguageSettings(app); err != nil {
+		t.Fatalf("normalizeLanguageSettings: %v", err)
+	}
+	saved, err := app.FindRecordById("app_settings", settings.Id)
+	if err != nil {
+		t.Fatalf("reload app_settings: %v", err)
+	}
+	if got := saved.GetString("deep_search_languages"); got != "de,uk" {
+		t.Fatalf("deep_search_languages = %q, want de,uk", got)
 	}
 }
 

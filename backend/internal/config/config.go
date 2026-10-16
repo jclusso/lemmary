@@ -13,6 +13,7 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 
 	"lemmary/backend/internal/aiprovider"
+	"lemmary/backend/internal/langcode"
 	"lemmary/backend/internal/strutil"
 )
 
@@ -518,23 +519,11 @@ func getEnvFloat(key string, fallback float64) float64 {
 	return parsed
 }
 
-// NormalizeLanguageList cleans a comma-separated ISO 639-1 list (e.g. "de, en, uk").
+// NormalizeLanguageList cleans a comma-separated ISO 639-1 list (e.g. "de, en, uk"),
+// dropping entries that name no language.
 func NormalizeLanguageList(raw string) string {
-	parts := strings.Split(raw, ",")
-	out := make([]string, 0, len(parts))
-	seen := map[string]struct{}{}
-	for _, part := range parts {
-		code := strings.ToLower(strings.TrimSpace(part))
-		if code == "" {
-			continue
-		}
-		if _, ok := seen[code]; ok {
-			continue
-		}
-		seen[code] = struct{}{}
-		out = append(out, code)
-	}
-	return strings.Join(out, ",")
+	codes, _ := langcode.ParseList(raw)
+	return codes
 }
 
 // HasLLM is what the setup wizard and the readiness check ask before declaring

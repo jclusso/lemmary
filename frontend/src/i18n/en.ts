@@ -1337,7 +1337,7 @@ export const en = {
   'settingsProcessing.resultLanguageHint':
     'Writes the title, summary, type and correspondent in this language, whatever language the document is in, and offers a translation of the OCR text for documents in other languages. Tags are exempt: they come from your own list, in whatever language you wrote it. Choose “Same as each document” to keep each document’s main language.',
   'settingsProcessing.deepSearchLanguages': 'Deep search languages',
-  'settingsProcessing.deepSearchLanguagesPlaceholder': 'e.g. de,en,uk',
+  'settingsProcessing.deepSearchLanguagesAdd': 'Add a language',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':
     'With an embedding model configured, one search already reaches documents in every language; this list is only used when Deep Search falls back to keyword search.',
   'settingsProcessing.deepSearchLanguagesHint':

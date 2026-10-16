@@ -386,7 +386,11 @@ func applyProcessingPatch(record *core.Record, req settingsPatchRequest) error {
 		record.Set("processing_result_language", code)
 	}
 	if req.DeepSearchLanguages != nil {
-		record.Set("deep_search_languages", config.NormalizeLanguageList(*req.DeepSearchLanguages))
+		codes, invalid := langcode.ParseList(*req.DeepSearchLanguages)
+		if len(invalid) > 0 {
+			return errInvalid("deep_search_languages: %q is not an ISO 639-1 language code", invalid[0])
+		}
+		record.Set("deep_search_languages", codes)
 	}
 	if err := patchSettingsPositive(record, "openai_timeout_sec", req.OpenAITimeoutSec); err != nil {
 		return err

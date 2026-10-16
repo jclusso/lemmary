@@ -9,16 +9,16 @@ import (
 
 // Adds language, the ISO 639-1 code extraction reads off each document, so the
 // document page can tell a document already in the result language from one
-// worth translating. The result language setting was free text until now; a
-// value that names a language becomes its code, and one that does not is
-// cleared, because the settings form now offers only codes and would refuse to
-// save it back.
+// worth translating. The result and deep search language settings were free
+// text until now; a value that names a language becomes its code, and one that
+// does not is dropped, because the settings form now offers only codes and
+// would refuse to save it back.
 func init() {
 	m.Register(func(app core.App) error {
 		if err := addDocumentLanguageField(app); err != nil {
 			return err
 		}
-		return normalizeResultLanguage(app)
+		return normalizeLanguageSettings(app)
 	}, func(app core.App) error {
 		documents, err := app.FindCollectionByNameOrId("documents")
 		if err != nil {
@@ -41,7 +41,7 @@ func addDocumentLanguageField(app core.App) error {
 	return app.Save(documents)
 }
 
-func normalizeResultLanguage(app core.App) error {
+func normalizeLanguageSettings(app core.App) error {
 	records, err := app.FindAllRecords("app_settings")
 	if err != nil {
 		return err
@@ -49,10 +49,13 @@ func normalizeResultLanguage(app core.App) error {
 	for _, record := range records {
 		raw := record.GetString("processing_result_language")
 		code, _ := langcode.Parse(raw)
-		if code == raw {
+		rawList := record.GetString("deep_search_languages")
+		codes, _ := langcode.ParseList(rawList)
+		if code == raw && codes == rawList {
 			continue
 		}
 		record.Set("processing_result_language", code)
+		record.Set("deep_search_languages", codes)
 		if err := app.Save(record); err != nil {
 			return err
 		}

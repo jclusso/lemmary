@@ -1528,7 +1528,7 @@ export const ru: Catalog = {
   'settingsProcessing.resultLanguageHint':
     'Название, краткое содержание, тип и корреспондент записываются на этом языке, на каком бы языке ни был документ, а для документов на других языках предлагается перевод OCR-текста. Теги не переводятся: они берутся из вашего списка на том языке, на котором вы его составили. Выберите «Как в самом документе», чтобы хранить основной язык каждого документа.',
   'settingsProcessing.deepSearchLanguages': 'Языки Deep Search',
-  'settingsProcessing.deepSearchLanguagesPlaceholder': 'например, de,en,uk',
+  'settingsProcessing.deepSearchLanguagesAdd': 'Добавить язык',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':
     'Если настроена модель эмбеддингов, один поиск уже находит документы на любом языке; этот список используется, только когда Deep Search переходит на поиск по ключевым словам.',
   'settingsProcessing.deepSearchLanguagesHint':

@@ -41,6 +41,7 @@ func TestNormalizeLanguageList(t *testing.T) {
 		{"de,de,DE", "de"},
 		{" , , ", ""},
 		{"uk", "uk"},
+		{"de, english, en-US", "de,en"},
 	}
 	for _, tc := range cases {
 		if got := NormalizeLanguageList(tc.in); got != tc.want {

@@ -989,6 +989,10 @@ var catalog = map[string]map[string]string{
 		"de": "Die Websuche benötigt einen passenden Anbieter (%s)",
 		"ru": "для веб-поиска нужен подходящий провайдер (%s)",
 	},
+	"deep_search_languages: %q is not an ISO 639-1 language code": {
+		"de": "deep_search_languages: %q ist kein Sprachcode nach ISO 639-1",
+		"ru": "deep_search_languages: %q не является кодом языка ISO 639-1",
+	},
 	"processing_result_language must be an ISO 639-1 language code": {
 		"de": "processing_result_language muss ein Sprachcode nach ISO 639-1 sein",
 		"ru": "processing_result_language должен быть кодом языка ISO 639-1",

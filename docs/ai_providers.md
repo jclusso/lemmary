@@ -218,7 +218,7 @@ afterwards.
 | `AI_TIMEOUT_SEC` | `90` | Language-model request timeout: extraction, Ask AI, search, research and split detection |
 | `WORKER_TIMEOUT_SEC` | `300` | Per-job processing timeout |
 | `WORKER_MAX_RETRIES` | `0` | Max step retry attempts before a job fails |
-| `DEEP_SEARCH_LANGUAGES` | empty | Comma-separated ISO 639-1 codes (e.g. `de,en,uk`) for keyword expansion on both search pages. Only drives per-language searches when no embedding model is set; with one, a single search already crosses languages |
+| `DEEP_SEARCH_LANGUAGES` | empty | Comma-separated ISO 639-1 codes (e.g. `de,en,uk`; an entry that names no language is dropped) for keyword expansion on both search pages. Only drives per-language searches when no embedding model is set; with one, a single search already crosses languages |
 | `EXTRACTION_PROMPT_VERSION` | `v1` | Stored on each processing job step run, with a digest of the Settings extraction rules appended where any are set; bookkeeping only, not offered in the Settings UI |
 | `NEAR_DUPLICATE_DETECTION_ENABLED` | `false` | Whether the pipeline runs near-duplicate detection |
 | `NEAR_DUPLICATE_THRESHOLD` | `0.92` | How similar two documents' text must be to count as near-duplicates |

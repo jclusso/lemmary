@@ -27,6 +27,30 @@ func Parse(raw string) (string, bool) {
 	return code, true
 }
 
+// ParseList reads a comma-separated list of languages into a comma-separated
+// list of distinct ISO 639-1 codes, in their first order, and returns the
+// entries that name no language apart.
+func ParseList(raw string) (string, []string) {
+	var codes, invalid []string
+	seen := map[string]bool{}
+	for part := range strings.SplitSeq(raw, ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		code, ok := Parse(part)
+		if !ok {
+			invalid = append(invalid, part)
+			continue
+		}
+		if !seen[code] {
+			seen[code] = true
+			codes = append(codes, code)
+		}
+	}
+	return strings.Join(codes, ","), invalid
+}
+
 // EnglishName is the language's English name, which a model follows more
 // reliably than a bare code. An unknown code comes back unchanged.
 func EnglishName(code string) string {

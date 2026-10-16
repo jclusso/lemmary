@@ -27,6 +27,19 @@ func TestParse(t *testing.T) {
 	}
 }
 
+func TestParseList(t *testing.T) {
+	codes, invalid := ParseList(" de, EN ,en-US,, english, uk ")
+	if codes != "de,en,uk" {
+		t.Fatalf("codes = %q, want de,en,uk", codes)
+	}
+	if len(invalid) != 1 || invalid[0] != "english" {
+		t.Fatalf("invalid = %v, want [english]", invalid)
+	}
+	if codes, invalid := ParseList(""); codes != "" || invalid != nil {
+		t.Fatalf("empty list = %q %v", codes, invalid)
+	}
+}
+
 func TestEnglishName(t *testing.T) {
 	cases := map[string]string{"en": "English", "de": "German", "es": "Spanish", "qq": "qq"}
 	for code, want := range cases {

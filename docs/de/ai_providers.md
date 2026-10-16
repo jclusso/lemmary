@@ -229,7 +229,7 @@ Werden beim ersten Start in `app_settings` geschrieben und danach über die
 | `AI_TIMEOUT_SEC` | `90` | Timeout für Sprachmodell-Anfragen: Extraktion, KI fragen, Suche, Recherche und Teilungserkennung |
 | `WORKER_TIMEOUT_SEC` | `300` | Verarbeitungs-Timeout pro Auftrag |
 | `WORKER_MAX_RETRIES` | `0` | Maximale Anzahl von Wiederholungsversuchen pro Schritt, bevor ein Auftrag fehlschlägt |
-| `DEEP_SEARCH_LANGUAGES` | leer | Kommagetrennte ISO-639-1-Codes (z. B. `de,en,uk`) für die Stichworterweiterung auf beiden Suchseiten. Steuert sprachspezifische Suchen nur, wenn kein Embedding-Modell gesetzt ist; mit einem solchen überschreitet bereits eine einzige Suche Sprachgrenzen |
+| `DEEP_SEARCH_LANGUAGES` | leer | Kommagetrennte ISO-639-1-Codes (z. B. `de,en,uk`; ein Eintrag, der keine Sprache bezeichnet, wird verworfen) für die Stichworterweiterung auf beiden Suchseiten. Steuert sprachspezifische Suchen nur, wenn kein Embedding-Modell gesetzt ist; mit einem solchen überschreitet bereits eine einzige Suche Sprachgrenzen |
 | `EXTRACTION_PROMPT_VERSION` | `v1` | Wird bei jedem Schrittlauf eines Verarbeitungsauftrags gespeichert, mit einem angehängten Digest der Extraktionsregeln aus den Einstellungen, sofern welche gesetzt sind; dient nur der Buchführung, wird in der Einstellungsoberfläche nicht angeboten |
 | `NEAR_DUPLICATE_DETECTION_ENABLED` | `false` | Ob die Pipeline eine Erkennung von Beinahe-Duplikaten ausführt |
 | `NEAR_DUPLICATE_THRESHOLD` | `0.92` | Wie ähnlich sich die Texte zweier Dokumente sein müssen, damit sie als Beinahe-Duplikate gelten |
