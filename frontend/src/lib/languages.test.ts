@@ -1,17 +1,27 @@
 import { describe, expect, it } from 'vitest'
-import { languageOptions, offersTranslation } from './languages'
+import { languageName, languageOptions, offersTranslation } from './languages'
 
 describe('languageOptions', () => {
-  it('names each code in the given locale', () => {
-    const english = languageOptions('en')
-    expect(english.find((option) => option.code === 'es')?.name).toBe('Spanish')
+  it('names every code in each interface language', () => {
+    for (const locale of ['en', 'de', 'ru'] as const) {
+      const options = languageOptions(locale)
+      expect(options.length).toBe(183)
+      expect(options.filter((option) => !option.name || option.name === option.code)).toEqual([])
+    }
+    expect(languageOptions('en').find((option) => option.code === 'rn')?.name).toBe('Rundi')
     expect(languageOptions('de').find((option) => option.code === 'es')?.name).toBe('Spanisch')
   })
 
   it('sorts by name rather than by code', () => {
     const names = languageOptions('en').map((option) => option.name)
     expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b, 'en')))
-    expect(names.length).toBe(183)
+  })
+})
+
+describe('languageName', () => {
+  it('names a listed code and passes anything else through', () => {
+    expect(languageName('es', 'ru')).toBe('Испанский')
+    expect(languageName('xx', 'en')).toBe('xx')
   })
 })
 

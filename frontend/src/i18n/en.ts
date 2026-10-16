@@ -1012,6 +1012,8 @@ export const en = {
   'documentPage.fieldDate': 'Document date',
   'documentPage.fieldType': 'Document type',
   'documentPage.fieldCorrespondent': 'Correspondent',
+  'documentPage.fieldLanguage': 'Language',
+  'documentPage.languageUnknown': 'Unknown',
   'documentPage.fieldTags': 'Tags',
   'documentPage.fieldSummary': 'Summary',
   'documentPage.fieldOcr': 'OCR text',

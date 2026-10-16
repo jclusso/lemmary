@@ -43,7 +43,16 @@ func TestDocumentLanguageMigrationIsIdempotent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("documents collection: %v", err)
 	}
-	if documents.Fields.GetByName("language") == nil {
-		t.Fatal("documents has no language field")
+	field, ok := documents.Fields.GetByName("language").(*core.TextField)
+	if !ok {
+		t.Fatal("documents has no language text field")
+	}
+	for _, bad := range []string{"EN", "e1", "eng"} {
+		if field.ValidatePlainValue(bad) == nil {
+			t.Fatalf("language %q must be refused", bad)
+		}
+	}
+	if err := field.ValidatePlainValue("en"); err != nil {
+		t.Fatalf("language en refused: %v", err)
 	}
 }

@@ -53,9 +53,10 @@ import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
 import { useAppMeta } from '../hooks/useAppMeta'
 import { previewKind } from '../lib/documentPreview'
-import { offersTranslation } from '../lib/languages'
+import { languageName, offersTranslation } from '../lib/languages'
+import { LanguageCombobox } from '../components/LanguageCombobox'
 import { anyJobRunning } from '../lib/api/jobs'
-import { t, tNode } from '../i18n'
+import { lang, t, tNode } from '../i18n'
 
 type OcrView = 'original' | 'translated' | 'both'
 
@@ -568,6 +569,7 @@ export function DocumentDetailPage() {
         documentDate: document.document_date,
         documentTypeName: documentTypeInput,
         correspondentName: correspondentInput,
+        language: document.language ?? '',
         tagIds,
         customFields: customFieldValuesForSave(customFields ?? [], customInputs),
         processingStatus: document.processing_status,
@@ -951,6 +953,25 @@ export function DocumentDetailPage() {
               />
             </label>
 
+            <div className={labelClass}>
+              <label htmlFor="document-language">{t('documentPage.fieldLanguage')}</label>
+              {editing ? (
+                <LanguageCombobox
+                  id="document-language"
+                  value={document.language ?? ''}
+                  onChange={(code) => setDocument({ ...document, language: code })}
+                  emptyLabel={t('documentPage.languageUnknown')}
+                />
+              ) : (
+                <input
+                  id="document-language"
+                  className={fieldClass(false)}
+                  readOnly
+                  value={document.language ? languageName(document.language, lang) : ''}
+                />
+              )}
+            </div>
+
             {customFields?.map((field) => (
               <label key={field.id} className={labelClass}>
                 {field.name}
@@ -1092,7 +1113,7 @@ export function DocumentDetailPage() {
                     ref={translatedOcrRef}
                     rows={22}
                     readOnly
-                    aria-label={t('documentPage.ocrTranslatedTo', { language: resultLanguage ?? '' })}
+                    aria-label={t('documentPage.ocrTranslatedTo', { language: languageName(resultLanguage ?? '', lang) })}
                     className={`${textareaClass(false)} ${ocrTextareaClass}`}
                     onScroll={() => syncOcrScroll(translatedOcrRef.current, originalOcrRef.current)}
                     value={translating ? t('documentPage.translating') : (translation.data ?? '')}

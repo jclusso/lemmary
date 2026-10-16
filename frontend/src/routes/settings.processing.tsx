@@ -15,10 +15,9 @@ import {
   labelTextClassName,
   sectionClassName,
   sectionTitleClassName,
-  selectClassName,
 } from '../components/ui'
-import { lang, t } from '../i18n'
-import { languageOptions } from '../lib/languages'
+import { LanguageCombobox } from '../components/LanguageCombobox'
+import { t } from '../i18n'
 
 /**
  * A managed tenant keeps everything here but the two timeouts, which its host
@@ -125,21 +124,15 @@ export function SettingsProcessingPage() {
             </>
           )}
           <div className={labelClassName}>
-            <label className={labelClassName}>
-              <span className={labelTextClassName}>{t('settingsProcessing.resultLanguage')}</span>
-              <select
-                className={`${selectClassName} w-full`}
-                value={form.processing_result_language}
-                onChange={(e) => updateField('processing_result_language', e.target.value)}
-              >
-                <option value="">{t('settingsProcessing.resultLanguageDocument')}</option>
-                {languageOptions(lang).map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.name} ({option.code})
-                  </option>
-                ))}
-              </select>
+            <label htmlFor="result-language" className={labelTextClassName}>
+              {t('settingsProcessing.resultLanguage')}
             </label>
+            <LanguageCombobox
+              id="result-language"
+              value={form.processing_result_language}
+              onChange={(code) => updateField('processing_result_language', code)}
+              emptyLabel={t('settingsProcessing.resultLanguageDocument')}
+            />
             <p className={fieldHintClassName}>
               {t('settingsProcessing.resultLanguageHint')}
             </p>

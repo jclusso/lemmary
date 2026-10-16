@@ -141,7 +141,9 @@ Original, die Übersetzung oder beides nebeneinander. Die Übersetzung entsteht,
 wenn sie zum ersten Mal angefordert wird, und wird mit dem Dokument gespeichert.
 Ein Dokument, das bereits in der Ergebnissprache vorliegt, hat keinen
 Umschalter; eines, das verarbeitet wurde, bevor Dokumentsprachen erfasst
-wurden, zeigt ihn, bis es erneut verarbeitet wird.
+wurden, zeigt ihn, bis es erneut verarbeitet wird. Eine falsch erkannte Sprache wird im
+Feld **Sprache** des Bearbeitungsformulars korrigiert, was den Umschalter sofort
+ein- oder ausblendet.
 
 ![Der OCR-Text eines deutschen Briefs neben seiner englischen Übersetzung](../screenshots/document-translated.png)
 

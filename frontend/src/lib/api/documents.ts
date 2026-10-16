@@ -678,6 +678,8 @@ export type DocumentMetadataInput = {
   documentDate: string
   documentTypeName: string
   correspondentName: string
+  /** ISO 639-1 code; empty when the language is unknown. */
+  language: string
   /** Ids from the user's existing tags; saving never creates one. */
   tagIds: string[]
   customFields: CustomFieldValues
@@ -706,6 +708,7 @@ export async function saveDocumentMetadata(
     },
     title: input.title,
     summary: input.summary,
+    language: input.language,
     ocr_text: input.ocrText,
     document_date: input.documentDate || null,
     tags: tagIds,

@@ -1069,6 +1069,8 @@ export const de: Catalog = {
   'documentPage.fieldDate': 'Dokumentdatum',
   'documentPage.fieldType': 'Dokumenttyp',
   'documentPage.fieldCorrespondent': 'Korrespondent',
+  'documentPage.fieldLanguage': 'Sprache',
+  'documentPage.languageUnknown': 'Unbekannt',
   'documentPage.fieldTags': 'Tags',
   'documentPage.fieldSummary': 'Zusammenfassung',
   'documentPage.fieldOcr': 'OCR-Text',

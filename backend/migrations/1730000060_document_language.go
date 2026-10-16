@@ -37,7 +37,7 @@ func addDocumentLanguageField(app core.App) error {
 	if documents.Fields.GetByName("language") != nil {
 		return nil
 	}
-	documents.Fields.Add(&core.TextField{Name: "language", Max: 2})
+	documents.Fields.Add(&core.TextField{Name: "language", Max: 2, Pattern: `^[a-z]{2}$`})
 	return app.Save(documents)
 }
 

@@ -128,7 +128,8 @@ also be read translated: the switch above it shows the original, the
 translation, or both side by side. The translation is made the first time it is
 asked for and stored with the document. A document already in the result
 language has no switch; one processed before document languages were recorded
-shows it until it is reprocessed.
+shows it until it is reprocessed. A wrongly detected language is corrected in the
+**Language** field of the edit form, which shows or hides the switch at once.
 
 ![A German letter's OCR text beside its English translation](./screenshots/document-translated.png)
 
