@@ -42,11 +42,14 @@ export const de: Catalog = {
   'documentStatus.needsReview': 'Prüfung nötig',
 
   'processing.stepPreview': 'Vorschau',
+  'processing.stepDetectBlankPages': 'Leere Seiten erkennen',
   'processing.stepDetectDuplicates': 'Duplikate erkennen',
   'processing.stepExtractMetadata': 'Metadaten extrahieren',
   'processing.stepApplyMetadata': 'Metadaten übernehmen',
   'processing.stepEmbed': 'Suchvektoren erstellen',
   'processing.descPreview': 'Vorschaubild der ersten Seite neu erzeugen (nur PDF)',
+  'processing.descDetectBlankPages':
+    'Seiten ohne Druck finden, damit die Texterkennung sie auslässt',
   'processing.descOcr': 'Texterkennung auf der Originaldatei erneut ausführen',
   'processing.descDetectDuplicates':
     'OCR-Text auf Beinahe-Duplikate vergleichen (wenn in den Einstellungen aktiviert)',
@@ -509,6 +512,30 @@ export const de: Catalog = {
   'shareDialog.notShared': 'Mit niemandem geteilt.',
   'shareDialog.unknownAccount': 'Unbekanntes Konto',
   'shareDialog.done': 'Fertig',
+  'pageEditor.title': 'Seiten',
+  'pageEditor.description':
+    'Wählen Sie die Seiten aus, die entfernt werden sollen. Leer wirkende Seiten sind bereits ausgewählt, und eine Seite, die nicht zur Texterkennung geschickt wurde, wird gelesen, wenn Sie sie behalten. Die hochgeladene Datei bleibt erhalten und kann später wiederhergestellt werden.',
+  'pageEditor.loading': 'Seiten werden gerendert...',
+  'pageEditor.loadFailed': 'Die Seiten konnten nicht geladen werden.',
+  'pageEditor.changeFailed': 'Die Seiten konnten nicht geändert werden.',
+  'pageEditor.page': 'Seite {page}',
+  'pageEditor.looksBlank': 'Wirkt leer',
+  'pageEditor.willRemove': 'Entfernen',
+  'pageEditor.blankFound': {
+    one: '{count} Seite wirkt leer und ist ausgewählt.',
+    other: '{count} Seiten wirken leer und sind ausgewählt.',
+  },
+  'pageEditor.noBlank': 'Keine Seite wirkt leer.',
+  'pageEditor.keepOne': 'Ein Dokument muss mindestens eine Seite behalten.',
+  'pageEditor.remove': { one: '{count} Seite entfernen', other: '{count} Seiten entfernen' },
+  'pageEditor.working': 'Wird gespeichert...',
+  'pageEditor.restore': 'Original wiederherstellen',
+  'pageEditor.restoreHint': 'Stellt die Datei so wieder her, wie sie vor dem Entfernen von Seiten war.',
+  'pageEditor.willRead': 'Wird gelesen',
+  'pageEditor.read': { one: '{count} Seite lesen', other: '{count} Seiten lesen' },
+  'pageEditor.willReread': 'Beim Speichern wird das Dokument erneut zur Texterkennung geschickt.',
+  'pageEditor.keep': { one: '{count} Seite behalten', other: '{count} Seiten behalten' },
+  'pageEditor.textKept': 'Der Text bleibt, wie er ist, daher wird keine Texterkennung benötigt.',
 
   'providerModelFields.none': 'Keiner',
   'providerModelFields.customModel': 'Eigene Modell-ID…',
@@ -1042,6 +1069,22 @@ export const de: Catalog = {
   'documentPage.status': 'Status: {status}',
   'documentPage.preview': 'Vorschau',
   'documentPage.openFile': 'Datei öffnen',
+  'documentPage.pages': 'Seiten',
+  'documentPage.pagesTitle': 'Seiten entfernen, etwa leere Seiten, die der Scanner durchgelassen hat',
+  'documentPage.pagesRemoved': 'Seiten entfernt.',
+  'documentPage.originalRestored': 'Originaldatei wiederhergestellt.',
+  'documentPage.textRereading': 'Der Text wird erneut gelesen.',
+  'documentPage.textUnchanged': 'Der Text musste nicht geändert werden.',
+  'documentPage.pagesKept': 'Die behaltenen Seiten werden gelesen.',
+  'documentPage.unreadPages': {
+    one: 'Seite {pages} wirkt leer und wurde nicht zur Texterkennung geschickt.',
+    other: 'Die Seiten {pages} wirken leer und wurden nicht zur Texterkennung geschickt.',
+  },
+  'documentPage.blankPages': {
+    one: 'Seite {pages} wirkt leer.',
+    other: 'Die Seiten {pages} wirken leer.',
+  },
+  'documentPage.reviewBlankPages': 'Seiten prüfen',
   'documentPage.hideJobDetails': 'Details zum Verarbeitungsauftrag ausblenden',
   'documentPage.showJobDetails': 'Details zum Verarbeitungsauftrag anzeigen',
   'documentPage.hideJob': 'Verarbeitungsauftrag ausblenden',
@@ -1187,6 +1230,11 @@ export const de: Catalog = {
   'settingsAi.ocrHelp':
     'Liest den Text aus hochgeladenen PDFs, Bildern und Scans. Reiner Text, CSV-, Word- und Excel-Dateien werden lokal gelesen und überspringen diesen Schritt. {link}',
   'settingsAi.ocrLink': 'OCR je Anbieter.',
+  'settingsAi.blankPageAICheck': 'Unklare leere Seiten mit KI prüfen',
+  'settingsAi.blankPageAICheckHint':
+    'Lemmary prüft jede Seite selbst darauf, ob sie leer ist. Wenn es das nicht sicher erkennen kann, etwa weil Text von der Rückseite durchscheint oder der Druck sehr hell ist, fragt es Ihr OCR-Modell und zeigt ihm diese Seite und die Seite davor. Nur unklare Seiten werden gesendet, daher kosten die meisten Dokumente nichts extra.',
+  'settingsAi.blankPageAICheckUnavailable':
+    'Funktioniert nur, wenn der OCR-Anbieter oben ein KI-Modell ist, das Seiten als Bilder liest, also nicht Mistral OCR, Google Vision oder lokale OCR.',
   'settingsAi.general': 'Allgemeine KI',
   'settingsAi.generalHelp':
     'Liest Metadaten aus Dokumenten, beantwortet Fragen bei „KI fragen“, führt die KI-gestützte Suche aus und liest Dokumente für Deep Research.',

@@ -82,6 +82,52 @@ each further sheet.
 use for a stack. Some devices return one PDF per sheet and some return one PDF
 for the lot; either way it arrives as one document.
 
+## Removing blank pages
+
+A feeder sometimes lets a blank sheet through, often with faint text bleeding
+through from its back. To take it out, open the document and press **Pages**.
+Every page is shown, and the ones that look blank are already selected. Change
+the selection if needed, then press **Remove**. This works on any PDF in your
+library, not only scans.
+
+A page counts as blank when it has almost no dark print. Specks of dust and
+the shadows at a scan's edges are ignored, and so are marks pressed through
+from the front. In a double-sided scan, a page that only shows the page before
+it, mirrored and fainter, counts as blank even when the bleed-through is dark.
+A page of faint ink with nothing to compare it to is kept: some scanners render
+print as a light grey that measures the same as bleed-through, and keeping a
+blank page is the safer mistake.
+
+Most pages are plainly blank or plainly printed. For the few in between, you
+can let the OCR model decide: turn on **Check unclear blank pages with AI** in
+Settings → AI, under the OCR model. Those pages, each with the page before it, go to the OCR
+model in one request per document, and its answer replaces the local guess.
+It needs an AI model as the OCR provider; a document with no unclear page makes
+no request. If the request fails, the local guess stands and the step shows a
+warning.
+
+Check the suggestion before removing: a page holding a single faint stamp may
+be flagged too.
+
+Processing finds these pages for you. A **Detect blank pages** step runs
+before OCR, and OCR leaves out what it found, so blank pages cost nothing to
+process and their bleed-through does not end up in the document's text. The
+file itself keeps them until you remove them: the document page says which
+pages look blank, in a notice at the top like the one for a likely duplicate,
+and **Review pages** opens the dialog with them selected. Keeping them instead
+ends the suggestion.
+
+Lemmary works out whether a change needs OCR again. Removing only pages that
+were left out keeps the text as it is. Removing a page that was read, or
+keeping a page that was left out, sends the document to OCR again; a page you
+keep is read from then on, even if it looks blank. The dialog says which of
+the two will happen before you save. The title, tags and other details stay
+as they are either way.
+
+The file as first uploaded is kept, and **Restore original** in the same
+dialog puts it back, again sending it to OCR only if a page that comes back
+was not a blank one.
+
 ## Limits
 
 A document may be at most 47 MB, which is the same ceiling as any upload, and

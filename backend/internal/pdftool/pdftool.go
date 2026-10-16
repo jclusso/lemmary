@@ -119,6 +119,26 @@ func PageCount(ctx context.Context, pdfPath string) (int, error) {
 // to the width of the highest page number, so the outputs are read back in
 // sorted order and renamed to unpadded names callers can address by page number.
 func RenderPages(ctx context.Context, pdfPath, outDir string, maxEdge, pageCount int) ([]string, error) {
+	return RenderPagesAs(ctx, pdfPath, outDir, PNG, maxEdge, pageCount)
+}
+
+// Format is an image format pdftoppm writes.
+type Format struct {
+	flag, ext string
+}
+
+var (
+	PNG  = Format{flag: "-png", ext: ".png"}
+	JPEG = Format{flag: "-jpeg", ext: ".jpg"}
+	// Gray is an uncompressed binary PGM. Compressing a noisy scan as PNG takes
+	// pdftoppm over twenty times longer than writing it raw, so this is the
+	// format for pages that are only measured, never shown.
+	Gray = Format{flag: "-gray", ext: ".pgm"}
+)
+
+// RenderPagesAs is RenderPages in the given format, named page-<n> with the
+// format's extension.
+func RenderPagesAs(ctx context.Context, pdfPath, outDir string, format Format, maxEdge, pageCount int) ([]string, error) {
 	if err := RequirePDF(pdfPath); err != nil {
 		return nil, err
 	}
@@ -131,7 +151,7 @@ func RenderPages(ctx context.Context, pdfPath, outDir string, maxEdge, pageCount
 
 	stagePrefix := filepath.Join(outDir, "raw")
 	if _, err := run(ctx, "pdftoppm",
-		"-png",
+		format.flag,
 		"-scale-to", strconv.Itoa(maxEdge),
 		pdfPath,
 		stagePrefix,
@@ -139,7 +159,7 @@ func RenderPages(ctx context.Context, pdfPath, outDir string, maxEdge, pageCount
 		return nil, err
 	}
 
-	rendered, err := filepath.Glob(stagePrefix + "-*.png")
+	rendered, err := filepath.Glob(stagePrefix + "-*" + format.ext)
 	if err != nil {
 		return nil, fmt.Errorf("pdftool: list rendered pages: %w", err)
 	}
@@ -154,7 +174,7 @@ func RenderPages(ctx context.Context, pdfPath, outDir string, maxEdge, pageCount
 
 	paths := make([]string, 0, len(rendered))
 	for i, src := range rendered {
-		dst := PagePNGPath(outDir, i+1)
+		dst := filepath.Join(outDir, fmt.Sprintf("page-%d%s", i+1, format.ext))
 		if err := os.Rename(src, dst); err != nil {
 			return nil, fmt.Errorf("pdftool: name rendered page %d: %w", i+1, err)
 		}
@@ -166,6 +186,12 @@ func RenderPages(ctx context.Context, pdfPath, outDir string, maxEdge, pageCount
 // RenderPage renders a single page of pdfPath to outPath (a .png path), scaled
 // so the longest edge is maxEdge pixels.
 func RenderPage(ctx context.Context, pdfPath, outPath string, maxEdge, page int) error {
+	return RenderPageAs(ctx, pdfPath, outPath, PNG, maxEdge, page)
+}
+
+// RenderPageAs is RenderPage in the given format; outPath carries that
+// format's extension.
+func RenderPageAs(ctx context.Context, pdfPath, outPath string, format Format, maxEdge, page int) error {
 	if err := RequirePDF(pdfPath); err != nil {
 		return err
 	}
@@ -176,11 +202,12 @@ func RenderPage(ctx context.Context, pdfPath, outPath string, maxEdge, page int)
 	ctx, cancel := context.WithTimeout(ctx, RenderTimeout)
 	defer cancel()
 
-	// -singlefile makes pdftoppm write exactly outPrefix+".png" with no page
-	// suffix, so the output path is known without listing the directory.
-	outPrefix := strings.TrimSuffix(outPath, ".png")
+	// -singlefile makes pdftoppm write exactly outPrefix plus the extension,
+	// with no page suffix, so the output path is known without listing the
+	// directory.
+	outPrefix := strings.TrimSuffix(outPath, format.ext)
 	_, err := run(ctx, "pdftoppm",
-		"-png",
+		format.flag,
 		"-f", strconv.Itoa(page),
 		"-l", strconv.Itoa(page),
 		"-scale-to", strconv.Itoa(maxEdge),
@@ -193,7 +220,7 @@ func RenderPage(ctx context.Context, pdfPath, outPath string, maxEdge, page int)
 
 // PagePNGPath is where RenderPages puts the PNG for a 1-based page number.
 func PagePNGPath(outDir string, page int) string {
-	return filepath.Join(outDir, fmt.Sprintf("page-%d.png", page))
+	return filepath.Join(outDir, fmt.Sprintf("page-%d%s", page, PNG.ext))
 }
 
 // PageText extracts the text layer of one page. It returns "" for a scanned

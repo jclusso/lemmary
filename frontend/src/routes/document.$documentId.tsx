@@ -48,6 +48,9 @@ import { ProcessingStatus } from '../components/ProcessingStatus'
 import { ProcessingSteps } from '../components/ProcessingSteps'
 import { Button } from '../components/ui'
 import { ShareDialog, ShareSummary } from '../components/ShareDialog'
+import { PageEditorDialog, type PageChange } from '../components/PageEditorDialog'
+import { BlankPagesNotice } from '../components/BlankPagesNotice'
+import { blankSuggestion } from '../lib/api/documentPages'
 import { RelatedDocuments } from '../components/RelatedDocuments'
 import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
@@ -70,6 +73,12 @@ const OCR_VIEW_LABELS: Record<OcrView, string> = {
  */
 function backTarget(document: DocumentRecord | null, owned: boolean): '/' | '/inbox' {
   return owned && document?.processing_status === 'needs_review' ? '/inbox' : '/'
+}
+
+function pageChangeMessage(change: PageChange, reread: boolean): string {
+  if (change === 'kept') return t('documentPage.pagesKept')
+  const done = change === 'removed' ? t('documentPage.pagesRemoved') : t('documentPage.originalRestored')
+  return `${done} ${reread ? t('documentPage.textRereading') : t('documentPage.textUnchanged')}`
 }
 
 function backLabel(to: '/' | '/inbox') {
@@ -237,6 +246,8 @@ export function DocumentDetailPage() {
   // write, so offering the controls would only produce 403s.
   const owned = Boolean(document) && document?.user === pb.authStore.record?.id
   const [sharing, setSharing] = useState(false)
+  const [editingPages, setEditingPages] = useState(false)
+  const blankPages = document ? blankSuggestion(document) : { pages: [], unread: false }
   const [shareVersion, setShareVersion] = useState(0)
   const back = backTarget(document, owned)
 
@@ -627,6 +638,7 @@ export function DocumentDetailPage() {
             : t('documentPage.duplicateReviewed')}
         </div>
       )}
+      {owned && <BlankPagesNotice suggestion={blankPages} onReview={() => setEditingPages(true)} />}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <Link to={back} className="text-sm text-ink-soft hover:text-oxblood">
@@ -744,6 +756,15 @@ export function DocumentDetailPage() {
               {markingReviewed ? t('documentPage.marking') : t('bulk.markReviewed')}
             </Button>
           )}
+          {owned && previewKind(document.file) === 'pdf' && (
+            <Button
+              variant="secondary"
+              title={t('documentPage.pagesTitle')}
+              onClick={() => setEditingPages(true)}
+            >
+              {t('documentPage.pages')}
+            </Button>
+          )}
           {owned && (
             <Button variant="secondary" onClick={() => setSharing(true)}>
               {t('bulk.share')}
@@ -782,6 +803,18 @@ export function DocumentDetailPage() {
           setShareVersion((version) => version + 1)
         }}
       />
+
+      {owned && (
+        <PageEditorDialog
+          documentId={documentId}
+          open={editingPages}
+          onClose={() => setEditingPages(false)}
+          onChanged={(change, outcome) => {
+            setError('')
+            setMessage(pageChangeMessage(change, outcome.reread))
+          }}
+        />
+      )}
 
       {/* The pane sits left of the form but after it in the DOM, so a keyboard
           reaches the fields without tabbing through the PDF viewer first. */}

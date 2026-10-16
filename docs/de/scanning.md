@@ -85,6 +85,52 @@ auf **Weitere Seite scannen**.
 Wahl für einen Stapel. Manche Geräte liefern ein PDF pro Blatt, andere ein PDF für den
 ganzen Stapel; in beiden Fällen kommt es als ein Dokument an.
 
+## Leere Seiten entfernen {#removing-blank-pages}
+
+Ein Einzug lässt manchmal ein leeres Blatt durch, oft mit schwachem Text, der von der
+Rückseite durchscheint. Um es zu entfernen, öffnen Sie das Dokument und klicken auf
+**Seiten**. Alle Seiten werden angezeigt, und die leer wirkenden sind bereits
+ausgewählt. Passen Sie die Auswahl bei Bedarf an und klicken Sie dann auf
+**Entfernen**. Das funktioniert mit jedem PDF in Ihrer Bibliothek, nicht nur mit Scans.
+
+Eine Seite gilt als leer, wenn sie fast keinen dunklen Druck enthält. Staubkörner und
+die Schatten an den Rändern eines Scans werden ignoriert, ebenso von der Vorderseite
+durchgedrückte Spuren. Bei einem beidseitigen Scan gilt eine Seite, die nur die
+vorherige Seite gespiegelt und blasser zeigt, auch dann als leer, wenn das
+Durchscheinende dunkel ist. Eine Seite mit blasser Tinte ohne Vergleichsseite bleibt
+erhalten: Manche Scanner geben Druck als helles Grau wieder, das genauso misst wie
+Durchscheinendes, und eine leere Seite zu behalten ist der harmlosere Fehler.
+
+Die meisten Seiten sind eindeutig leer oder eindeutig bedruckt. Über die wenigen
+dazwischen kann das OCR-Modell entscheiden: Aktivieren Sie **Unklare leere Seiten mit
+KI prüfen** unter Einstellungen → KI beim OCR-Modell. Diese Seiten gehen jeweils mit der
+vorherigen Seite in einer Anfrage pro Dokument an das OCR-Modell, und seine Antwort
+ersetzt die lokale Einschätzung. Dafür muss ein KI-Modell als OCR-Anbieter eingestellt
+sein; ein Dokument ohne unklare Seite löst keine Anfrage aus. Schlägt die Anfrage fehl,
+bleibt die lokale Einschätzung bestehen, und der Schritt zeigt eine Warnung.
+
+Prüfen Sie den Vorschlag vor dem Entfernen: Auch eine Seite mit nur einem blassen
+Stempel kann markiert werden.
+
+Die Verarbeitung findet diese Seiten für Sie. Ein Schritt **Leere Seiten erkennen**
+läuft vor der Texterkennung, und die Texterkennung lässt aus, was er gefunden hat.
+Leere Seiten kosten daher nichts, und ihr durchscheinender Text landet nicht im Text
+des Dokuments. Die Datei selbst behält sie, bis Sie sie entfernen: Die Dokumentseite
+nennt die leer wirkenden Seiten in einem Hinweis oben, wie bei einem möglichen
+Duplikat, und **Seiten prüfen** öffnet den Dialog mit diesen Seiten ausgewählt.
+Behalten Sie sie stattdessen, endet der Vorschlag.
+
+Lemmary entscheidet selbst, ob eine Änderung eine erneute Texterkennung braucht.
+Werden nur ausgelassene Seiten entfernt, bleibt der Text, wie er ist. Wird eine
+gelesene Seite entfernt oder eine ausgelassene Seite behalten, geht das Dokument
+erneut zur Texterkennung; eine behaltene Seite wird von da an gelesen, auch wenn sie
+leer wirkt. Der Dialog zeigt vor dem Speichern, was davon passiert. Titel, Tags und
+andere Angaben bleiben in beiden Fällen unverändert.
+
+Die ursprünglich hochgeladene Datei wird aufbewahrt, und **Original
+wiederherstellen** im selben Dialog stellt sie wieder her. Auch dann geht das
+Dokument nur zur Texterkennung, wenn eine zurückkehrende Seite keine leere war.
+
 ## Grenzen {#limits}
 
 Ein Dokument darf höchstens 47 MB groß sein, dieselbe Obergrenze wie bei jedem Upload;
