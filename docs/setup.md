@@ -381,7 +381,7 @@ For a sensitive document:
 - **Embeddings** are made only by the [local embeddings sidecar](/local_embeddings), never a hosted model.
 - **Ask AI, AI search, Deep Research, OCR translation, AI tag assignment and the MCP endpoint** leave it out entirely: the model is not told it exists.
 
-**Keep sensitive documents from local providers too** turns off the local OCR and embedding sidecars for them as well. These rules live in the pipeline steps, so reprocessing, including a forced step, cannot get around them.
+These rules live in the pipeline steps, so reprocessing, including a forced step, cannot get around them.
 
 Marking an existing document sensitive deletes the embeddings already stored for it. It cannot recall what a provider received before the mark was set, so set it at upload or through the folder. Unmarking a document changes nothing by itself; reprocess it to run OCR and extraction. The documents list filters on **Sensitive only**, and a backup carries the mark in `metadata.json` and restores it.
 

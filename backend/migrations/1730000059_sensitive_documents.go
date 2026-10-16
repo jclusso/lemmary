@@ -6,11 +6,9 @@ import (
 )
 
 // Adds documents.sensitive, the owner's mark that a document must never reach
-// an external AI provider, and the two settings that say what the mark does:
-// sensitive_folders, the consume-folder names whose files arrive marked, and
-// sensitive_block_local, which keeps marked documents from the local sidecars
-// as well. The flag is owner-writable on purpose: the upload form sets it in
-// the same request that creates the document, before any job exists.
+// an external AI provider, and sensitive_folders, the consume-folder names whose
+// files arrive marked. The flag is owner-writable on purpose: the upload form
+// sets it in the same request that creates the document, before any job exists.
 func init() {
 	m.Register(addSensitiveDocuments, dropSensitiveDocuments)
 }
@@ -36,9 +34,6 @@ func addSensitiveDocuments(app core.App) error {
 	seedFolders := settings.Fields.GetByName("sensitive_folders") == nil
 	if seedFolders {
 		settings.Fields.Add(&core.TextField{Name: "sensitive_folders", Max: 500})
-	}
-	if settings.Fields.GetByName("sensitive_block_local") == nil {
-		settings.Fields.Add(&core.BoolField{Name: "sensitive_block_local"})
 	}
 	if err := app.Save(settings); err != nil {
 		return err
@@ -68,6 +63,5 @@ func dropSensitiveDocuments(app core.App) error {
 		return nil
 	}
 	settings.Fields.RemoveByName("sensitive_folders")
-	settings.Fields.RemoveByName("sensitive_block_local")
 	return app.Save(settings)
 }

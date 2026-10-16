@@ -49,7 +49,6 @@ type settingsResponse struct {
 	NearDuplicateThreshold        float64 `json:"near_duplicate_threshold"`
 	AlwaysRequireReview           bool    `json:"always_require_review"`
 	SensitiveFolders              string  `json:"sensitive_folders"`
-	SensitiveBlockLocal           bool    `json:"sensitive_block_local"`
 	// The consume folder. Owner empty means the first admin's paired account.
 	IngestDirOwner          string `json:"ingest_dir_owner"`
 	IngestDirIntervalMin    int    `json:"ingest_dir_interval_min"`
@@ -95,7 +94,6 @@ type settingsPatchRequest struct {
 	NearDuplicateThreshold        *float64  `json:"near_duplicate_threshold"`
 	AlwaysRequireReview           *bool     `json:"always_require_review"`
 	SensitiveFolders              *string   `json:"sensitive_folders"`
-	SensitiveBlockLocal           *bool     `json:"sensitive_block_local"`
 	IngestDirOwner                *string   `json:"ingest_dir_owner"`
 	IngestDirIntervalMin          *int      `json:"ingest_dir_interval_min"`
 	IngestDirDeleteOriginal       *bool     `json:"ingest_dir_delete_original"`
@@ -290,7 +288,6 @@ func settingsResponseFromConfig(cfg config.Config) settingsResponse {
 		NearDuplicateThreshold:        threshold,
 		AlwaysRequireReview:           cfg.AlwaysRequireReview,
 		SensitiveFolders:              strings.Join(cfg.SensitiveFolders, ", "),
-		SensitiveBlockLocal:           cfg.SensitiveBlockLocal,
 		IngestDirOwner:                cfg.IngestDirOwner,
 		IngestDirIntervalMin:          cfg.IngestDirIntervalMin,
 		IngestDirDeleteOriginal:       cfg.IngestDirDeleteOriginal,
@@ -427,9 +424,6 @@ func applySensitivePatch(record *core.Record, req settingsPatchRequest) error {
 			return errInvalid("sensitive_folders must be at most %d characters", config.MaxSensitiveFoldersChars)
 		}
 		record.Set("sensitive_folders", folders)
-	}
-	if req.SensitiveBlockLocal != nil {
-		record.Set("sensitive_block_local", *req.SensitiveBlockLocal)
 	}
 	return nil
 }

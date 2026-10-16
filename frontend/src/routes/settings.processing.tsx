@@ -35,7 +35,6 @@ export function SettingsProcessingPage() {
       extraction_rules: settings.extraction_rules,
       always_require_review: settings.always_require_review,
       sensitive_folders: settings.sensitive_folders,
-      sensitive_block_local: settings.sensitive_block_local,
       embedding_model: settings.embedding_model,
     }))
 
@@ -65,7 +64,6 @@ export function SettingsProcessingPage() {
       extraction_rules: form.extraction_rules,
       always_require_review: form.always_require_review,
       sensitive_folders: form.sensitive_folders,
-      sensitive_block_local: form.sensitive_block_local,
     })
   }
 
@@ -186,16 +184,6 @@ export function SettingsProcessingPage() {
             />
           </label>
           <p className={fieldHintClassName}>{t('settingsProcessing.sensitiveFoldersHint')}</p>
-          <label className="mt-3 flex items-center gap-2.5 text-sm font-medium text-ink">
-            <input
-              type="checkbox"
-              className="h-4 w-4 accent-oxblood"
-              checked={form.sensitive_block_local}
-              onChange={(e) => updateField('sensitive_block_local', e.target.checked)}
-            />
-            {t('settingsProcessing.sensitiveBlockLocal')}
-          </label>
-          <p className={`${fieldHintClassName} mt-2`}>{t('settingsProcessing.sensitiveBlockLocalHint')}</p>
         </div>
         <div className="mt-4">
           <SaveSettingsButton saving={saving} />

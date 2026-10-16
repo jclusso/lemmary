@@ -43,7 +43,6 @@ func settingsRecordForTest(t *testing.T) *core.Record {
 		&core.SelectField{Name: "imap_skip_types", Values: []string{"pdf", "office", "image", "text"}, MaxSelect: 4},
 		&core.SelectField{Name: "mcp_capabilities", Values: config.MCPCapabilities, MaxSelect: 5},
 		&core.TextField{Name: "sensitive_folders", Max: config.MaxSensitiveFoldersChars},
-		&core.BoolField{Name: "sensitive_block_local"},
 	)
 	record := core.NewRecord(collection)
 	record.Id = config.SingletonID
@@ -303,16 +302,12 @@ func TestPatchNormalizesSensitiveFoldersAndBoundsThem(t *testing.T) {
 	record := settingsRecordForTest(t)
 
 	if err := applySettingsPatch(nil, record, settingsPatchRequest{
-		SensitiveFolders:    new(" sensitive,\nMedical , SENSITIVE "),
-		SensitiveBlockLocal: new(true),
+		SensitiveFolders: new(" sensitive,\nMedical , SENSITIVE "),
 	}); err != nil {
 		t.Fatalf("applySettingsPatch: %v", err)
 	}
 	if got := record.GetString("sensitive_folders"); got != "sensitive, Medical" {
 		t.Fatalf("sensitive_folders = %q, want the deduplicated list", got)
-	}
-	if !record.GetBool("sensitive_block_local") {
-		t.Fatal("sensitive_block_local stayed off after a patch turning it on")
 	}
 
 	err := applySettingsPatch(nil, record, settingsPatchRequest{

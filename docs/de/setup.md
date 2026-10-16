@@ -388,7 +388,7 @@ Für ein sensibles Dokument gilt:
 - **Embeddings** erzeugt nur der [lokale Embedding-Sidecar](/de/local_embeddings), nie ein gehostetes Modell.
 - **KI fragen, KI-Suche, Deep Research, OCR-Übersetzung, KI-Tag-Zuordnung und der MCP-Endpunkt** lassen es ganz aus: Das Modell erfährt nicht, dass es existiert.
 
-**Sensible Dokumente auch von lokalen Anbietern fernhalten** schaltet für sie zusätzlich die lokalen OCR- und Embedding-Sidecars ab. Diese Regeln stecken in den Pipeline-Schritten, daher umgeht sie auch eine erneute Verarbeitung mit erzwungenem Schritt nicht.
+Diese Regeln stecken in den Pipeline-Schritten, daher umgeht sie auch eine erneute Verarbeitung mit erzwungenem Schritt nicht.
 
 Wird ein vorhandenes Dokument als sensibel markiert, werden seine gespeicherten Embeddings gelöscht. Was ein Anbieter vor der Markierung erhalten hat, lässt sich nicht zurückholen; markieren Sie daher beim Upload oder über den Ordner. Das Aufheben der Markierung ändert allein nichts; verarbeiten Sie das Dokument neu, um OCR und Extraktion auszuführen. Die Dokumentliste filtert mit **Nur sensible**, und ein Backup speichert die Markierung in `metadata.json` und stellt sie wieder her.
 

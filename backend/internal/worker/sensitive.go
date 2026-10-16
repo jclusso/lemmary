@@ -12,14 +12,12 @@ import (
 
 // sensitiveBlocksOCR reports whether a sensitive document's file may not go to
 // the OCR provider. Native text extraction never leaves the process, so a
-// format it reads is never blocked; anything else needs a local engine the
-// admin has not also ruled out.
+// format it reads is never blocked; anything else needs the local engine.
 func sensitiveBlocksOCR(state *StepState, provider ocr.Provider) bool {
 	if !models.IsSensitive(state.Document) || textextract.Supports(state.MimeType) {
 		return false
 	}
-	local := provider != nil && aiprovider.IsLocalOCR(provider.Name())
-	return !local || state.Cfg.SensitiveBlockLocal
+	return provider == nil || !aiprovider.IsLocalOCR(provider.Name())
 }
 
 // sensitiveBlocksEmbedding reports whether a sensitive document's text may not

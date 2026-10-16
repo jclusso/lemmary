@@ -1406,8 +1406,6 @@ export const de: Catalog = {
   'settingsProcessing.sensitiveIntro': 'Ein als sensibel markiertes Dokument wird nie an einen externen KI-Anbieter gesendet: OCR nur über nativen Text oder den lokalen OCR-Sidecar, keine KI-Metadaten, kein „KI fragen“, keine KI-Suche, Übersetzung oder gehosteten Embeddings. Es landet zur Benennung im Posteingang.',
   'settingsProcessing.sensitiveFolders': 'Eingangsordner, die Dateien als sensibel markieren',
   'settingsProcessing.sensitiveFoldersHint': 'Ordnernamen, durch Kommas getrennt. Eine Datei in einem Ordner mit einem dieser Namen, in beliebiger Tiefe des Eingangsordners, wird als sensibel markiert. Leer markiert nichts.',
-  'settingsProcessing.sensitiveBlockLocal': 'Sensible Dokumente auch von lokalen Anbietern fernhalten',
-  'settingsProcessing.sensitiveBlockLocalHint': 'Aus: Die lokalen OCR- und Embedding-Sidecars dürfen sensible Dokumente weiterhin lesen, da sie diesen Server nie verlassen. An: Sensible Scans erhalten weder OCR noch Embeddings.',
   'settingsProcessing.alwaysReview': 'Neue Dokumente immer prüfen lassen',
   'settingsProcessing.alwaysReviewHint':
     'Jedes Dokument, für das die KI Metadaten extrahiert, wartet im Posteingang, egal wie sicher die Extraktion war – erneut verarbeitete Dokumente eingeschlossen. Nichts wird ohne Ihre Zustimmung abgeschlossen. Ist die Option aus, landen dort nur unsichere Extraktionen und mögliche Duplikate. Solange ein Dokument wartet, kann die KI auch neue Tags vorschlagen; wer einen annimmt, legt den Tag an.',

@@ -1335,8 +1335,6 @@ export const en = {
   'settingsProcessing.sensitiveIntro': 'A document marked sensitive is never sent to an external AI provider: OCR runs only on native text or the local OCR sidecar, and there is no AI metadata, Ask AI, AI search, translation or hosted embedding. It lands in the Inbox for you to name.',
   'settingsProcessing.sensitiveFolders': 'Consume folders that mark files sensitive',
   'settingsProcessing.sensitiveFoldersHint': 'Comma-separated folder names. A file in a folder with one of these names, at any depth of the consume folder, arrives marked sensitive. Empty marks nothing.',
-  'settingsProcessing.sensitiveBlockLocal': 'Keep sensitive documents from local providers too',
-  'settingsProcessing.sensitiveBlockLocalHint': 'Off, the local OCR and embedding sidecars may still read sensitive documents, since they never leave this server. On, sensitive scans get no OCR and no embeddings at all.',
   'settingsProcessing.alwaysReview': 'Always require review for new documents',
   'settingsProcessing.alwaysReviewHint':
     'Every document the AI extracts metadata for waits in the Inbox, however confident the extraction was — reprocessed documents included. Nothing completes but by your saying so. Off, only low-confidence extractions and possible duplicates land there. While a document waits, the AI may also suggest new tags for it; accepting one creates the tag.',

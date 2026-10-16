@@ -94,10 +94,8 @@ type Config struct {
 	// the MCPCapabilities list. Empty keeps it read-only.
 	MCPCapabilities []string
 	// SensitiveFolders are the consume-folder names whose files arrive marked
-	// sensitive. SensitiveBlockLocal keeps sensitive documents from the local
-	// OCR and embedding sidecars too, not only from external providers.
-	SensitiveFolders    []string
-	SensitiveBlockLocal bool
+	// sensitive.
+	SensitiveFolders []string
 }
 
 const DefaultNearDuplicateThreshold = 0.92
@@ -381,7 +379,6 @@ func configFromRecord(app core.App, record *core.Record) (Config, error) {
 		IMAPSince:                     record.GetDateTime("imap_since").Time(),
 		MCPCapabilities:               record.GetStringSlice("mcp_capabilities"),
 		SensitiveFolders:              ParseSensitiveFolders(record.GetString("sensitive_folders")),
-		SensitiveBlockLocal:           record.GetBool("sensitive_block_local"),
 	}
 
 	if err := resolveProviders(app, &cfg); err != nil {
@@ -467,7 +464,6 @@ func applyConfigToRecord(record *core.Record, cfg Config) {
 	record.Set("ingest_dir_interval_min", interval)
 	record.Set("ingest_dir_delete_original", cfg.IngestDirDeleteOriginal)
 	record.Set("sensitive_folders", strings.Join(cfg.SensitiveFolders, ", "))
-	record.Set("sensitive_block_local", cfg.SensitiveBlockLocal)
 }
 
 func getEnv(key, fallback string) string {

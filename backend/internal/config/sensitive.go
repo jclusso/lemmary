@@ -49,9 +49,8 @@ func InSensitiveFolder(rel string, folders []string) bool {
 }
 
 // EmbedsSensitive reports whether sensitive documents may be embedded: only by
-// the local embeddings sidecar, and only while the admin allows local
-// providers.
+// the local embeddings sidecar, which never sends text off the server.
 func EmbedsSensitive(cfg Config) bool {
 	p := cfg.EmbeddingProvider
-	return p != nil && p.SDK == aiprovider.SDKLocalEmbeddings && !cfg.SensitiveBlockLocal
+	return p != nil && p.SDK == aiprovider.SDKLocalEmbeddings
 }

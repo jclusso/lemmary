@@ -43,14 +43,12 @@ func TestOCRSkipsASensitiveScanUnlessALocalEngineIsAllowed(t *testing.T) {
 		sensitive bool
 		provider  namedOCR
 		mime      string
-		block     bool
 		wantSkip  bool
 	}{
-		{"an ordinary scan goes to the provider", false, external, "application/pdf", false, false},
-		{"a sensitive scan never reaches an external provider", true, external, "application/pdf", false, true},
-		{"a sensitive scan may use local OCR", true, docling, "application/pdf", false, false},
-		{"unless local providers are ruled out too", true, docling, "application/pdf", true, true},
-		{"native extraction never leaves the host", true, external, textextract.MIMEPlainText, true, false},
+		{"an ordinary scan goes to the provider", false, external, "application/pdf", false},
+		{"a sensitive scan never reaches an external provider", true, external, "application/pdf", true},
+		{"a sensitive scan may use local OCR", true, docling, "application/pdf", false},
+		{"native extraction never leaves the host", true, external, textextract.MIMEPlainText, false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -58,7 +56,6 @@ func TestOCRSkipsASensitiveScanUnlessALocalEngineIsAllowed(t *testing.T) {
 			state := &StepState{
 				Document:   sensitiveTestDocument(t, tc.sensitive),
 				MimeType:   tc.mime,
-				Cfg:        config.Config{SensitiveBlockLocal: tc.block},
 				ForceSteps: forced,
 			}
 			skip, err := step.ShouldSkip(state)
@@ -96,12 +93,10 @@ func TestEmbedSkipsASensitiveDocumentUnlessTheLocalEmbedderIsAllowed(t *testing.
 	cases := []struct {
 		name     string
 		provider *aiprovider.Provider
-		block    bool
 		wantSkip bool
 	}{
-		{"a hosted embedder never sees it", hosted, false, true},
-		{"the local sidecar may embed it", local, false, false},
-		{"unless local providers are ruled out too", local, true, true},
+		{"a hosted embedder never sees it", hosted, true},
+		{"the local sidecar may embed it", local, false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -110,7 +105,7 @@ func TestEmbedSkipsASensitiveDocumentUnlessTheLocalEmbedderIsAllowed(t *testing.
 			step := &EmbedStep{Embedder: stubEmbedder{}}
 			state := &StepState{
 				Document: document,
-				Cfg:      config.Config{EmbeddingProvider: tc.provider, SensitiveBlockLocal: tc.block},
+				Cfg:      config.Config{EmbeddingProvider: tc.provider},
 			}
 			skip, err := step.ShouldSkip(state)
 			if err != nil {
