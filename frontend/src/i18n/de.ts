@@ -1235,7 +1235,7 @@ export const de: Catalog = {
   'settingsAi.ocrLink': 'OCR je Anbieter.',
   'settingsAi.blankPageAICheck': 'Unklare leere Seiten mit KI prüfen',
   'settingsAi.blankPageAICheckHint':
-    'Die meisten Seiten werden auf diesem Server als leer oder bedruckt eingestuft. Die wenigen, die er nicht entscheiden kann, etwa stark durchscheinender Text oder sehr blasser Druck, werden dem OCR-Modell zusammen mit der jeweils vorherigen Seite gezeigt, und seine Antwort entscheidet. Erfordert ein KI-OCR-Modell; kostet eine Anfrage für ein Dokument mit einer solchen Seite und für alle anderen nichts.',
+    'Lemmary prüft jede Seite selbst darauf, ob sie leer ist. Wenn es das nicht sicher erkennen kann, etwa weil Text von der Rückseite durchscheint oder der Druck sehr hell ist, fragt es Ihr OCR-Modell und zeigt ihm diese Seite und die Seite davor. Nur unklare Seiten werden gesendet, daher kosten die meisten Dokumente nichts extra.',
   'settingsAi.blankPageAICheckUnavailable':
     'Funktioniert nur, wenn der OCR-Anbieter oben ein KI-Modell ist, das Seiten als Bilder liest, also nicht Mistral OCR, Google Vision oder lokale OCR.',
   'settingsAi.general': 'Allgemeine KI',

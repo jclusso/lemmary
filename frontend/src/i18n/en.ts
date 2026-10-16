@@ -1172,7 +1172,7 @@ export const en = {
   'settingsAi.ocrLink': 'OCR, per provider.',
   'settingsAi.blankPageAICheck': 'Check unclear blank pages with AI',
   'settingsAi.blankPageAICheckHint':
-    'Most pages are judged blank or printed on this server. The few it cannot settle, such as heavy bleed-through or very faint print, are shown to the OCR model with the page before each, and its answer decides them. Needs an AI OCR model; costs one request for a document with such a page and nothing for the rest.',
+    "Lemmary checks each page for blank pages on its own. When it can't tell whether a page is blank, for example when text shows through from the back or the print is very light, it asks your OCR model, showing it that page and the page before. Only unclear pages are sent, so most documents cost nothing extra.",
   'settingsAi.blankPageAICheckUnavailable':
     'Only works when the OCR provider above is an AI model that reads pages as images, not Mistral OCR, Google Vision or local OCR.',
   'settingsAi.general': 'General AI',
