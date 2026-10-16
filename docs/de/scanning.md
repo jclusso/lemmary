@@ -103,7 +103,7 @@ Durchscheinendes, und eine leere Seite zu behalten ist der harmlosere Fehler.
 
 Die meisten Seiten sind eindeutig leer oder eindeutig bedruckt. Über die wenigen
 dazwischen kann das OCR-Modell entscheiden: Aktivieren Sie **Unklare leere Seiten mit
-KI prüfen** unter Einstellungen → Verarbeitung. Diese Seiten gehen jeweils mit der
+KI prüfen** unter Einstellungen → KI beim OCR-Modell. Diese Seiten gehen jeweils mit der
 vorherigen Seite in einer Anfrage pro Dokument an das OCR-Modell, und seine Antwort
 ersetzt die lokale Einschätzung. Dafür muss ein KI-Modell als OCR-Anbieter eingestellt
 sein; ein Dokument ohne unklare Seite löst keine Anfrage aus. Schlägt die Anfrage fehl,

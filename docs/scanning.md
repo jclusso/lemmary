@@ -100,7 +100,7 @@ blank page is the safer mistake.
 
 Most pages are plainly blank or plainly printed. For the few in between, you
 can let the OCR model decide: turn on **Check unclear blank pages with AI** in
-Settings → Processing. Those pages, each with the page before it, go to the OCR
+Settings → AI, under the OCR model. Those pages, each with the page before it, go to the OCR
 model in one request per document, and its answer replaces the local guess.
 It needs an AI model as the OCR provider; a document with no unclear page makes
 no request. If the request fails, the local guess stands and the step shows a

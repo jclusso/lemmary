@@ -194,6 +194,15 @@ export function isLLMProvider(sdk: string) {
 }
 
 /**
+ * Mirrors the SDKs ocr.newProvider reads documents through a chat model for:
+ * those can be shown a page and asked whether it is blank. Mistral's OCR
+ * endpoint only returns text.
+ */
+export function ocrSeesPageImages(sdk?: string) {
+  return sdk !== undefined && sdk !== 'mistral' && isLLMProvider(sdk)
+}
+
+/**
  * Mirrors aiprovider.RequiresOAuth: the one SDK whose credential is minted by
  * signing in, so the form shows a sign-in panel instead of a key field.
  */

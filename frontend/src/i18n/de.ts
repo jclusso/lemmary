@@ -1233,6 +1233,11 @@ export const de: Catalog = {
   'settingsAi.ocrHelp':
     'Liest den Text aus hochgeladenen PDFs, Bildern und Scans. Reiner Text, CSV-, Word- und Excel-Dateien werden lokal gelesen und überspringen diesen Schritt. {link}',
   'settingsAi.ocrLink': 'OCR je Anbieter.',
+  'settingsAi.blankPageAICheck': 'Unklare leere Seiten mit KI prüfen',
+  'settingsAi.blankPageAICheckHint':
+    'Die meisten Seiten werden auf diesem Server als leer oder bedruckt eingestuft. Die wenigen, die er nicht entscheiden kann, etwa stark durchscheinender Text oder sehr blasser Druck, werden dem OCR-Modell zusammen mit der jeweils vorherigen Seite gezeigt, und seine Antwort entscheidet. Erfordert ein KI-OCR-Modell; kostet eine Anfrage für ein Dokument mit einer solchen Seite und für alle anderen nichts.',
+  'settingsAi.blankPageAICheckUnavailable':
+    'Funktioniert nur, wenn der OCR-Anbieter oben ein KI-Modell ist, das Seiten als Bilder liest, also nicht Mistral OCR, Google Vision oder lokale OCR.',
   'settingsAi.general': 'Allgemeine KI',
   'settingsAi.generalHelp':
     'Liest Metadaten aus Dokumenten, beantwortet Fragen bei „KI fragen“, führt die KI-gestützte Suche aus und liest Dokumente für Deep Research.',
@@ -1441,9 +1446,6 @@ export const de: Catalog = {
   'settingsProcessing.alwaysReview': 'Neue Dokumente immer prüfen lassen',
   'settingsProcessing.alwaysReviewHint':
     'Jedes Dokument, für das die KI Metadaten extrahiert, wartet im Posteingang, egal wie sicher die Extraktion war – erneut verarbeitete Dokumente eingeschlossen. Nichts wird ohne Ihre Zustimmung abgeschlossen. Ist die Option aus, landen dort nur unsichere Extraktionen und mögliche Duplikate. Solange ein Dokument wartet, kann die KI auch neue Tags vorschlagen; wer einen annimmt, legt den Tag an.',
-  'settingsProcessing.blankPageAICheck': 'Unklare leere Seiten mit KI prüfen',
-  'settingsProcessing.blankPageAICheckHint':
-    'Die meisten Seiten werden auf diesem Server als leer oder bedruckt eingestuft. Die wenigen, die er nicht entscheiden kann, etwa stark durchscheinender Text oder sehr blasser Druck, werden dem OCR-Modell zusammen mit der jeweils vorherigen Seite gezeigt, und seine Antwort entscheidet. Erfordert ein KI-OCR-Modell; kostet eine Anfrage für ein Dokument mit einer solchen Seite und für alle anderen nichts.',
   'settingsProcessing.ocrTimeout': 'OCR-Zeitlimit (Sekunden)',
   'settingsProcessing.ocrTimeoutHint':
     'Wie lange ein einzelner OCR-Aufruf dauern darf, bevor der Schritt fehlschlägt.',
