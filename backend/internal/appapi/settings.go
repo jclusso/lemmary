@@ -14,6 +14,7 @@ import (
 	"lemmary/backend/internal/aiprovider"
 	"lemmary/backend/internal/config"
 	"lemmary/backend/internal/i18n"
+	"lemmary/backend/internal/langcode"
 	"lemmary/backend/internal/strutil"
 )
 
@@ -378,7 +379,11 @@ func applyProcessingPatch(record *core.Record, req settingsPatchRequest) error {
 		return err
 	}
 	if req.ProcessingResultLanguage != nil {
-		record.Set("processing_result_language", strings.ToLower(strings.TrimSpace(*req.ProcessingResultLanguage)))
+		code, ok := langcode.Parse(*req.ProcessingResultLanguage)
+		if !ok && strings.TrimSpace(*req.ProcessingResultLanguage) != "" {
+			return errInvalid("processing_result_language must be an ISO 639-1 language code")
+		}
+		record.Set("processing_result_language", code)
 	}
 	if req.DeepSearchLanguages != nil {
 		record.Set("deep_search_languages", config.NormalizeLanguageList(*req.DeepSearchLanguages))

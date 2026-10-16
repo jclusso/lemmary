@@ -16,6 +16,7 @@ import (
 	"github.com/openai/openai-go/v3/shared"
 
 	"lemmary/backend/internal/aiprovider"
+	"lemmary/backend/internal/langcode"
 	"lemmary/backend/internal/logfmt"
 	"lemmary/backend/internal/models"
 	"lemmary/backend/internal/strutil"
@@ -64,15 +65,17 @@ Return ONLY valid JSON with these fields:
 - tags (array of strings, chosen only from the existing tags list below)
 - people_or_organizations (array of strings)
 - summary (string, 1-3 sentences)
+- language (string, the ISO 639-1 code of the language most of the document is written in, e.g. "en")
 - confidence (number between 0 and 1)
 
 `
 
 	if resultLanguage != "" {
-		prompt += fmt.Sprintf("Always write title, summary, document_type, and correspondent in %s, whatever language the source document is in; write people_or_organizations as the document spells them.", resultLanguage)
+		prompt += fmt.Sprintf("Always write title, summary, document_type, and correspondent in %s, whatever language the source document is in; write people_or_organizations as the document spells them.", langcode.EnglishName(resultLanguage))
 	} else {
-		prompt += "Always write title, summary, and people_or_organizations in the same language as the source document."
+		prompt += "Always write title, summary, and people_or_organizations in the document's main language."
 	}
+	prompt += " The main language is the one most of the text is written in: short passages in other languages, such as a translated notice or a customer service line, do not change it."
 	prompt += " Tags are the exception: they are copied verbatim from the list below, whatever language it is in."
 
 	prompt += formatExistingCorrespondentsPrompt(catalog.Correspondents)

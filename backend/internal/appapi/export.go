@@ -343,6 +343,7 @@ func buildExportMetadata(record *core.Record, index taxonomyIndex, originalFilen
 		"id":                      record.Id,
 		"title":                   record.GetString("title"),
 		"summary":                 record.GetString("summary"),
+		"language":                record.GetString("language"),
 		"document_date":           record.GetString("document_date"),
 		"tags":                    tags,
 		"document_type":           index.values[record.Id].OptionName(models.DocumentTypeFieldID),

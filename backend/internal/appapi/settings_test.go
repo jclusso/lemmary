@@ -633,6 +633,33 @@ func TestPatchSettingsRollsBackWhenBrandingFails(t *testing.T) {
 	}
 }
 
+func TestPatchSettingsStoresResultLanguageAsACode(t *testing.T) {
+	app := bootQueueApp(t)
+	rt := &config.Runtime{}
+
+	for body, want := range map[string]string{
+		`{"processing_result_language":"EN-us"}`: "en",
+		`{"processing_result_language":""}`:      "",
+	} {
+		rec := callManaged(t, handlePatchSettings(app, rt), http.MethodPatch, "", body)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("patch %s = %d %s", body, rec.Code, rec.Body)
+		}
+		record, err := config.FindSettingsRecord(app, rt.Env())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := record.GetString("processing_result_language"); got != want {
+			t.Fatalf("patch %s stored %q, want %q", body, got, want)
+		}
+	}
+
+	rec := callManaged(t, handlePatchSettings(app, rt), http.MethodPatch, "", `{"processing_result_language":"english"}`)
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "ISO 639-1") {
+		t.Fatalf("patch english = %d %s, want a 400 naming ISO 639-1", rec.Code, rec.Body)
+	}
+}
+
 // Branding is tenant-owned: a managed instance sets the models, not the name.
 func TestBrandingIsNotAManagedSetting(t *testing.T) {
 	t.Parallel()

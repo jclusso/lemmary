@@ -1521,10 +1521,10 @@ export const ru: Catalog = {
   'settingsProcessing.aiTimeout': 'Тайм-аут ИИ (секунды)',
   'settingsProcessing.aiTimeoutHint':
     'Сколько может длиться один запрос на извлечение, чат, поиск или определение разбиения.',
-  'settingsProcessing.resultLanguage': 'Язык результата (ISO 639-1)',
-  'settingsProcessing.resultLanguagePlaceholder': 'например, ru',
+  'settingsProcessing.resultLanguage': 'Язык результата',
+  'settingsProcessing.resultLanguageDocument': 'Как в самом документе',
   'settingsProcessing.resultLanguageHint':
-    'Название, краткое содержание, тип и корреспондент записываются на этом языке, на каком бы языке ни был документ. Теги не переводятся: они берутся из вашего списка на том языке, на котором вы его составили. Оставьте пустым, чтобы хранить язык самого документа.',
+    'Название, краткое содержание, тип и корреспондент записываются на этом языке, на каком бы языке ни был документ, а для документов на других языках предлагается перевод OCR-текста. Теги не переводятся: они берутся из вашего списка на том языке, на котором вы его составили. Выберите «Как в самом документе», чтобы хранить основной язык каждого документа.',
   'settingsProcessing.deepSearchLanguages': 'Языки Deep Search',
   'settingsProcessing.deepSearchLanguagesPlaceholder': 'например, de,en,uk',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':

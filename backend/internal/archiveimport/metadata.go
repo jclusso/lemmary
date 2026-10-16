@@ -6,6 +6,7 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/types"
 
+	"lemmary/backend/internal/langcode"
 	"lemmary/backend/internal/models"
 )
 
@@ -81,6 +82,9 @@ func applyMetadata(record *core.Record, meta map[string]any, resolver *taxonomyR
 		}
 	}
 
+	if code, ok := langcode.Parse(stringField(meta, "language")); ok {
+		record.Set("language", code)
+	}
 	if date, ok := models.NormalizeDocumentDate(stringField(meta, "document_date")); ok && date != "" {
 		record.Set("document_date", date)
 	}

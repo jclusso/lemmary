@@ -14,6 +14,7 @@ func testDocumentsCollection() *core.Collection {
 	docs.Fields.Add(
 		&core.TextField{Name: "title"},
 		&core.TextField{Name: "summary"},
+		&core.TextField{Name: "language"},
 		&core.TextField{Name: "metadata_source"},
 		&core.TextField{Name: "text_fingerprint"},
 		&core.TextField{Name: "processing_status"},
@@ -62,6 +63,7 @@ func TestApplyMetadataRestoresFields(t *testing.T) {
 	meta := map[string]any{
 		"title":                   "Invoice 42",
 		"summary":                 "A summary",
+		"language":                "EN",
 		"metadata_source":         "ai",
 		"text_fingerprint":        "deadbeefdeadbeef",
 		"document_date":           "15.03.2026",
@@ -79,6 +81,9 @@ func TestApplyMetadataRestoresFields(t *testing.T) {
 	}
 	if record.GetString("summary") != "A summary" || record.GetString("text_fingerprint") != "deadbeefdeadbeef" {
 		t.Fatalf("record=%#v", record.PublicExport())
+	}
+	if record.GetString("language") != "en" {
+		t.Fatalf("language=%q", record.GetString("language"))
 	}
 	// A day-first date from another instance is normalized to the stored form.
 	if record.GetString("document_date") != "2026-03-15" {

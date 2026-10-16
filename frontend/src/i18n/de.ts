@@ -1402,10 +1402,10 @@ export const de: Catalog = {
   'settingsProcessing.aiTimeout': 'KI-Zeitlimit (Sekunden)',
   'settingsProcessing.aiTimeoutHint':
     'Wie lange eine Extraktions-, Chat-, Such- oder Aufteilungsanfrage dauern darf.',
-  'settingsProcessing.resultLanguage': 'Ergebnissprache (ISO 639-1)',
-  'settingsProcessing.resultLanguagePlaceholder': 'z. B. de',
+  'settingsProcessing.resultLanguage': 'Ergebnissprache',
+  'settingsProcessing.resultLanguageDocument': 'Wie das jeweilige Dokument',
   'settingsProcessing.resultLanguageHint':
-    'Schreibt Titel, Zusammenfassung, Typ und Korrespondent in dieser Sprache, gleich in welcher Sprache das Dokument verfasst ist. Tags sind ausgenommen: Sie stammen aus Ihrer eigenen Liste, in welcher Sprache Sie diese auch geschrieben haben. Leer lassen, um die Sprache des Dokuments selbst zu behalten.',
+    'Schreibt Titel, Zusammenfassung, Typ und Korrespondent in dieser Sprache, gleich in welcher Sprache das Dokument verfasst ist, und bietet für Dokumente in anderen Sprachen eine Übersetzung des OCR-Texts an. Tags sind ausgenommen: Sie stammen aus Ihrer eigenen Liste, in welcher Sprache Sie diese auch geschrieben haben. Wählen Sie „Wie das jeweilige Dokument“, um die Hauptsprache jedes Dokuments zu behalten.',
   'settingsProcessing.deepSearchLanguages': 'Sprachen für Deep Search',
   'settingsProcessing.deepSearchLanguagesPlaceholder': 'z. B. de,en,uk',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':

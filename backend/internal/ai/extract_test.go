@@ -331,7 +331,7 @@ func TestBuildExtractionSystemPromptClosesTheTagVocabulary(t *testing.T) {
 // stay as listed.
 func TestBuildExtractionSystemPromptWritesInTheResultLanguage(t *testing.T) {
 	t.Parallel()
-	prompt := buildExtractionSystemPrompt("English", "", ExtractionCatalog{Tags: []string{"Invoices"}})
+	prompt := buildExtractionSystemPrompt("en", "", ExtractionCatalog{Tags: []string{"Invoices"}})
 
 	if !strings.Contains(prompt, "document_type, and correspondent in English") {
 		t.Fatalf("expected the result-language rule, got:\n%s", prompt)
@@ -343,6 +343,20 @@ func TestBuildExtractionSystemPromptWritesInTheResultLanguage(t *testing.T) {
 	}
 	if !strings.Contains(prompt, "Tags are the exception") {
 		t.Fatalf("expected tags to stay verbatim, got:\n%s", prompt)
+	}
+}
+
+// Without a result language the metadata follows the document, and a short
+// passage in another language (a translated notice on a bill) must not decide
+// which language that is.
+func TestBuildExtractionSystemPromptUsesTheMainLanguage(t *testing.T) {
+	t.Parallel()
+	prompt := buildExtractionSystemPrompt("", "", ExtractionCatalog{})
+
+	for _, want := range []string{"in the document's main language", "do not change it", "- language (string, the ISO 639-1 code"} {
+		if !strings.Contains(prompt, want) {
+			t.Fatalf("expected %q in prompt:\n%s", want, prompt)
+		}
 	}
 }
 

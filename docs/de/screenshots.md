@@ -135,10 +135,13 @@ Fälligkeitsdatum und Zahlungsstatus –, ausgefüllt von derselben Extraktion.
 
 ![Dokumentdetails](../screenshots/document-detail.png)
 
-Ist eine Ergebnissprache gesetzt, lässt sich auch der OCR-Text übersetzt lesen:
-Der Umschalter darüber zeigt das Original, die Übersetzung oder beides
-nebeneinander. Die Übersetzung entsteht, wenn sie zum ersten Mal angefordert
-wird, und wird mit dem Dokument gespeichert.
+Ist eine Ergebnissprache gesetzt, lässt sich der OCR-Text eines Dokuments in
+einer anderen Sprache auch übersetzt lesen: Der Umschalter darüber zeigt das
+Original, die Übersetzung oder beides nebeneinander. Die Übersetzung entsteht,
+wenn sie zum ersten Mal angefordert wird, und wird mit dem Dokument gespeichert.
+Ein Dokument, das bereits in der Ergebnissprache vorliegt, hat keinen
+Umschalter; eines, das verarbeitet wurde, bevor Dokumentsprachen erfasst
+wurden, zeigt ihn, bis es erneut verarbeitet wird.
 
 ![Der OCR-Text eines deutschen Briefs neben seiner englischen Übersetzung](../screenshots/document-translated.png)
 

@@ -989,6 +989,10 @@ var catalog = map[string]map[string]string{
 		"de": "Die Websuche benötigt einen passenden Anbieter (%s)",
 		"ru": "для веб-поиска нужен подходящий провайдер (%s)",
 	},
+	"processing_result_language must be an ISO 639-1 language code": {
+		"de": "processing_result_language muss ein Sprachcode nach ISO 639-1 sein",
+		"ru": "processing_result_language должен быть кодом языка ISO 639-1",
+	},
 	"worker_max_retries must be >= 0": {
 		"de": "worker_max_retries muss >= 0 sein",
 		"ru": "worker_max_retries должен быть >= 0",

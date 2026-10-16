@@ -53,6 +53,7 @@ import { DocumentPreview } from '../components/DocumentPreview'
 import { useStoredFlag } from '../hooks/useStoredFlag'
 import { useAppMeta } from '../hooks/useAppMeta'
 import { previewKind } from '../lib/documentPreview'
+import { offersTranslation } from '../lib/languages'
 import { anyJobRunning } from '../lib/api/jobs'
 import { t, tNode } from '../i18n'
 
@@ -241,7 +242,7 @@ export function DocumentDetailPage() {
   const back = backTarget(document, owned)
 
   const { resultLanguage } = useAppMeta()
-  const canTranslate = Boolean(resultLanguage) && hasOcrText && !editing
+  const canTranslate = offersTranslation(document?.language, resultLanguage) && hasOcrText && !editing
   const [ocrView, setOcrView] = useState<OcrView>('original')
   const translationWanted = canTranslate && ocrView !== 'original'
   const ocrText = document?.ocr_text ?? ''

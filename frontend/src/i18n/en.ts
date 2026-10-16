@@ -1330,10 +1330,10 @@ export const en = {
   'settingsProcessing.aiTimeout': 'AI timeout (seconds)',
   'settingsProcessing.aiTimeoutHint':
     'How long one extraction, chat, search or split-detection request may take.',
-  'settingsProcessing.resultLanguage': 'Result language (ISO 639-1)',
-  'settingsProcessing.resultLanguagePlaceholder': 'e.g. en',
+  'settingsProcessing.resultLanguage': 'Result language',
+  'settingsProcessing.resultLanguageDocument': 'Same as each document',
   'settingsProcessing.resultLanguageHint':
-    'Writes the title, summary, type and correspondent in this language, whatever language the document is in. Tags are exempt: they come from your own list, in whatever language you wrote it. Leave empty to keep the document’s own language.',
+    'Writes the title, summary, type and correspondent in this language, whatever language the document is in, and offers a translation of the OCR text for documents in other languages. Tags are exempt: they come from your own list, in whatever language you wrote it. Choose “Same as each document” to keep each document’s main language.',
   'settingsProcessing.deepSearchLanguages': 'Deep search languages',
   'settingsProcessing.deepSearchLanguagesPlaceholder': 'e.g. de,en,uk',
   'settingsProcessing.deepSearchLanguagesEmbeddingHint':

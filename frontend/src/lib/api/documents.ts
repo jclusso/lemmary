@@ -57,6 +57,8 @@ export type DocumentRecord = {
   document_date: string
   ocr_text: string
   summary: string
+  /** ISO 639-1 code extraction read off the document; empty before it was recorded. */
+  language?: string
   processing_status: DocumentStatus
   metadata_source: string
   confidence: number

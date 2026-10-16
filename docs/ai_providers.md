@@ -234,7 +234,11 @@ The **result language** has no variable at all. It decides what language a
 document's title, summary, type and correspondent are stored in, which is a
 reader's preference rather than an operator's, so it is set in **Settings**. Tags
 are exempt: they are assigned from a list the user writes, so they are already in
-the language that user chose.
+the language that user chose. With no result language, each document keeps its
+main language, the one most of its text is written in, so a bill with a
+translated customer service notice is still titled in the bill's language.
+Extraction also records that language on the document, and the document page
+offers a translation only when it differs from the result language.
 
 ## Binding models in Settings
 

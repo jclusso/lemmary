@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"lemmary/backend/internal/langcode"
 )
 
 var xmlBlockRE = regexp.MustCompile(`(?s)<[^>]+>.*?</[^>]+>`)
@@ -23,7 +25,9 @@ type ExtractedMetadata struct {
 	// Asked for only with related-document linking on.
 	References lenientStrings `json:"references,omitempty"`
 	Summary    string         `json:"summary"`
-	Confidence float64        `json:"confidence"`
+	// ISO 639-1 code of the language most of the document is written in.
+	Language   string  `json:"language"`
+	Confidence float64 `json:"confidence"`
 	// Keyed by field name as the prompt offered it; apply maps names to ids.
 	CustomFields lenientObject `json:"custom_fields,omitempty"`
 }
@@ -92,6 +96,14 @@ func (m *ExtractedMetadata) Normalize() []string {
 		notes = append(notes, fmt.Sprintf("document_date %q normalized to %q", raw, normalized))
 	}
 	m.DocumentDate = normalized
+
+	if rawLanguage := strings.TrimSpace(m.Language); rawLanguage != "" {
+		code, ok := langcode.Parse(rawLanguage)
+		if !ok {
+			notes = append(notes, fmt.Sprintf("language %q is not an ISO 639-1 code; dropped", rawLanguage))
+		}
+		m.Language = code
+	}
 
 	return notes
 }

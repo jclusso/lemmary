@@ -123,10 +123,12 @@ due date and payment status — filled by the same extraction.
 
 ![Document detail](./screenshots/document-detail.png)
 
-With a result language set, the OCR text can also be read translated: the
-switch above it shows the original, the translation, or both side by side. The
-translation is made the first time it is asked for and stored with the
-document.
+With a result language set, the OCR text of a document in another language can
+also be read translated: the switch above it shows the original, the
+translation, or both side by side. The translation is made the first time it is
+asked for and stored with the document. A document already in the result
+language has no switch; one processed before document languages were recorded
+shows it until it is reprocessed.
 
 ![A German letter's OCR text beside its English translation](./screenshots/document-translated.png)
 

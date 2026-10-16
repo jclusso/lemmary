@@ -228,6 +228,7 @@ func (s *ApplyMetadataStep) Run(ctx context.Context, state *StepState) error {
 
 	state.Document.Set("title", metadata.Title)
 	state.Document.Set("summary", metadata.Summary)
+	state.Document.Set("language", metadata.Language)
 	writes, err := fieldWrites(state, metadata)
 	if err != nil {
 		return err

@@ -112,6 +112,24 @@ func TestParseExtractedMetadataDropsUnusableDate(t *testing.T) {
 	}
 }
 
+func TestParseExtractedMetadataNormalizesLanguage(t *testing.T) {
+	cases := []struct{ raw, want string }{
+		{`"EN"`, "en"},
+		{`"en-US"`, "en"},
+		{`"Spanish"`, ""},
+		{`""`, ""},
+	}
+	for _, tc := range cases {
+		metadata, err := models.ParseExtractedMetadata(`{"title":"Invoice 001","language":` + tc.raw + `,"confidence":0.9}`)
+		if err != nil {
+			t.Fatalf("language %s: unexpected error: %v", tc.raw, err)
+		}
+		if metadata.Language != tc.want {
+			t.Fatalf("language %s: got %q, want %q", tc.raw, metadata.Language, tc.want)
+		}
+	}
+}
+
 func TestParseExtractedMetadataSuggestedTags(t *testing.T) {
 	metadata, err := models.ParseExtractedMetadata(`{"title": "Boiler warranty", "suggested_tags": ["warranty", "heating"], "confidence": 0.9}`)
 	if err != nil {
